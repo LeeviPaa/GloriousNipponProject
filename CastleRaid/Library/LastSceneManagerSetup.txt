@@ -1,4 +1,0 @@
-sceneSetups:
-- path: Assets/VRTK/Examples/037_CameraRig_ClimbingFalling.unity
-  isLoaded: 1
-  isActive: 1
