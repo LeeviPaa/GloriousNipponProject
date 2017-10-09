@@ -37,6 +37,7 @@ ModelImporter:
     4300006: Cloth3
     4300008: Cloth4
     4300010: TopLedge
+    7400000: Take 001
     9500000: //RootNode
   materials:
     importMaterials: 1
