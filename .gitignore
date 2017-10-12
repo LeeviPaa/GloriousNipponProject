@@ -2,8 +2,7 @@ CastleRaid/[Ll]ibrary/
 CastleRaid/[Tt]emp/
 CastleRaid/[Oo]bj/
 CastleRaid/[Bb]uild/
-CastleRaid/[Bb]uilds/
-CastleRaid/Assets/LocalPlugins*
+CastleRaid/Assets/LocalPlugins/
 
 # Visual Studio 2015 cache directory
 /.vs/
