@@ -8,6 +8,11 @@ public class Toolbox : Singleton<Toolbox>
 
     void Awake()
     {
+        DontDestroyOnLoad(gameObject);
+        if(GameObject.FindObjectsOfType<Toolbox>().Length > 1)
+        {
+            GameObject.Destroy(gameObject);
+        }
         //E = RegisterComponent<EventManager>();
         // Your initialization code here
     }
