@@ -32,3 +32,5 @@ sysinfo.txt
 *.apk
 *.unitypackage
 Builds/
+CastleRaid/Assets/Scenes/Prototype/_IGNORE_WhiteboxDevelopment.unity.meta
+CastleRaid/Assets/Scenes/Prototype/_IGNORE_WhiteboxDevelopment.unity
