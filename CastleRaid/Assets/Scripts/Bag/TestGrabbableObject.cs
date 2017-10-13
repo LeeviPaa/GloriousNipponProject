@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TestGrabbableObject : MonoBehaviour {
-    public bool isGrabing;
+public class TestGrabbableObject : VRTK.VRTK_InteractableObject {
     public enum EItemID
     {
         small,
@@ -11,17 +10,25 @@ public class TestGrabbableObject : MonoBehaviour {
         big
     }
     public EItemID id;
+
+    private BoxCollider bc;
 	// Use this for initialization
 	void Start () {
-		
+        bc = GetComponent<BoxCollider>();
 	}
-	
-	// Update is called once per frame
-	void Update () {
-        if (isGrabing)
-            GetComponent<MeshRenderer>().material.color = new Color(1, 0, 0);
-        else
-            GetComponent<MeshRenderer>().material.color = new Color(0, 0, 1);
 
+    // Update is called once per frame
+    override protected void Update () {
+        base.Update();
+        if (IsGrabbed())
+        {
+            GetComponent<MeshRenderer>().material.color = new Color(1, 0, 0);
+            bc.isTrigger = true;
+        }
+        else
+        {
+            GetComponent<MeshRenderer>().material.color = new Color(0, 0, 1);
+            bc.isTrigger = false;
+        }
     }
 }
