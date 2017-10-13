@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bag : MonoBehaviour
+public class Bag : VRTK.VRTK_InteractableObject
 {
 
     enum EBagState
@@ -41,8 +41,11 @@ public class Bag : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+   protected override void Update()
     {
+        base.Update();
+
+        // For non vr.
         if (Input.GetKeyDown(KeyCode.Q))
         {
             if (state == EBagState.Placed)
@@ -86,6 +89,8 @@ public class Bag : MonoBehaviour
         }
 
     }
+
+    
     float CheckDistance()
     {
         float result = Vector3.Distance(GameObject.FindWithTag("Player").transform.position, transform.position);
@@ -159,12 +164,12 @@ public class Bag : MonoBehaviour
         print("hittttt");
         if (gObj)
         {
-            if (gObj.isGrabing == true)
+            if (gObj.IsGrabbed() == true)
             {
                 readyForIn = true;
             }
             // When release grabed object in the bag
-            if (readyForIn == true && gObj.isGrabing == false)
+            if (readyForIn == true && gObj.IsGrabbed() == false)
                 PutTresure();
         }
     }
