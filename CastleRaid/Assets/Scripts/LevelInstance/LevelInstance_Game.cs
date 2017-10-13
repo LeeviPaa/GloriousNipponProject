@@ -50,7 +50,7 @@ public abstract class LevelInstance_Game : LevelInstance
 
     protected virtual void Update()
     {
-        if (timerActive)
+        if (timerActive && levelTimeLimit != 0f)
         {
             levelTimeLeft -= Time.deltaTime;
             if (levelTimeLeft <= 0f)
