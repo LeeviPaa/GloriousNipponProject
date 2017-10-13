@@ -123,14 +123,14 @@ public class Bag : VRTK.VRTK_InteractableObject
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<TestGrabbableObject>())
-        {
-            print("touch");
-            foreach (var g in grabbingObjects)
-            {
-                grabbingObjectsTemp.Add(g.GetComponent<TestGrabbableObject>());
-            }
-        }
+        //if (other.GetComponent<TestGrabbableObject>())
+        //{
+        //    print("touch");
+        //    foreach (var g in grabbingObjects)
+        //    {
+        //        grabbingObjectsTemp.Add(g.GetComponent<TestGrabbableObject>());
+        //    }
+        //}
     }
 
     /// <summary>
@@ -139,16 +139,16 @@ public class Bag : VRTK.VRTK_InteractableObject
     /// <param name="other"></param>
     private void OnTriggerStay(Collider other)
     {
-        if (other.GetComponent<TestGrabbableObject>())
-            foreach (var g in grabbingObjectsTemp)
-            {
-                // When release grabed object in the bag
-                if (g.IsGrabbed() == false)
-                {
-                    print("get");
-                    PutTresure(g);
-                }
-            }
+        //if (other.GetComponent<TestGrabbableObject>())
+        //    foreach (var g in grabbingObjectsTemp)
+        //    {
+        //        // When release grabed object in the bag
+        //        if (g.IsGrabbed() == false)
+        //        {
+        //            print("get");
+        //            PutTresure(g);
+        //        }
+        //    }
     }
 
 
