@@ -37,35 +37,55 @@ public class PlayerDragMovement : MonoBehaviour
         {
             enabled = false;
         }
-
-        InitControllerListeners(VRTK_DeviceFinder.GetControllerLeftHand(), true);
-        InitControllerListeners(VRTK_DeviceFinder.GetControllerRightHand(), true);
     }
+
+	void Start() 
+	{
+		StartCoroutine(DelayedStart());
+	}
+
+	IEnumerator DelayedStart() 
+	{
+		yield return null;
+
+		playArea = VRTK_DeviceFinder.PlayAreaTransform();
+
+		InitControllerListeners(VRTK_DeviceFinder.GetControllerLeftHand(), true);
+		InitControllerListeners(VRTK_DeviceFinder.GetControllerRightHand(), true);
+	}
 
     void InitControllerListeners(GameObject controller, bool state)
     {
-        if (controller)
+		if (controller)
         {
             VRTK_ControllerEvents controllerEvents = controller.GetComponent<VRTK_ControllerEvents>();
             if (state)
             {
                 controllerEvents.TriggerPressed += TriggerPressed;
-                controllerEvents.TriggerReleased += TriggerPressed;
+                controllerEvents.TriggerReleased += TriggerReleased;
             }
             else
             {
                 controllerEvents.TriggerPressed -= TriggerPressed;
-                controllerEvents.TriggerReleased -= TriggerPressed;
+                controllerEvents.TriggerReleased -= TriggerReleased;
             }
         }
     }
 
     void TriggerPressed(object sender, ControllerInteractionEventArgs e)
     {
-        currentUsedController = ((VRTK_ControllerEvents)sender).gameObject;
-        isDragging = true;
-        controllerDragStartPosition = currentUsedController.transform.position;
-        playerDragStartPosition = playArea.position;
+		GameObject controller = ((VRTK_ControllerEvents)sender).gameObject;
+		if (bodyPhysics.OnGround()) 
+		{
+			currentUsedController = controller;
+			isDragging = true;
+			controllerDragStartPosition = currentUsedController.transform.position;
+			playerDragStartPosition = playArea.position;
+			bodyPhysics.ResetFalling();
+			bodyPhysics.TogglePreventSnapToFloor(true);
+			bodyPhysics.enableBodyCollisions = false;
+			bodyPhysics.ToggleOnGround(false);
+		}
     }
 
     void TriggerReleased(object sender, ControllerInteractionEventArgs e)
@@ -73,16 +93,19 @@ public class PlayerDragMovement : MonoBehaviour
         GameObject controller = ((VRTK_ControllerEvents)sender).gameObject;
         if (controller == currentUsedController)
         {
-            isDragging = false;
+			isDragging = false;
             currentUsedController = null;
-        }
+			bodyPhysics.TogglePreventSnapToFloor(false);
+			bodyPhysics.enableBodyCollisions = true;
+			bodyPhysics.ToggleOnGround(true);
+		}
     }
 
     void Update()
     {
-        if (bodyPhysics.OnGround() && playArea)
+        if (isDragging && playArea)
         {
             playArea.position = playerDragStartPosition + ((controllerDragStartPosition - currentUsedController.transform.position) * dragSpeed);
         }
-    }
+	}
 }

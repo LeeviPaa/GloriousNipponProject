@@ -17,7 +17,7 @@ public class PlayerMovementController : MonoBehaviour
         }
         if (climbMovement)
         {
-            climbMovement.PlayerClimbStarted += OnPlayerClimbStarted;
+			climbMovement.PlayerClimbStarted += OnPlayerClimbStarted;
             climbMovement.PlayerClimbEnded += OnPlayerClimbEnded;
         }
         if (!dragMovement)
@@ -37,6 +37,6 @@ public class PlayerMovementController : MonoBehaviour
 
     void OnPlayerClimbEnded(object sender, PlayerClimbEventArgs e)
     {
-        dragMovement.enabled = true;
+		dragMovement.enabled = true;
     }
 }
