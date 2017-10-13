@@ -26,7 +26,7 @@ public class Bag : VRTK.VRTK_InteractableObject
     [SerializeField]
     private UnityEngine.UI.Text txtBelongings;
 
-    TestGrabbableObject gObj;
+    List<TestGrabbableObject> grabbingObjectsTemp;
     bool readyForIn;
     [SerializeField]
     private float intaractivableRange;
@@ -37,11 +37,11 @@ public class Bag : VRTK.VRTK_InteractableObject
     // Use this for initialization
     void Start()
     {
-
+        grabbingObjectsTemp = new List<TestGrabbableObject>();
     }
 
     // Update is called once per frame
-   protected override void Update()
+    protected override void Update()
     {
         base.Update();
 
@@ -90,7 +90,7 @@ public class Bag : VRTK.VRTK_InteractableObject
 
     }
 
-    
+
     float CheckDistance()
     {
         float result = Vector3.Distance(GameObject.FindWithTag("Player").transform.position, transform.position);
@@ -121,38 +121,16 @@ public class Bag : VRTK.VRTK_InteractableObject
         readyForIn = false;
 
     }
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        gObj = collision.gameObject.GetComponent<TestGrabbableObject>();
-        if (gObj)
-            print("hit");
-    }
-    private void OnTriggerEnter(Collider collider)
-    {
-        gObj = collider.gameObject.GetComponent<TestGrabbableObject>();
-        if (gObj)
-            print("hit");
-    }
-
-    /// <summary>
-    /// Don't need this OnCollisionStay().
-    /// Because When from true to false of the isGrabing flag.
-    /// Why i don't remove it, for testing program.
-    /// </summary>
-    /// <param name="collision"></param>
-    private void OnCollisionStay(Collision collision)
-    {
-        //print("hittttt");
-        //if (gObj)
-        //{
-        //    if (gObj.isGrabing == true)
-        //    {
-        //        readyForIn = true;
-        //    }
-        //    // When release grabed object in the bag
-        //    if (readyForIn == true && gObj.isGrabing == false)
-        //        Destroy(gObj.gameObject);
-        //}
+        if (other.GetComponent<TestGrabbableObject>())
+        {
+            print("touch");
+            foreach (var g in grabbingObjects)
+            {
+                grabbingObjectsTemp.Add(g.GetComponent<TestGrabbableObject>());
+            }
+        }
     }
 
     /// <summary>
@@ -161,27 +139,29 @@ public class Bag : VRTK.VRTK_InteractableObject
     /// <param name="other"></param>
     private void OnTriggerStay(Collider other)
     {
-        print("hittttt");
-        if (gObj)
-        {
-            if (gObj.IsGrabbed() == true)
+        if (other.GetComponent<TestGrabbableObject>())
+            foreach (var g in grabbingObjectsTemp)
             {
-                readyForIn = true;
+                // When release grabed object in the bag
+                if (g.IsGrabbed() == false)
+                {
+                    print("get");
+                    PutTresure(g);
+                }
             }
-            // When release grabed object in the bag
-            if (readyForIn == true && gObj.IsGrabbed() == false)
-                PutTresure();
-        }
     }
 
-    void PutTresure()
-    {
-        IncreaseItemInBag(gObj.id);
-        sound.PlayOneShot(sound.clip);
-        print("fa");
 
-        Destroy(gObj.gameObject);
-        
+    void PutTresure(TestGrabbableObject grabbingObject)
+    {
+        IncreaseItemInBag(grabbingObject.id);
+
+        sound.PlayOneShot(sound.clip);
+
+        print("PuttingToBag!!");
+
+        Destroy(grabbingObject.gameObject);
+
     }
 
     void IncreaseItemInBag(TestGrabbableObject.EItemID id)
@@ -191,7 +171,7 @@ public class Bag : VRTK.VRTK_InteractableObject
         else
             belongings.Add(id, 1);
 
-            txtBelongings.text = string.Empty;
+        txtBelongings.text = string.Empty;
         foreach (KeyValuePair<TestGrabbableObject.EItemID, int> pair in belongings)
         {
             txtBelongings.text += pair.Key + " " + pair.Value + "\n";
