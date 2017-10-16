@@ -5,6 +5,7 @@ using VRTK;
 
 public class PlayerDragMovement : MonoBehaviour
 {
+    public VRTK_PlayerClimb climbMovement;
     public VRTK_BodyPhysics bodyPhysics;
     public float dragSpeed = 1f;
 
@@ -29,13 +30,32 @@ public class PlayerDragMovement : MonoBehaviour
         {
             bodyPhysics = GetComponent<VRTK_BodyPhysics>();
         }
-        if (bodyPhysics)
-        {
-
-        }
-        else
+        if (!bodyPhysics)
         {
             enabled = false;
+        }
+
+        if (!climbMovement)
+        {
+            climbMovement = GetComponent<VRTK_PlayerClimb>();
+        }
+    }
+
+    void OnEnable()
+    {
+        if (climbMovement)
+        {
+            climbMovement.PlayerClimbStarted += OnPlayerClimbStarted;
+            climbMovement.PlayerClimbEnded += OnPlayerClimbEnded;
+        }
+    }
+
+    void OnDisable()
+    {
+        if (climbMovement)
+        {
+            climbMovement.PlayerClimbStarted -= OnPlayerClimbStarted;
+            climbMovement.PlayerClimbEnded -= OnPlayerClimbEnded;
         }
     }
 
@@ -108,4 +128,14 @@ public class PlayerDragMovement : MonoBehaviour
             playArea.position = playerDragStartPosition + ((controllerDragStartPosition - currentUsedController.transform.position) * dragSpeed);
         }
 	}
+
+    void OnPlayerClimbStarted(object sender, PlayerClimbEventArgs e)
+    {
+        enabled = false;
+    }
+
+    void OnPlayerClimbEnded(object sender, PlayerClimbEventArgs e)
+    {
+        enabled = true;
+    }
 }
