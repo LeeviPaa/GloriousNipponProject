@@ -3,6 +3,7 @@ CastleRaid/[Tt]emp/
 CastleRaid/[Oo]bj/
 CastleRaid/[Bb]uild/
 CastleRaid/Assets/LocalPlugins*
+*_IGNORE_*
 
 # Visual Studio 2015 cache directory
 CastleRaid/.vs/
