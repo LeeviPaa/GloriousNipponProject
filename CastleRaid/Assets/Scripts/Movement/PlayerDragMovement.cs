@@ -9,11 +9,12 @@ public class PlayerDragMovement : MonoBehaviour
     public VRTK_BodyPhysics bodyPhysics;
     public float dragSpeed = 1f;
 
-    private bool isDragging = false;
+	private enum State { Active, Inactive, Locked }
+    private State dragState = State.Active;
     private Transform playArea;
-    private Vector3 controllerDragStartPosition = Vector3.zero;
-    private Vector3 playerDragStartPosition = Vector3.zero;
-    private GameObject currentUsedController;
+    private Vector3 controllerDragStartLocalPos= Vector3.zero;
+    private Vector3 playAreaDragStartPos = Vector3.zero;
+	private GameObject currentUsedController;
 
     public struct PlayerDragMovementEventArgs
     {
@@ -39,13 +40,13 @@ public class PlayerDragMovement : MonoBehaviour
         {
             climbMovement = GetComponent<VRTK_PlayerClimb>();
         }
-    }
+	}
 
     void OnEnable()
     {
         if (climbMovement)
         {
-            climbMovement.PlayerClimbStarted += OnPlayerClimbStarted;
+			climbMovement.PlayerClimbStarted += OnPlayerClimbStarted;
             climbMovement.PlayerClimbEnded += OnPlayerClimbEnded;
         }
     }
@@ -54,7 +55,7 @@ public class PlayerDragMovement : MonoBehaviour
     {
         if (climbMovement)
         {
-            climbMovement.PlayerClimbStarted -= OnPlayerClimbStarted;
+			climbMovement.PlayerClimbStarted -= OnPlayerClimbStarted;
             climbMovement.PlayerClimbEnded -= OnPlayerClimbEnded;
         }
     }
@@ -94,48 +95,55 @@ public class PlayerDragMovement : MonoBehaviour
 
     void TriggerPressed(object sender, ControllerInteractionEventArgs e)
     {
-		GameObject controller = ((VRTK_ControllerEvents)sender).gameObject;
+		if (dragState == State.Locked)
+		{
+			return;
+		}
+		GameObject controller = VRTK_DeviceFinder.GetActualController(((VRTK_ControllerEvents)sender).gameObject);
 		if (bodyPhysics.OnGround()) 
 		{
 			currentUsedController = controller;
-			isDragging = true;
-			controllerDragStartPosition = currentUsedController.transform.position;
-			playerDragStartPosition = playArea.position;
+			controllerDragStartLocalPos = currentUsedController.transform.localPosition;
+			playAreaDragStartPos = playArea.position;
 			bodyPhysics.ResetFalling();
 			bodyPhysics.TogglePreventSnapToFloor(true);
 			bodyPhysics.enableBodyCollisions = false;
 			bodyPhysics.ToggleOnGround(false);
+			dragState = State.Active;
 		}
-    }
+	}
 
     void TriggerReleased(object sender, ControllerInteractionEventArgs e)
     {
-        GameObject controller = ((VRTK_ControllerEvents)sender).gameObject;
-        if (controller == currentUsedController)
+        GameObject controller = VRTK_DeviceFinder.GetActualController(((VRTK_ControllerEvents)sender).gameObject);
+		if (controller == currentUsedController)
         {
-			isDragging = false;
-            currentUsedController = null;
+			currentUsedController = null;
 			bodyPhysics.TogglePreventSnapToFloor(false);
 			bodyPhysics.enableBodyCollisions = true;
 			bodyPhysics.ToggleOnGround(true);
+			if (dragState == State.Active)
+			{
+				dragState = State.Inactive;
+			}
 		}
     }
 
     void Update()
     {
-        if (isDragging && playArea)
+        if (dragState == State.Active && playArea)
         {
-            playArea.position = playerDragStartPosition + ((controllerDragStartPosition - currentUsedController.transform.position) * dragSpeed);
+			playArea.position = playAreaDragStartPos + ((controllerDragStartLocalPos - currentUsedController.transform.localPosition) * dragSpeed);
         }
 	}
 
-    void OnPlayerClimbStarted(object sender, PlayerClimbEventArgs e)
-    {
-        enabled = false;
-    }
+	void OnPlayerClimbStarted(object sender, PlayerClimbEventArgs e)
+	{
+		dragState = State.Locked;
+	}
 
     void OnPlayerClimbEnded(object sender, PlayerClimbEventArgs e)
     {
-        enabled = true;
-    }
+		dragState = State.Inactive;
+	}
 }
