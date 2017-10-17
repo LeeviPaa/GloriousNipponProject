@@ -31,4 +31,24 @@ public class TestGrabbableObject : VRTK.VRTK_InteractableObject {
             bc.isTrigger = false;
         }
     }
+
+    void OnCollisionEnter(Collision col)
+    {
+        if(col.gameObject.GetComponent<Bag>())
+        {
+        }
+    }
+
+    void OnTriggerStay(Collider other)
+    {
+
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+            //if(other.gameObject.GetComponent<Bag>())
+            //{
+            //    GetComponent<BoxCollider>().isTrigger = false;
+            //}
+    }
 }
