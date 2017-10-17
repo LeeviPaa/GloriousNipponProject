@@ -18,21 +18,17 @@ public class Bag : VRTK.VRTK_InteractableObject
     [SerializeField]
     private BoxCollider col;
     [SerializeField]
-    private Transform bagpos;
-    [SerializeField]
-    private Transform handpos;
-    [SerializeField]
     private AudioSource sound;
     [SerializeField]
     private UnityEngine.UI.Text txtBelongings;
 
     List<TestGrabbableObject> grabbingObjectsTemp;
-    bool readyForIn;
-    [SerializeField]
-    private float intaractivableRange;
 
+    GameObject followObject = Camera.main.gameObject;
 
     private Dictionary<TestGrabbableObject.EItemID, int> belongings = new Dictionary<TestGrabbableObject.EItemID, int>();
+
+    TestGrabbableObject obj;
 
     // Use this for initialization
     void Start()
@@ -45,42 +41,31 @@ public class Bag : VRTK.VRTK_InteractableObject
     {
         base.Update();
 
-        // For non vr.
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            if (state == EBagState.Grabed)
-            {
-                OnCarry();
-                return;
-            }
-            if (state == EBagState.Carried)
-            {
-                OnGrab();
-                return;
-            }
 
-            print("pushQ");
+        // For camera
+        //transform.position = Camera.main.transform.position - Camera.main.transform.forward;
+        //transform.forward = Camera.main.transform.forward;
+
+        // For hands.
+        if (followObject.GetComponent<Camera>())
+        {
+            transform.position = Camera.main.transform.position - Camera.main.transform.forward;
+            transform.localRotation = Camera.main.transform.localRotation;
+            transform.forward = Camera.main.transform.forward;
+        }
+        else
+        {
+            transform.position = followObject.transform.position;
+            transform.localRotation = followObject.transform.localRotation;
         }
 
-       
-        print(grabbingObjects.Count);
-        if (state == EBagState.Carried)
-        {
-           //I want to fix to back of maincam(vr cam).
-            transform.SetParent(bagpos);
-            transform.position = Camera.main.transform.position;
-            transform.localRotation = Quaternion.identity;
-        }
-
-        //if (state == EBagState.Grabed)
-        //{
-        //    transform.SetParent(handpos);
-        //    transform.localPosition = Vector3.zero;
-        //    transform.localRotation = Quaternion.identity;
-        //}
 
     }
 
+    public void SetFollowObject(GameObject obj)
+    {
+        followObject = obj;
+    }
 
     float CheckDistance()
     {
@@ -88,44 +73,26 @@ public class Bag : VRTK.VRTK_InteractableObject
         print(result);
         return result;
     }
-    public void OnCarry()
-    {
-        state = EBagState.Carried;
-    }
 
-    public void OnGrab()
-    {
-        state = EBagState.Grabed;
-
-    }
     private void OnTriggerEnter(Collider other)
     {
-        var obj = other.GetComponent<TestGrabbableObject>();
-        if (obj)
+        var temp = other.GetComponent<TestGrabbableObject>();
+        if (temp.GetIsGrabbed())
         {
-                grabbingObjectsTemp.Add(obj);
+            obj = temp;
         }
+
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="other"></param>
     private void OnTriggerStay(Collider other)
     {
-        //if (other.gameObject.GetComponent<TestGrabbableObject>())
-        //{
-        //        print("You can loot if you release grabbing object");
-        
-        //        // When release grabed object in the bag
-        //        if (other.gameObject.GetComponent<TestGrabbableObject>().is == false)
-        //        {
-
-        //            print("get");
-        //            PutTresure(g);
-        //        }
-        //    }
-        //}
+        if (obj)
+        {
+            if (!obj.GetIsGrabbed())
+            {
+                PutTresure(obj);
+            }
+        }
     }
 
 
@@ -133,10 +100,14 @@ public class Bag : VRTK.VRTK_InteractableObject
     {
         IncreaseItemInBag(grabbingObject.id);
 
+
         sound.PlayOneShot(sound.clip);
+        // sound.PlayOneShot(grabbingObject.clip);
 
         print("PuttingToBag!!");
 
+
+        //In future, chenge to animation .
         Destroy(grabbingObject.gameObject);
 
     }
