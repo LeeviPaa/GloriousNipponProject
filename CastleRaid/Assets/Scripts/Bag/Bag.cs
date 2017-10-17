@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bag : MonoBehaviour
+public class Bag : VRTK.VRTK_InteractableObject
 {
 
     enum EBagState
     {
-        Placed,
+        //Placed,
         Grabed,
         Carried
     }
-    EBagState state = EBagState.Placed;
+    EBagState state = EBagState.Carried;
 
     [SerializeField]
     private Rigidbody rb;
@@ -26,7 +26,7 @@ public class Bag : MonoBehaviour
     [SerializeField]
     private UnityEngine.UI.Text txtBelongings;
 
-    TestGrabbableObject gObj;
+    List<TestGrabbableObject> grabbingObjectsTemp;
     bool readyForIn;
     [SerializeField]
     private float intaractivableRange;
@@ -37,22 +37,17 @@ public class Bag : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
+        grabbingObjectsTemp = new List<TestGrabbableObject>();
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void Update()
     {
+        base.Update();
+
+        // For non vr.
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            if (state == EBagState.Placed)
-            {
-                if (CheckDistance() < intaractivableRange)
-                    OnGrab();
-
-                return;
-            }
-
             if (state == EBagState.Grabed)
             {
                 OnCarry();
@@ -60,32 +55,33 @@ public class Bag : MonoBehaviour
             }
             if (state == EBagState.Carried)
             {
-                OnPlace();
+                OnGrab();
                 return;
             }
 
             print("pushQ");
         }
 
-
+       
+        print(grabbingObjects.Count);
         if (state == EBagState.Carried)
         {
+           //I want to fix to back of maincam(vr cam).
             transform.SetParent(bagpos);
-            transform.localPosition = Vector3.zero;
-            transform.localRotation = Quaternion.identity;
-        }
-        if (state == EBagState.Placed)
-        {
-            transform.SetParent(null);
-        }
-        if (state == EBagState.Grabed)
-        {
-            transform.SetParent(handpos);
-            transform.localPosition = Vector3.zero;
+            transform.position = Camera.main.transform.position;
             transform.localRotation = Quaternion.identity;
         }
 
+        //if (state == EBagState.Grabed)
+        //{
+        //    transform.SetParent(handpos);
+        //    transform.localPosition = Vector3.zero;
+        //    transform.localRotation = Quaternion.identity;
+        //}
+
     }
+
+
     float CheckDistance()
     {
         float result = Vector3.Distance(GameObject.FindWithTag("Player").transform.position, transform.position);
@@ -95,59 +91,20 @@ public class Bag : MonoBehaviour
     public void OnCarry()
     {
         state = EBagState.Carried;
-        col.isTrigger = true;
-        rb.useGravity = false;
-        rb.constraints = RigidbodyConstraints.FreezeAll;
     }
-    public void OnPlace()
-    {
-        state = EBagState.Placed;
-        col.isTrigger = false;
-        rb.useGravity = true;
-        rb.constraints = RigidbodyConstraints.None;
-    }
+
     public void OnGrab()
     {
         state = EBagState.Grabed;
-        col.isTrigger = true;
-        rb.useGravity = false;
-        rb.constraints = RigidbodyConstraints.FreezeAll;
-
-        readyForIn = false;
 
     }
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        gObj = collision.gameObject.GetComponent<TestGrabbableObject>();
-        if (gObj)
-            print("hit");
-    }
-    private void OnTriggerEnter(Collider collider)
-    {
-        gObj = collider.gameObject.GetComponent<TestGrabbableObject>();
-        if (gObj)
-            print("hit");
-    }
-
-    /// <summary>
-    /// Don't need this OnCollisionStay().
-    /// Because When from true to false of the isGrabing flag.
-    /// Why i don't remove it, for testing program.
-    /// </summary>
-    /// <param name="collision"></param>
-    private void OnCollisionStay(Collision collision)
-    {
-        //print("hittttt");
-        //if (gObj)
-        //{
-        //    if (gObj.isGrabing == true)
-        //    {
-        //        readyForIn = true;
-        //    }
-        //    // When release grabed object in the bag
-        //    if (readyForIn == true && gObj.isGrabing == false)
-        //        Destroy(gObj.gameObject);
-        //}
+        var obj = other.GetComponent<TestGrabbableObject>();
+        if (obj)
+        {
+                grabbingObjectsTemp.Add(obj);
+        }
     }
 
     /// <summary>
@@ -156,27 +113,32 @@ public class Bag : MonoBehaviour
     /// <param name="other"></param>
     private void OnTriggerStay(Collider other)
     {
-        print("hittttt");
-        if (gObj)
-        {
-            if (gObj.isGrabing == true)
-            {
-                readyForIn = true;
-            }
-            // When release grabed object in the bag
-            if (readyForIn == true && gObj.isGrabing == false)
-                PutTresure();
-        }
+        //if (other.gameObject.GetComponent<TestGrabbableObject>())
+        //{
+        //        print("You can loot if you release grabbing object");
+        
+        //        // When release grabed object in the bag
+        //        if (other.gameObject.GetComponent<TestGrabbableObject>().is == false)
+        //        {
+
+        //            print("get");
+        //            PutTresure(g);
+        //        }
+        //    }
+        //}
     }
 
-    void PutTresure()
-    {
-        IncreaseItemInBag(gObj.id);
-        sound.PlayOneShot(sound.clip);
-        print("fa");
 
-        Destroy(gObj.gameObject);
-        
+    void PutTresure(TestGrabbableObject grabbingObject)
+    {
+        IncreaseItemInBag(grabbingObject.id);
+
+        sound.PlayOneShot(sound.clip);
+
+        print("PuttingToBag!!");
+
+        Destroy(grabbingObject.gameObject);
+
     }
 
     void IncreaseItemInBag(TestGrabbableObject.EItemID id)
@@ -186,7 +148,7 @@ public class Bag : MonoBehaviour
         else
             belongings.Add(id, 1);
 
-            txtBelongings.text = string.Empty;
+        txtBelongings.text = string.Empty;
         foreach (KeyValuePair<TestGrabbableObject.EItemID, int> pair in belongings)
         {
             txtBelongings.text += pair.Key + " " + pair.Value + "\n";

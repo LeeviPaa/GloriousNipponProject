@@ -2,7 +2,8 @@ CastleRaid/[Ll]ibrary/
 CastleRaid/[Tt]emp/
 CastleRaid/[Oo]bj/
 CastleRaid/[Bb]uild/
-CastleRaid/Assets/LocalPlugins/
+CastleRaid/Assets/LocalPlugins*
+*_IGNORE_*
 
 # Visual Studio 2015 cache directory
 CastleRaid/.vs/
@@ -31,3 +32,6 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+Builds/
+CastleRaid/Assets/Scenes/Prototype/_IGNORE_WhiteboxDevelopment.unity.meta
+CastleRaid/Assets/Scenes/Prototype/_IGNORE_WhiteboxDevelopment.unity
