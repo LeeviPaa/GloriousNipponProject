@@ -66,9 +66,9 @@ public class Bag : VRTK.VRTK_InteractableObject
         print(grabbingObjects.Count);
         if (state == EBagState.Carried)
         {
-           I want to fix to back of maincam(vr cam).
+           //I want to fix to back of maincam(vr cam).
             transform.SetParent(bagpos);
-            transform.position = Camera.main.transform;
+            transform.position = Camera.main.transform.position;
             transform.localRotation = Quaternion.identity;
         }
 
