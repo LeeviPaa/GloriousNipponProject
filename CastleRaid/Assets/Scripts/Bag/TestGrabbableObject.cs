@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VRTK;
 
-public class TestGrabbableObject : VRTK.VRTK_InteractableObject {
+public class TestGrabbableObject : VRTK_InteractableObject
+{
     public enum EItemID
     {
         small,
@@ -10,45 +12,55 @@ public class TestGrabbableObject : VRTK.VRTK_InteractableObject {
         big
     }
     public EItemID id;
+    public AudioClip clip;
+    bool isGrabbed = false;
 
     private BoxCollider bc;
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         bc = GetComponent<BoxCollider>();
-	}
 
-    // Update is called once per frame
-    override protected void Update () {
-        base.Update();
-        if (IsGrabbed())
-        {
-            GetComponent<MeshRenderer>().material.color = new Color(1, 0, 0);
-            bc.isTrigger = true;
-        }
-        else
-        {
-            GetComponent<MeshRenderer>().material.color = new Color(0, 0, 1);
-            bc.isTrigger = false;
-        }
+
     }
-
-    void OnCollisionEnter(Collision col)
+    override protected void OnEnable()
     {
-        if(col.gameObject.GetComponent<Bag>())
-        {
-        }
+        base.OnEnable();
+        VRTK_InteractGrab asd = GetComponent<VRTK_InteractGrab>();
+        asd.ControllerStartGrabInteractableObject += OnStartGrab;
+        asd.ControllerUngrabInteractableObject += OnEndGrab;
     }
-
-    void OnTriggerStay(Collider other)
+    override protected void OnDisable()
     {
-
+        base.OnDisable();
+        VRTK_InteractGrab asd = GetComponent<VRTK_InteractGrab>();
+        asd.ControllerStartGrabInteractableObject -= OnStartGrab;
+        asd.ControllerUngrabInteractableObject -= OnEndGrab;
     }
-
-    void OnTriggerExit(Collider other)
+    void OnStartGrab(object sender, ObjectInteractEventArgs e)
     {
-            //if(other.gameObject.GetComponent<Bag>())
-            //{
-            //    GetComponent<BoxCollider>().isTrigger = false;
-            //}
+        print("Grab");
+        isGrabbed = true;
+
+        // For test;
+        GetComponent<MeshRenderer>().material.color = new Color(1, 0, 0);
+        bc.isTrigger = true;
     }
+
+    void OnEndGrab(object sender, ObjectInteractEventArgs e)
+    {
+        print("Released");
+        isGrabbed = false;
+
+        // For test
+        GetComponent<MeshRenderer>().material.color = new Color(0, 0, 1);
+        bc.isTrigger = false;
+    }
+
+    public bool GetIsGrabbed()
+    {
+        return isGrabbed;
+    }
+
+
 }
