@@ -7,11 +7,11 @@ public class Bag : VRTK.VRTK_InteractableObject
 
     enum EBagState
     {
-        Placed,
+        //Placed,
         Grabed,
         Carried
     }
-    EBagState state = EBagState.Placed;
+    EBagState state = EBagState.Carried;
 
     [SerializeField]
     private Rigidbody rb;
@@ -48,14 +48,6 @@ public class Bag : VRTK.VRTK_InteractableObject
         // For non vr.
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            if (state == EBagState.Placed)
-            {
-                if (CheckDistance() < intaractivableRange)
-                    OnGrab();
-
-                return;
-            }
-
             if (state == EBagState.Grabed)
             {
                 OnCarry();
@@ -63,30 +55,29 @@ public class Bag : VRTK.VRTK_InteractableObject
             }
             if (state == EBagState.Carried)
             {
-                OnPlace();
+                OnGrab();
                 return;
             }
 
             print("pushQ");
         }
 
-
+       
+        print(grabbingObjects.Count);
         if (state == EBagState.Carried)
         {
+           I want to fix to back of maincam(vr cam).
             transform.SetParent(bagpos);
-            transform.localPosition = Vector3.zero;
+            transform.position = Camera.main.transform;
             transform.localRotation = Quaternion.identity;
         }
-        if (state == EBagState.Placed)
-        {
-            transform.SetParent(null);
-        }
-        if (state == EBagState.Grabed)
-        {
-            transform.SetParent(handpos);
-            transform.localPosition = Vector3.zero;
-            transform.localRotation = Quaternion.identity;
-        }
+
+        //if (state == EBagState.Grabed)
+        //{
+        //    transform.SetParent(handpos);
+        //    transform.localPosition = Vector3.zero;
+        //    transform.localRotation = Quaternion.identity;
+        //}
 
     }
 
@@ -100,37 +91,20 @@ public class Bag : VRTK.VRTK_InteractableObject
     public void OnCarry()
     {
         state = EBagState.Carried;
-        col.isTrigger = true;
-        rb.useGravity = false;
-        rb.constraints = RigidbodyConstraints.FreezeAll;
     }
-    public void OnPlace()
-    {
-        state = EBagState.Placed;
-        col.isTrigger = false;
-        rb.useGravity = true;
-        rb.constraints = RigidbodyConstraints.None;
-    }
+
     public void OnGrab()
     {
         state = EBagState.Grabed;
-        col.isTrigger = true;
-        rb.useGravity = false;
-        rb.constraints = RigidbodyConstraints.FreezeAll;
-
-        readyForIn = false;
 
     }
     private void OnTriggerEnter(Collider other)
     {
-        //if (other.GetComponent<TestGrabbableObject>())
-        //{
-        //    print("touch");
-        //    foreach (var g in grabbingObjects)
-        //    {
-        //        grabbingObjectsTemp.Add(g.GetComponent<TestGrabbableObject>());
-        //    }
-        //}
+        var obj = other.GetComponent<TestGrabbableObject>();
+        if (obj)
+        {
+                grabbingObjectsTemp.Add(obj);
+        }
     }
 
     /// <summary>
@@ -139,16 +113,19 @@ public class Bag : VRTK.VRTK_InteractableObject
     /// <param name="other"></param>
     private void OnTriggerStay(Collider other)
     {
-        //if (other.GetComponent<TestGrabbableObject>())
-        //    foreach (var g in grabbingObjectsTemp)
-        //    {
+        //if (other.gameObject.GetComponent<TestGrabbableObject>())
+        //{
+        //        print("You can loot if you release grabbing object");
+        
         //        // When release grabed object in the bag
-        //        if (g.IsGrabbed() == false)
+        //        if (other.gameObject.GetComponent<TestGrabbableObject>().is == false)
         //        {
+
         //            print("get");
         //            PutTresure(g);
         //        }
         //    }
+        //}
     }
 
 
