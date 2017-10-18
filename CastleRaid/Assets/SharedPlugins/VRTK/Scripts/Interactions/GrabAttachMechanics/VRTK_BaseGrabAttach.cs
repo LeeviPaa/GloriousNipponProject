@@ -101,13 +101,17 @@ namespace VRTK.GrabAttachMechanics
         /// <returns>Is true if the grab is successful, false if the grab is unsuccessful.</returns>
         public virtual bool StartGrab(GameObject grabbingObject, GameObject givenGrabbedObject, Rigidbody givenControllerAttachPoint)
         {
+			Debug.Log("StartGrab");
             grabbedObject = givenGrabbedObject;
             if (grabbedObject == null)
             {
                 return false;
-            }
+			}
 
-            grabbedObjectScript = grabbedObject.GetComponent<VRTK_InteractableObject>();
+			//givenControllerAttachPoint == null, find out why and fix it!!
+			Debug.Log("StartGrab givenControllerAttachPoint: " + givenControllerAttachPoint);
+
+			grabbedObjectScript = grabbedObject.GetComponent<VRTK_InteractableObject>();
             grabbedObjectRigidBody = grabbedObject.GetComponent<Rigidbody>();
             controllerAttachPoint = givenControllerAttachPoint;
             grabbedSnapHandle = GetSnapHandle(grabbingObject);
