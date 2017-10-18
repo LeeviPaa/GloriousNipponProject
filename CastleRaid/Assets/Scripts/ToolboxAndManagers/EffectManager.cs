@@ -38,16 +38,46 @@ public class EffectManager : MonoBehaviour
     /// Get predefined Effect object.
     /// </summary>
     /// <param name="name">Name of the effect in settings.</param>
-    public EffectItem GetEffect(string name)
+    /// <param name="parent">Parent of the object. Null attachs the object to EffectManager.</param>
+    /// <param name="pos">Position relative to parent.</param>
+    public EffectItem GetEffect(string name, Transform parent = null, Vector3 pos = default(Vector3))
     {
-        return GetEffect(GetEffectIndex(name));
+        return GetEffect(GetEffectIndex(name), parent, pos);
+    }
+
+    /// <summary>
+    /// Get predefined Effect object.
+    /// </summary>
+    /// <param name="name">Name of the effect in settings.</param>
+    /// <param name="lifetime">Duration before automatically returned to pool.</param>
+    /// <param name="parent">Parent of the object. Null attachs the object to EffectManager.</param>
+    /// <param name="pos">Position relative to parent.</param>
+    public EffectItem GetEffect(string name, float lifetime, Transform parent = null, Vector3 pos = default(Vector3))
+    {
+        return GetEffect(name, lifetime, parent, pos);
     }
 
     /// <summary>
     /// Get predefined Effect object.
     /// </summary>
     /// <param name="index">Index of the effect in settings.</param>
-    public EffectItem GetEffect(int index)
+    /// <param name="lifetime">Duration before automatically returned to pool.</param>
+    /// <param name="parent">Parent of the object. Null attachs the object to EffectManager.</param>
+    /// <param name="pos">Position relative to parent.</param>
+    public EffectItem GetEffect(int index, float lifetime, Transform parent = null, Vector3 pos = default(Vector3))
+    {
+        EffectItem item = GetEffect(index, parent, pos);
+        item.SetLifetime(lifetime);
+        return item;
+    }
+
+    /// <summary>
+    /// Get predefined Effect object.
+    /// </summary>
+    /// <param name="index">Index of the effect in settings.</param>
+    /// <param name="parent">Parent of the object. Null attachs the object to EffectManager.</param>
+    /// <param name="pos">Position relative to parent.</param>
+    public EffectItem GetEffect(int index, Transform parent = null, Vector3 pos = default(Vector3))
     {
         if (index <= 0 || index >= effectPool.Length)
             return null;
@@ -56,6 +86,10 @@ public class EffectManager : MonoBehaviour
             if (!effectPool[index][i].gameObject.activeSelf)
             {
                 effectPool[index][i].gameObject.SetActive(true);
+                if (!parent)
+                    parent = transform;
+                effectPool[index][i].transform.SetParent(parent);
+                effectPool[index][i].transform.localPosition = pos;
                 return effectPool[index][i];
             }
         }
