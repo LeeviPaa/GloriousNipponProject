@@ -26,20 +26,6 @@ public static class GameManager
 
     private static LevelInstance _levelInstance;
 
-    public static EffectManager effectManager
-    {
-        get
-        {
-            if (!_effectManager)
-            {
-                _effectManager = Object.FindObjectOfType<EffectManager>();
-            }
-            return _effectManager;
-        }
-    }
-
-    private static EffectManager _effectManager;
-
     static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
 
