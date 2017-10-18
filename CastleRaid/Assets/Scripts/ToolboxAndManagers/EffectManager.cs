@@ -2,32 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public class EffectPoolSettings
-{
-    public string name;
-    public GameObject prefab;
-    public int poolSize;
-    [HideInInspector]
-    public Transform parent;
-}
-
 public class EffectManager : MonoBehaviour
 {
     [SerializeField]
-    private EffectPoolSettings[] effectPoolSettings;
-    private List<Effect>[] effectPool;
+    private PoolSettings[] effectPoolSettings;
+    private List<EffectItem>[] effectPool;
 
     void Awake()
     {
-        effectPool = new List<Effect>[effectPoolSettings.Length];
+        effectPool = new List<EffectItem>[effectPoolSettings.Length];
         for (int i = 0; i < effectPoolSettings.Length; i++)
         {
-            effectPool[i] = new List<Effect>();
+            effectPool[i] = new List<EffectItem>();
 
             for (int p = 0; p < effectPoolSettings[i].poolSize; p++)
             {
-                CreateEffectPoolItem(i);
+                AddEffectPoolItem(i);
             }
         }
     }
@@ -44,13 +34,23 @@ public class EffectManager : MonoBehaviour
         return -1;
     }
 
-    public Effect GetEffect(string name)
+    /// <summary>
+    /// Get predefined Effect object.
+    /// </summary>
+    /// <param name="name">Name of the effect in settings.</param>
+    public EffectItem GetEffect(string name)
     {
         return GetEffect(GetEffectIndex(name));
     }
 
-    public Effect GetEffect(int index)
+    /// <summary>
+    /// Get predefined Effect object.
+    /// </summary>
+    /// <param name="index">Index of the effect in settings.</param>
+    public EffectItem GetEffect(int index)
     {
+        if (index <= 0 || index >= effectPool.Length)
+            return null;
         for (int i = 0; i < effectPool[index].Count; i++)
         {
             if (!effectPool[index][i].gameObject.activeSelf)
@@ -59,12 +59,12 @@ public class EffectManager : MonoBehaviour
                 return effectPool[index][i];
             }
         }
-        Effect newEffect = CreateEffectPoolItem(index);
+        EffectItem newEffect = AddEffectPoolItem(index);
         newEffect.gameObject.SetActive(true);
         return newEffect;
     }
 
-    public void ReturnToPool(Effect self)
+    public void ReturnToPool(EffectItem self)
     {
         if (effectPoolSettings.Length <= self.poolIndex)
             return;
@@ -72,13 +72,16 @@ public class EffectManager : MonoBehaviour
         self.transform.SetParent(effectPoolSettings[self.poolIndex].parent);
     }
 
-    private Effect CreateEffectPoolItem(int index)
+    private EffectItem AddEffectPoolItem(int index)
     {
         if (!effectPoolSettings[index].parent)
             CreateEffectPoolParent(index);
-        Effect effect = Instantiate(effectPoolSettings[index].prefab, Vector3.zero, Quaternion.identity, effectPoolSettings[index].parent).GetComponent<Effect>();
+        EffectItem effect = Instantiate(effectPoolSettings[index].prefab, Vector3.zero, Quaternion.identity, effectPoolSettings[index].parent).GetComponent<EffectItem>();
         effect.effectManager = this;
         effect.poolIndex = index;
+        effect.name = effectPoolSettings[index].name + "[" + effectPool[index].Count + "]";
+        effect.Init();
+        effect.gameObject.SetActive(false);
         effectPool[index].Add(effect);
         return effect;
     }

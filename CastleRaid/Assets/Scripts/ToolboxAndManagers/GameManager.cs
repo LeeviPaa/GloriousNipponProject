@@ -40,6 +40,20 @@ public static class GameManager
 
     private static EffectManager _effectManager;
 
+    public static AudioManager audioManager
+    {
+        get
+        {
+            if (!_audioManager)
+            {
+                _audioManager = Object.FindObjectOfType<AudioManager>();
+            }
+            return _audioManager;
+        }
+    }
+
+    private static AudioManager _audioManager;
+
     static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
 

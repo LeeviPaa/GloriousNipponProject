@@ -2,29 +2,33 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Effect : MonoBehaviour
+public class EffectItem : MonoBehaviour
 {
     [HideInInspector]
     public EffectManager effectManager;
     [HideInInspector]
     public int poolIndex;
 
-    [SerializeField]
-    protected bool lifetimeActive = false;
-    [SerializeField]
-    protected float lifetime = 0f;
+    public bool _lifetimeActive = false;
+    public float _lifetime = 0f;
 
     protected ParticleSystem[] particleSystems;
 
-    protected virtual void Awake()
+    public virtual void Init()
     {
         particleSystems = GetComponentsInChildren<ParticleSystem>();
     }
 
     protected virtual void Update()
     {
-        if (lifetimeActive)
-            lifetime -= Time.deltaTime;
+        if (_lifetimeActive)
+        {
+            _lifetime -= Time.deltaTime;
+            if (_lifetime <= 0f)
+            {
+                ReturnToPool();
+            }
+        }
     }
 
     public virtual void PlayAllParticleSystems()
@@ -53,7 +57,13 @@ public class Effect : MonoBehaviour
 
     public virtual void SetLifetime(float seconds)
     {
-        lifetimeActive = true;
-        lifetime = seconds;
+        _lifetimeActive = true;
+        _lifetime = seconds;
+    }
+
+    public void ReturnToPool()
+    {
+        StopAllParticleSystems();
+        effectManager.ReturnToPool(this);
     }
 }
