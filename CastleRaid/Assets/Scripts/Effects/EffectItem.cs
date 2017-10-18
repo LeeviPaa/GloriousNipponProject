@@ -22,11 +22,6 @@ public class EffectItem : MonoBehaviour
 		_lifetimeMax = lifetime;
 	}
 
-	public virtual void ResetEffect()
-	{
-		lifetime = _lifetimeMax;
-	}
-
     protected virtual void Update()
     {
         if (lifetimeActive)
@@ -66,12 +61,13 @@ public class EffectItem : MonoBehaviour
     public virtual void SetLifetime(float seconds)
     {
         lifetimeActive = true;
-        lifetime = seconds;
+        lifetime = _lifetimeMax = seconds;
     }
 
     public void ReturnToPool()
     {
         StopAllParticleSystems();
+        lifetime = _lifetimeMax;
         effectManager.ReturnToPool(this);
     }
 }
