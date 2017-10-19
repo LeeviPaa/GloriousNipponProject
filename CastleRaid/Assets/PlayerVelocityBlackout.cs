@@ -45,7 +45,6 @@ public class PlayerVelocityBlackout : MonoBehaviour
 
     void Update()
     {
-        print(bodyPhysics.GetVelocity().magnitude);
         if (postProsessing)
         {
             VignetteModel.Settings settings = postProsessing.profile.vignette.settings;
