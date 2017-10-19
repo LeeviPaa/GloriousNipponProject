@@ -64,8 +64,8 @@ public class LootBag : MonoBehaviour
                         lootablesInLootTrigger[i].OnLootingFinished += OnLootableLooted;
                         lootablesInLootTrigger[i].Loot(lootDestinationTransform);
                         lootablesInLootTrigger.RemoveAt(i);
-						
-						//Spawn loot effect
+
+						//Call looting effect
 						GameManager.effectManager.GetEffect("LootBurst", true, pos: transform.position);
 					}
                 }
@@ -133,7 +133,7 @@ public class LootBag : MonoBehaviour
                     lootable.OnLootingFinished += OnLootableLooted;
                     lootable.Loot(lootDestinationTransform);
 
-					//Spawn loot effect
+					//Call looting effect
 					GameManager.effectManager.GetEffect("LootBurst", true, pos: transform.position);
 				}
                 else
@@ -179,7 +179,8 @@ public class LootBag : MonoBehaviour
             OnLootTotalValueChange(lootTotalValue);
         }
 
-        //Call appropriate visual / sound effects here if the effects are the same regardless of the lootable
+		//Call appropriate visual / sound effects here if the effects are the same regardless of the lootable
+		//GameManager.audioManager.GetAudio("LootingFinished", pos: transform.position);
     }
 
     public bool GetActiveState()
