@@ -82,18 +82,18 @@ public class PlayerDragMovement : MonoBehaviour
             VRTK_ControllerEvents controllerEvents = controller.GetComponent<VRTK_ControllerEvents>();
             if (state)
             {
-                controllerEvents.TriggerPressed += TriggerPressed;
-                controllerEvents.TriggerReleased += TriggerReleased;
+                controllerEvents.GripPressed += GripPressed;
+                controllerEvents.GripReleased += GripReleased;
             }
             else
             {
-                controllerEvents.TriggerPressed -= TriggerPressed;
-                controllerEvents.TriggerReleased -= TriggerReleased;
+                controllerEvents.GripPressed -= GripPressed;
+                controllerEvents.GripReleased -= GripReleased;
             }
         }
     }
 
-    void TriggerPressed(object sender, ControllerInteractionEventArgs e)
+    void GripPressed(object sender, ControllerInteractionEventArgs e)
     {
 		if (dragState == State.Locked)
 		{
@@ -106,21 +106,21 @@ public class PlayerDragMovement : MonoBehaviour
 			controllerDragStartLocalPos = currentUsedController.transform.localPosition;
 			playAreaDragStartPos = playArea.position;
 			bodyPhysics.ResetFalling();
-			//bodyPhysics.TogglePreventSnapToFloor(true);
-			//bodyPhysics.enableBodyCollisions = false;
+			bodyPhysics.TogglePreventSnapToFloor(true);
+			bodyPhysics.enableBodyCollisions = false;
 			bodyPhysics.ToggleOnGround(false);
 			dragState = State.Active;
 		}
 	}
 
-    void TriggerReleased(object sender, ControllerInteractionEventArgs e)
+    void GripReleased(object sender, ControllerInteractionEventArgs e)
     {
         GameObject controller = VRTK_DeviceFinder.GetActualController(((VRTK_ControllerEvents)sender).gameObject);
 		if (controller == currentUsedController)
         {
 			currentUsedController = null;
-			//bodyPhysics.TogglePreventSnapToFloor(false);
-			//bodyPhysics.enableBodyCollisions = true;
+			bodyPhysics.TogglePreventSnapToFloor(false);
+			bodyPhysics.enableBodyCollisions = true;
 			bodyPhysics.ToggleOnGround(true);
 			if (dragState == State.Active)
 			{
@@ -134,6 +134,7 @@ public class PlayerDragMovement : MonoBehaviour
         if (dragState == State.Active && playArea)
         {
 			playArea.position = playAreaDragStartPos + ((controllerDragStartLocalPos - currentUsedController.transform.localPosition) * dragSpeed);
+            bodyPhysics.ForceSnapToFloor();
         }
 	}
 

@@ -6,23 +6,21 @@ using UnityEngine.PostProcessing;
 
 public class PlayerVelocityBlackout : MonoBehaviour
 {
-    public VRTK_BodyPhysics bodyPhysics;
-    public float minBlackoutVelocity;
-    public float maxBlackoutVelocity;
-    private PostProcessingBehaviour postProsessing;
+    public enum Mode { Velocity, Acceleration }
+    public Mode detectionMode;
+    public float startLimit;
+    public float endLimit;
+    public float maxDelta;
+    [Range(0f,1f)]
+    public float maxFadeIntensity;
+
+    private VignetteModel vignette;
     private float originalVignetteIntensity;
 
-    void Awake()
-    {
-        if (!bodyPhysics)
-        {
-            bodyPhysics = GetComponent<VRTK_BodyPhysics>();
-        }
-        if (!bodyPhysics)
-        {
-            enabled = false;
-        }
-    }
+    private Vector3 lastBodyPos;
+    private float lastBodyVelocity = 0f;
+    private float lastBodyAcceleration = 0f;
+    private Transform playArea;
 
     void Start()
     {
@@ -35,31 +33,64 @@ public class PlayerVelocityBlackout : MonoBehaviour
         Transform camera = VRTK_DeviceFinder.HeadsetCamera();
         if (camera)
         {
-            postProsessing = camera.GetComponent<PostProcessingBehaviour>();
-            if (postProsessing)
+            PostProcessingBehaviour pp = camera.GetComponent<PostProcessingBehaviour>();
+            if (pp && pp.profile)
             {
-                originalVignetteIntensity = postProsessing.profile.vignette.settings.intensity;
+                vignette = pp.profile.vignette;
+                originalVignetteIntensity = vignette.settings.intensity;
             } 
-        }     
+        }
+        playArea = VRTK_DeviceFinder.PlayAreaTransform();
+        if (playArea)
+        {
+            lastBodyPos = playArea.position;
+        }
     }
 
     void Update()
     {
-        if (postProsessing)
+        if (playArea)
         {
-            VignetteModel.Settings settings = postProsessing.profile.vignette.settings;
-            settings.intensity = Mathf.InverseLerp(minBlackoutVelocity, maxBlackoutVelocity, bodyPhysics.GetVelocity().magnitude);
-            postProsessing.profile.vignette.settings = settings;
+            Vector3 pos = playArea.position;
+            float velocity = (pos - lastBodyPos).magnitude / Time.deltaTime;
+            float acceleration = velocity - lastBodyVelocity;
+            if (vignette != null)
+            {
+                VignetteModel.Settings settings = vignette.settings;
+                switch (detectionMode)
+                {
+                    case Mode.Velocity:
+                        settings.intensity =
+                            Mathf.Lerp(0, maxFadeIntensity,
+                            Mathf.InverseLerp(startLimit, endLimit, 
+                            Mathf.MoveTowards(lastBodyVelocity, velocity, maxDelta)));
+                        break;
+
+                    case Mode.Acceleration:
+                        settings.intensity =
+                            Mathf.Lerp(0, maxFadeIntensity,
+                            Mathf.InverseLerp(startLimit, endLimit,
+                            Mathf.MoveTowards(lastBodyAcceleration, acceleration, maxDelta)));
+                        break;
+
+                    default:
+                        break;
+                }
+                vignette.settings = settings;
+            }
+            lastBodyPos = pos;
+            lastBodyVelocity = velocity;
+            lastBodyAcceleration = acceleration;
         }
     }
 
     void OnDestroy()
     {
-        if (postProsessing)
+        if (vignette != null)
         {
-            VignetteModel.Settings settings = postProsessing.profile.vignette.settings;
+            VignetteModel.Settings settings = vignette.settings;
             settings.intensity = originalVignetteIntensity;
-            postProsessing.profile.vignette.settings = settings;
+            vignette.settings = settings;
         }
     }
 }
