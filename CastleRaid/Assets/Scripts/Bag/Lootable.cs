@@ -34,10 +34,15 @@ public class Lootable : MonoBehaviour
 		interactableObjectScript = GetComponent<VRTK_InteractableObject>();
 
 		if (interactableObjectScript)
-		{
-			interactableObjectScript.InteractableObjectGrabbed += OnStartGrab;
-			interactableObjectScript.InteractableObjectUngrabbed += OnEndGrab;
+        {
+            interactableObjectScript.InteractableObjectGrabbed -= OnStartGrab;
+            interactableObjectScript.InteractableObjectGrabbed += OnStartGrab;
+            interactableObjectScript.InteractableObjectUngrabbed -= OnEndGrab;
+            interactableObjectScript.InteractableObjectUngrabbed += OnEndGrab;
 		}
+
+        //Call passive indicator effect
+        GameManager.effectManager.GetEffect("GlitterEffect", true, transform);
 	}
 	void OnDisable()
 	{
@@ -58,10 +63,9 @@ public class Lootable : MonoBehaviour
 		isGrabbed = true;
 		print("OnStartGrab");
 
-		//Call grab visual / sound effects here
-		//GameManager.effectManager.GetEffect("LootableGrab", true, pos: transform.position);
-		//Debug.Log("Called effect manager GetEffect with name LootableGrab");
-	}
+        //Call grab visual / sound effects here
+        GameManager.effectManager.GetEffect("GrabBurst", true, pos: transform.position);
+    }
 
 	void OnEndGrab(object sender, InteractableObjectEventArgs e)
 	{

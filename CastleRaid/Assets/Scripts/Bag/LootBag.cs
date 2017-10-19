@@ -174,6 +174,7 @@ public class LootBag : MonoBehaviour
         }
 
         //Call appropriate visual / sound effects here if the effects are the same regardless of the lootable
+        GameManager.effectManager.GetEffect("LootBurst", true, pos: transform.position);
     }
 
     public bool GetActiveState()
