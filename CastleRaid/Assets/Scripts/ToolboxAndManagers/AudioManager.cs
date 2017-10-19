@@ -22,8 +22,19 @@ public class AudioManager : MonoBehaviour
 {
     [SerializeField]
     private AudioItemSettings[] _audioItemSettings;
+    [SerializeField]
+    private int _poolSize;
+    private List<AudioItem> _audioItemPool;
 
-    private const string itemName = "[AUDIO] ";
+    private const string itemName = "[AUDIO]";
+
+    void Awake()
+    {
+        for (int i = 0; i < _poolSize; i++)
+        {
+            AddAudioItem();
+        }
+    }
 
     public int GetAudioIndex(string name)
     {
@@ -41,41 +52,69 @@ public class AudioManager : MonoBehaviour
     /// Get GameObject and AudioSource with predefined settings.
     /// </summary>
     /// <param name="name">Name of the audio item in settings.</param>
+    /// <param name="oneShot">Automatically return to pool after playing once.</param>
     /// <param name="parent">Parent of the object. Null attachs the object to AudioManager.</param>
-    /// <param name="pos">Position relative to parent.</param>
-    public AudioSource GetAudio(string name, Transform parent = null, Vector3 pos = default(Vector3))
+    /// <param name="pos">World position.</param>
+    public AudioItem GetAudio(string name, bool oneShot, Vector3 pos, Transform parent = null)
     {
-        return GetAudio(GetAudioIndex(name), parent, pos);
+        return GetAudio(GetAudioIndex(name), oneShot, pos, parent);
     }
 
     /// <summary>
     /// Get GameObject and AudioSource with predefined settings.
     /// </summary>
     /// <param name="index">Index of the audio item in settings.</param>
+    /// <param name="oneShot">Automatically return to pool after playing once.</param>
     /// <param name="parent">Parent of the object. Null attachs the object to AudioManager.</param>
-    /// <param name="pos">Position relative to parent.</param>
-    public AudioSource GetAudio(int index, Transform parent = null, Vector3 pos = default(Vector3))
+    /// <param name="pos">World position.</param>
+    public AudioItem GetAudio(int index, bool oneShot, Vector3 pos, Transform parent = null)
     {
         if (index <= 0 || index >= _audioItemSettings.Length)
             return null;
-        AudioSource audio = new GameObject(itemName + _audioItemSettings[index].name, typeof(AudioSource)).GetComponent<AudioSource>();
+        AudioItem audio = null;
+        for (int i = 0; i < _audioItemPool.Count; i++)
+        {
+            if (!_audioItemPool[i].gameObject.activeSelf)
+            {
+                audio = _audioItemPool[i];
+                break;
+            }
+        }
+        if (!audio)
+        {
+            audio = AddAudioItem();
+        }
         if (parent)
         {
             audio.transform.SetParent(parent);
         }
-        else
-        {
-            audio.transform.SetParent(transform);
-        }
-        audio.playOnAwake = false;
-        audio.transform.localPosition = pos;
-        audio.clip = _audioItemSettings[index].clip;
-        audio.outputAudioMixerGroup = _audioItemSettings[index].mixerGroup;
-        audio.volume = _audioItemSettings[index].volume;
-        audio.priority = _audioItemSettings[index].priority;
-        audio.spatialBlend = _audioItemSettings[index].spatialBlend ? 0f : 1f;
-        audio.loop = _audioItemSettings[index].loop;
-        audio.mute = _audioItemSettings[index].mute;   
-        return null;
+        audio.transform.position = pos;
+        audio.source.clip = _audioItemSettings[index].clip;
+        audio.source.outputAudioMixerGroup = _audioItemSettings[index].mixerGroup;
+        audio.source.volume = _audioItemSettings[index].volume;
+        audio.source.priority = _audioItemSettings[index].priority;
+        audio.source.spatialBlend = _audioItemSettings[index].spatialBlend ? 0f : 1f;
+        audio.source.loop = _audioItemSettings[index].loop;
+        audio.source.mute = _audioItemSettings[index].mute;
+        audio.autoReturnAfterPlaying = oneShot;
+        audio.name = itemName + " " + _audioItemSettings[index].name;
+        return audio;
+    }
+
+    private AudioItem AddAudioItem()
+    {
+        AudioItem audio = new GameObject(itemName, typeof(AudioSource), typeof(AudioItem)).GetComponent<AudioItem>();
+        _audioItemPool.Add(audio);
+        audio.audioManager = this;
+        audio.Init(); 
+        return audio;
+    }
+
+    public void ReturnToPool(AudioItem self)
+    {
+        self.gameObject.SetActive(false);
+        self.transform.SetParent(transform);
+        self.transform.localPosition = Vector3.zero;
+        self.name = itemName;
     }
 }
