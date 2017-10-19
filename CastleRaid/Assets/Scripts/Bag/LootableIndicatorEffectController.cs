@@ -6,7 +6,7 @@ using VRTK;
 public class LootableIndicatorEffectController : MonoBehaviour
 {
     VRTK_InteractableObject interactableObjectScript;
-    ParticleSystem effect;
+    ParticleSystem[] effects;
 
     private void OnEnable()
     {
@@ -23,7 +23,7 @@ public class LootableIndicatorEffectController : MonoBehaviour
 			}
 		}
 
-        effect = GetComponent<ParticleSystem>();
+		effects = GetComponentsInChildren<ParticleSystem>();
     }
 
     private void OnDisable()
@@ -36,18 +36,26 @@ public class LootableIndicatorEffectController : MonoBehaviour
     }
 
     void OnStartGrab(object sender, InteractableObjectEventArgs e)
-    {
-        if(effect != null)
+	{
+		if (effects != null)
         {
-            effect.Stop();
+			int count = effects.Length;
+			for (int i = 0; i < count; i++)
+			{
+				effects[i].Stop();
+			}
         }
     }
 
     void OnEndGrab(object sender, InteractableObjectEventArgs e)
-    {
-        if (effect != null)
-        {
-            effect.Play();
+	{
+		if (effects != null)
+		{
+			int count = effects.Length;
+			for (int i = 0; i < count; i++)
+			{
+				effects[i].Play();
+			}
         }
     }
 }

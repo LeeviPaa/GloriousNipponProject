@@ -105,10 +105,10 @@ public class PlayerDragMovement : MonoBehaviour
 			currentUsedController = controller;
 			controllerDragStartLocalPos = currentUsedController.transform.localPosition;
 			playAreaDragStartPos = playArea.position;
-			bodyPhysics.ResetFalling();
-			bodyPhysics.TogglePreventSnapToFloor(true);
-			bodyPhysics.enableBodyCollisions = false;
-			bodyPhysics.ToggleOnGround(false);
+			//bodyPhysics.ResetFalling();
+			//bodyPhysics.TogglePreventSnapToFloor(true);
+			//bodyPhysics.enableBodyCollisions = false;
+			//bodyPhysics.ToggleOnGround(false);
 			dragState = State.Active;
 		}
 	}
@@ -119,9 +119,9 @@ public class PlayerDragMovement : MonoBehaviour
 		if (controller == currentUsedController)
         {
 			currentUsedController = null;
-			bodyPhysics.TogglePreventSnapToFloor(false);
-			bodyPhysics.enableBodyCollisions = true;
-			bodyPhysics.ToggleOnGround(true);
+			//bodyPhysics.TogglePreventSnapToFloor(false);
+			//bodyPhysics.enableBodyCollisions = true;
+			//bodyPhysics.ToggleOnGround(true);
 			if (dragState == State.Active)
 			{
 				dragState = State.Inactive;
@@ -133,7 +133,9 @@ public class PlayerDragMovement : MonoBehaviour
     {
         if (dragState == State.Active && playArea)
         {
-			playArea.position = playAreaDragStartPos + ((controllerDragStartLocalPos - currentUsedController.transform.localPosition) * dragSpeed);
+			Vector3 finalPos = playAreaDragStartPos + ((controllerDragStartLocalPos - currentUsedController.transform.localPosition) * dragSpeed);
+			finalPos.y = playArea.position.y;
+			playArea.position = finalPos;
             bodyPhysics.ForceSnapToFloor();
         }
 	}
