@@ -1,0 +1,209 @@
+fileFormatVersion: 2
+guid: 4f1f41934219c174cb59d0194d4091d4
+timeCreated: 1508291038
+licenseType: Free
+ModelImporter:
+  serializedVersion: 21
+  fileIDToRecycleName:
+    100000: 1f1
+    100002: 1f2
+    100004: 1f3
+    100006: 1f3_end
+    100008: 2f1
+    100010: 2f2
+    100012: 2f3
+    100014: 2f3_end
+    100016: 3f1
+    100018: 3f2
+    100020: 3f3
+    100022: 3f3_end
+    100024: 4f1
+    100026: 4f2
+    100028: 4f3
+    100030: 4f3_end
+    100032: 5f1
+    100034: 5f2
+    100036: 5f3
+    100038: 5f3_end
+    100040: Bag_Armature
+    100042: Bag_Mod.001
+    100044: BtmBone
+    100046: BtmBone_end
+    100048: Hand1
+    100050: Hand2
+    100052: Hand_Armature
+    100054: Hand_Mod
+    100056: //RootNode
+    100058: MidBone
+    100060: Root
+    100062: TopBone
+    400000: 1f1
+    400002: 1f2
+    400004: 1f3
+    400006: 1f3_end
+    400008: 2f1
+    400010: 2f2
+    400012: 2f3
+    400014: 2f3_end
+    400016: 3f1
+    400018: 3f2
+    400020: 3f3
+    400022: 3f3_end
+    400024: 4f1
+    400026: 4f2
+    400028: 4f3
+    400030: 4f3_end
+    400032: 5f1
+    400034: 5f2
+    400036: 5f3
+    400038: 5f3_end
+    400040: Bag_Armature
+    400042: Bag_Mod.001
+    400044: BtmBone
+    400046: BtmBone_end
+    400048: Hand1
+    400050: Hand2
+    400052: Hand_Armature
+    400054: Hand_Mod
+    400056: //RootNode
+    400058: MidBone
+    400060: Root
+    400062: TopBone
+    4300000: Bag_Mod.001
+    4300002: Hand_Mod
+    7400000: Hand_Idle
+    7400002: Hand_Closed
+    9500000: //RootNode
+    13700000: Bag_Mod.001
+    13700002: Hand_Mod
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Hand_Idle
+      takeName: Hand_Armature|Armature.001Action
+      firstFrame: 0
+      lastFrame: 1
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Hand_Closed
+      takeName: Hand_Armature|Armature.001Action
+      firstFrame: 27
+      lastFrame: 28
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
