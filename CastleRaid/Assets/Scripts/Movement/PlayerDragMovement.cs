@@ -10,7 +10,7 @@ public class PlayerDragMovement : MonoBehaviour
     public float dragSpeed = 1f;
 
     private enum State { Active, Inactive, Locked }
-    private State dragState = State.Active;
+	private State dragState = State.Inactive;
     private Transform playArea;
     private Vector3 controllerDragStartLocalPos = Vector3.zero;
     private Vector3 playAreaDragStartPos = Vector3.zero;
