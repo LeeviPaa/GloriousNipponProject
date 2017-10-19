@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VRTK;
 
 [RequireComponent(typeof(LootBag))]
 public class LootBagDisplayController : MonoBehaviour
@@ -19,9 +20,30 @@ public class LootBagDisplayController : MonoBehaviour
     TextMesh textMesh; //Change to other than TextMesh if necessary in the future
     LootBag lootBag;
 
+	[SerializeField]
+	bool floating = false;
+	Transform mainCameraTransform;
+	Vector3 floatingOffset;
+	bool headsetReferenceFound = false;
+
     private void OnEnable()
     {
-        if (textMesh == null)
+		if (floating)
+		{
+			floatingOffset = transform.localPosition;
+			displayHolder.transform.SetParent(null);
+			displayHolder.transform.rotation = Quaternion.identity;
+
+			headsetReferenceFound = false;
+			mainCameraTransform = VRTK_DeviceFinder.HeadsetCamera();
+
+			if (mainCameraTransform != null)
+			{
+				headsetReferenceFound = true;
+			}
+		}
+
+		if (textMesh == null)
         {
             Debug.LogError("Missing text mesh reference!");
         }
@@ -44,7 +66,29 @@ public class LootBagDisplayController : MonoBehaviour
         lootBag.OnLootTotalValueChange -= OnLootTotalValueChange;
     }
 
-    private void OnLootCountChange(int newLootCount)
+	private void FixedUpdate()
+	{
+		if (floating)
+		{
+			displayHolder.transform.position = lootBag.transform.position + floatingOffset;
+
+			if (headsetReferenceFound)
+			{
+				displayHolder.transform.LookAt(mainCameraTransform);
+			}
+			else
+			{
+				mainCameraTransform = VRTK_DeviceFinder.HeadsetCamera();
+
+				if (mainCameraTransform != null)
+				{
+					headsetReferenceFound = true;
+				}
+			}
+		}
+	}
+
+	private void OnLootCountChange(int newLootCount)
     {
         if (displayType == EDisplayType.LOOTCOUNT)
         {
