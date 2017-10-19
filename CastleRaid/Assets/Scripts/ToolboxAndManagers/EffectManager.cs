@@ -100,12 +100,11 @@ public class EffectManager : MonoBehaviour
 				return effectPool[index][i];
             }
         }
-        EffectItem newEffect = AddEffectPoolItem(index);
-        newEffect.gameObject.SetActive(true);
+        EffectItem newEffect = AddEffectPoolItem(index);      
 		newEffect.transform.SetParent(parent);
 		newEffect.transform.localPosition = pos;
-		newEffect.PlayAllParticleSystems();
-		return newEffect;
+        newEffect.gameObject.SetActive(true);
+        return newEffect;
     }
 
     public void ReturnToPool(EffectItem self)
@@ -114,6 +113,7 @@ public class EffectManager : MonoBehaviour
             return;
         self.gameObject.SetActive(false);
         self.transform.SetParent(effectPoolSettings[self.poolIndex].parent);
+        self.transform.localPosition = Vector3.zero;
     }
 
     private EffectItem AddEffectPoolItem(int index)
@@ -121,11 +121,11 @@ public class EffectManager : MonoBehaviour
         if (!effectPoolSettings[index].parent)
             CreateEffectPoolParent(index);
         EffectItem effect = Instantiate(effectPoolSettings[index].prefab, Vector3.zero, Quaternion.identity, effectPoolSettings[index].parent).GetComponent<EffectItem>();
+        effect.gameObject.SetActive(false);
         effect.effectManager = this;
         effect.poolIndex = index;
         effect.name = effectPoolSettings[index].name + "[" + effectPool[index].Count + "]";
-        effect.Init();
-        effect.gameObject.SetActive(false);
+        effect.Init(); 
         effectPool[index].Add(effect);
         return effect;
     }
