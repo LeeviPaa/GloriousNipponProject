@@ -51,8 +51,8 @@ public class EffectItem : MonoBehaviour
     }
 
     public virtual void StopAllParticleSystems()
-    {
-        foreach (ParticleSystem sys in _particleSystems)
+	{
+		foreach (ParticleSystem sys in _particleSystems)
         {
             sys.Stop();
         }

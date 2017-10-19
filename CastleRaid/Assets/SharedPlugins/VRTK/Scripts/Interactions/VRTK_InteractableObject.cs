@@ -224,16 +224,16 @@ namespace VRTK
         public virtual void OnInteractableObjectGrabbed(InteractableObjectEventArgs e)
         {
             if (InteractableObjectGrabbed != null)
-            {
-                InteractableObjectGrabbed(this, e);
+			{
+				InteractableObjectGrabbed(this, e);
             }
         }
 
         public virtual void OnInteractableObjectUngrabbed(InteractableObjectEventArgs e)
-        {
-            if (InteractableObjectUngrabbed != null)
-            {
-                InteractableObjectUngrabbed(this, e);
+		{
+			if (InteractableObjectUngrabbed != null)
+			{
+				InteractableObjectUngrabbed(this, e);
             }
         }
 

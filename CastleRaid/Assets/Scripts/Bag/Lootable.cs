@@ -61,7 +61,6 @@ public class Lootable : MonoBehaviour
 	void OnStartGrab(object sender, InteractableObjectEventArgs e)
 	{
 		isGrabbed = true;
-		print("OnStartGrab");
 
         //Call grab visual / sound effects here
         GameManager.effectManager.GetEffect("GrabBurst", true, pos: transform.position);

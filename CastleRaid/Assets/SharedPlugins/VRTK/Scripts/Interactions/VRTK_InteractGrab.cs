@@ -356,16 +356,18 @@ namespace VRTK
 
             if (defaultAttachPoint != null)
             {
+				Debug.Log("defaultAttachPoint != null, setting controller attach point to default");
                 controllerAttachPoint = defaultAttachPoint.GetComponent<Rigidbody>();
 
                 if (controllerAttachPoint == null)
-                {
-                    Rigidbody autoGenRB = defaultAttachPoint.gameObject.AddComponent<Rigidbody>();
+				{
+					Debug.Log("controllerAttachPoint == creating new attach point");
+					Rigidbody autoGenRB = defaultAttachPoint.gameObject.AddComponent<Rigidbody>();
                     autoGenRB.isKinematic = true;
                     controllerAttachPoint = autoGenRB;
                 }
             }
-        }
+		}
 
         protected virtual bool IsObjectGrabbable(GameObject obj)
         {

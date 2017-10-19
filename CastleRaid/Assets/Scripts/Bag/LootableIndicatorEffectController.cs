@@ -10,14 +10,18 @@ public class LootableIndicatorEffectController : MonoBehaviour
 
     private void OnEnable()
     {
-        interactableObjectScript = transform.parent.GetComponent<VRTK_InteractableObject>();
-        if (interactableObjectScript != null)
-        {
-            interactableObjectScript.InteractableObjectGrabbed -= OnStartGrab;
-            interactableObjectScript.InteractableObjectGrabbed += OnStartGrab;
-            interactableObjectScript.InteractableObjectUngrabbed -= OnEndGrab;
-            interactableObjectScript.InteractableObjectUngrabbed += OnEndGrab;
-        }
+		Transform _parent = transform.parent;
+		if (_parent)
+		{
+			interactableObjectScript = _parent.GetComponent<VRTK_InteractableObject>();
+			if (interactableObjectScript != null)
+			{
+				interactableObjectScript.InteractableObjectGrabbed -= OnStartGrab;
+				interactableObjectScript.InteractableObjectGrabbed += OnStartGrab;
+				interactableObjectScript.InteractableObjectUngrabbed -= OnEndGrab;
+				interactableObjectScript.InteractableObjectUngrabbed += OnEndGrab;
+			}
+		}
 
         effect = GetComponent<ParticleSystem>();
     }
