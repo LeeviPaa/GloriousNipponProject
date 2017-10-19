@@ -96,7 +96,6 @@ public class EffectManager : MonoBehaviour
 				effectPool[index][i].gameObject.SetActive(true);
                 effectPool[index][i].transform.SetParent(parent);
                 effectPool[index][i].transform.localPosition = pos;
-				effectPool[index][i].PlayAllParticleSystems();
 				return effectPool[index][i];
             }
         }
