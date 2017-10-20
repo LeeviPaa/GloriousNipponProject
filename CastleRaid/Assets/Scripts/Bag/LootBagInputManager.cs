@@ -30,8 +30,15 @@ public class LootBagInputManager : MonoBehaviour
 
 	private void OnDisable()
 	{
-		controllerEventsRight.TriggerAxisChanged -= OnRightTriggerAxisChanged;
-		controllerEventsLeft.TriggerAxisChanged -= OnLeftTriggerAxisChanged;
+		if (controllerEventsRight)
+		{
+			controllerEventsRight.TriggerAxisChanged -= OnRightTriggerAxisChanged;
+		}
+
+		if (controllerEventsLeft)
+		{
+			controllerEventsLeft.TriggerAxisChanged -= OnLeftTriggerAxisChanged;
+		}
 	}
 
 	private void Update()
@@ -53,8 +60,6 @@ public class LootBagInputManager : MonoBehaviour
 				controllerEventsLeft.TriggerAxisChanged += OnLeftTriggerAxisChanged;
 			}
 		}
-
-
 	}
 
 	private void OnRightTriggerAxisChanged(object sender, ControllerInteractionEventArgs e)
