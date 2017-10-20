@@ -21,6 +21,9 @@ public class Lootable : MonoBehaviour
 	float minimizingStartTime = -1f;
 	float minimizingDuration = 0.5f;
 
+	[SerializeField]
+	bool spawnIndicatorEffect = true;
+
 	//TODO: Implement timer after ungrab to the Lootable script, to prevent looting all lootables by just waving the bag
 	//Lootable would have to have been ungrabbed within half a second or so for the lootBag to accept it as a viable loot
 
@@ -42,7 +45,24 @@ public class Lootable : MonoBehaviour
 		}
 
 		//Call passive indicator effect
-		GameManager.effectManager.GetEffect("GlitterEffect", true, Vector3.zero, Quaternion.identity, transform);
+		if (spawnIndicatorEffect)
+		{
+			//EffectItem effect = GameManager.effectManager.GetEffect("GlitterEffect", false, transform.position, transform.rotation, transform);
+		}
+
+
+		//Loot effect plays a world origin for a frame. This script is at world origin at OnEnable. Why? It should be at the spawn position!
+		//ParticleSystem[] effects = effect.GetComponentsInChildren<ParticleSystem>();
+
+		//if (effects != null)
+		//{
+		//	int count = effects.Length;
+		//	for (int i = 0; i < count; i++)
+		//	{
+		//		Debug.Log("asd" + transform.position);
+		//		effects[i].Play();
+		//	}
+		//}
 	}
 	void OnDisable()
 	{
@@ -51,7 +71,7 @@ public class Lootable : MonoBehaviour
 			interactableObjectScript.InteractableObjectGrabbed -= OnStartGrab;
 			interactableObjectScript.InteractableObjectUngrabbed -= OnEndGrab;
 		}
-
+		
 		if (minimizingToBag)
 		{
 			FinishLooting();

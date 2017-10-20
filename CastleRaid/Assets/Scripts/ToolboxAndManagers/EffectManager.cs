@@ -111,7 +111,11 @@ public class EffectManager : MonoBehaviour
         effect.transform.position = pos;
         effect.transform.rotation = rot;
         effect.gameObject.SetActive(true);
-        return effect;
+		if (play)
+		{
+			effect.PlayAllParticleSystems();
+		}
+		return effect;
     }
 
     public void ReturnToPool(EffectItem self)
