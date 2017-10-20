@@ -30,14 +30,14 @@ public class HandAnimationController : MonoBehaviour
 	private void OnEnable()
 	{
 		handAnimator = GetComponent<Animator>();
-		lootBag.OnLootBagActiveStateChange += OnLootBagActiveStateChange;
+		//lootBag.OnLootBagActiveStateChange += OnLootBagActiveStateChange;
 
 		controllerReferenceFound = false;
 	}
 
 	private void OnDisable()
 	{
-		lootBag.OnLootBagActiveStateChange -= OnLootBagActiveStateChange;
+		//lootBag.OnLootBagActiveStateChange -= OnLootBagActiveStateChange;
 
 		if (controllerEvents)
 		{

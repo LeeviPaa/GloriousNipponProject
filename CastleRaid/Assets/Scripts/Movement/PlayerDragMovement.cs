@@ -48,6 +48,18 @@ public class PlayerDragMovement : MonoBehaviour
         }
     }
 
+	void Start()
+	{
+		StartCoroutine(DelayedStart());
+	}
+
+	IEnumerator DelayedStart()
+	{
+		yield return null;
+
+		playArea = VRTK_DeviceFinder.PlayAreaTransform();
+	}
+
     void OnDisable()
     {
         for (int i = 0; i < grab.Length; i++)
