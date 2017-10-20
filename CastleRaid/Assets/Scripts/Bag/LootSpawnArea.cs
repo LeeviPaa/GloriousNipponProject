@@ -21,7 +21,15 @@ public class LootSpawnArea : MonoBehaviour
 			if (lootSpawnInfos[i].lootablePrefab != null)
 			{
 				lootableToSpawn = lootSpawnInfos[i].lootablePrefab;
-				spawnTransform = lootSpawnTransforms[lootSpawnInfos[i].transformArrayIndex];
+
+				if(lootSpawnInfos[i].transformArrayIndex  < lootSpawnTransforms.Count)
+				{
+					spawnTransform = lootSpawnTransforms[lootSpawnInfos[i].transformArrayIndex];
+				}
+				else
+				{
+					Debug.LogWarning("transformArrayIndex out of lootSpawnTransforms bounds! Skipping lootable spawning");
+				}
 			}
 			else if(defaultLootableType != null)
 			{

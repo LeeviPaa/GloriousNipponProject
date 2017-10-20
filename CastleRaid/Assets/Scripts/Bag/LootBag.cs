@@ -66,7 +66,7 @@ public class LootBag : MonoBehaviour
                         lootablesInLootTrigger.RemoveAt(i);
 
 						//Call looting effect
-						GameManager.effectManager.GetEffect("LootBurst", true, pos: transform.position);
+						GameManager.effectManager.GetEffect("LootBurst", true, transform.position, transform.rotation);
 					}
                 }
             }
@@ -134,7 +134,7 @@ public class LootBag : MonoBehaviour
                     lootable.Loot(lootDestinationTransform);
 
 					//Call looting effect
-					GameManager.effectManager.GetEffect("LootBurst", true, pos: transform.position);
+					GameManager.effectManager.GetEffect("LootBurst", true, transform.position, transform.rotation);
 				}
                 else
                 {

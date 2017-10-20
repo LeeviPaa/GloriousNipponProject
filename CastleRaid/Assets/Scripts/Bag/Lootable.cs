@@ -42,7 +42,7 @@ public class Lootable : MonoBehaviour
 		}
 
 		//Call passive indicator effect
-		GameManager.effectManager.GetEffect("GlitterEffect", true, transform);
+		GameManager.effectManager.GetEffect("GlitterEffect", true, Vector3.zero, Quaternion.identity, transform);
 	}
 	void OnDisable()
 	{
@@ -63,7 +63,7 @@ public class Lootable : MonoBehaviour
 		isGrabbed = true;
 
 		//Call grab visual / sound effects here
-		GameManager.effectManager.GetEffect("GrabBurst", true, pos: transform.position);
+		GameManager.effectManager.GetEffect("GrabBurst", true, transform.position, Quaternion.identity);
 		//GameManager.audioManager.GetAudio("LootGrab", pos: transform.position);
 	}
 
