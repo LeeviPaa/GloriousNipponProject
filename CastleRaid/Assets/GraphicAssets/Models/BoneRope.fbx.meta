@@ -1,16 +1,27 @@
 fileFormatVersion: 2
-guid: 9acdf0bbf400555479b3a405eaecc71d
-timeCreated: 1508476810
+guid: 02a4a99b665a03740833544cf27b29bf
+timeCreated: 1508469485
 licenseType: Free
 ModelImporter:
   serializedVersion: 21
   fileIDToRecycleName:
     100000: //RootNode
+    100002: Armature
+    100004: Cylinder
+    100006: Rope_End
+    100008: Rope_Start
     400000: //RootNode
+    400002: Armature
+    400004: Cylinder
+    400006: Rope_End
+    400008: Rope_Start
     2300000: //RootNode
+    2300002: Cylinder
     3300000: //RootNode
-    4300000: Box009
+    3300002: Cylinder
+    4300000: Cylinder
     9500000: //RootNode
+    13700000: Cylinder
   materials:
     importMaterials: 1
     materialName: 0
@@ -27,7 +38,7 @@ ModelImporter:
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
-    animationCompression: 1
+    animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -74,10 +85,10 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    rootMotionBoneName: 
+    rootMotionBoneName: Rope_Start
     rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
-    hasExtraRoot: 0
+    hasExtraRoot: 1
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 2
