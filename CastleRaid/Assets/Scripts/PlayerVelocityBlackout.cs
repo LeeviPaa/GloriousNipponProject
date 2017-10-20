@@ -10,7 +10,8 @@ public class PlayerVelocityBlackout : MonoBehaviour
     public Mode detectionMode;
     public float startLimit;
     public float endLimit;
-    public float maxDelta;
+    public float dampTime;
+    public float maxDampDelta;
     [Range(0f,1f)]
     public float maxFadeIntensity;
 
@@ -20,7 +21,10 @@ public class PlayerVelocityBlackout : MonoBehaviour
     private Vector3 lastBodyPos;
     private float lastBodyVelocity = 0f;
     private float lastBodyAcceleration = 0f;
+    private float currentDeltaVelocity = 0f;
+    private float currentValue = 0f;
     private Transform playArea;
+    private float currentDelta = 0f;
 
     void Start()
     {
@@ -49,35 +53,29 @@ public class PlayerVelocityBlackout : MonoBehaviour
 
     void Update()
     {
-        if (playArea)
+        if (playArea && vignette != null)
         {
             Vector3 pos = playArea.position;
             float velocity = (pos - lastBodyPos).magnitude / Time.deltaTime;
             float acceleration = velocity - lastBodyVelocity;
-            if (vignette != null)
+            float target = 0f;
+            VignetteModel.Settings newSettings = vignette.settings;
+            switch (detectionMode)
             {
-                VignetteModel.Settings settings = vignette.settings;
-                switch (detectionMode)
-                {
-                    case Mode.Velocity:
-                        settings.intensity =
-                            Mathf.Lerp(0, maxFadeIntensity,
-                            Mathf.InverseLerp(startLimit, endLimit, 
-                            Mathf.MoveTowards(lastBodyVelocity, velocity, maxDelta)));
-                        break;
+                case Mode.Velocity:
+                    target = Mathf.InverseLerp(startLimit, endLimit, velocity);
+                    break;
 
-                    case Mode.Acceleration:
-                        settings.intensity =
-                            Mathf.Lerp(0, maxFadeIntensity,
-                            Mathf.InverseLerp(startLimit, endLimit,
-                            Mathf.MoveTowards(lastBodyAcceleration, acceleration, maxDelta)));
-                        break;
+                case Mode.Acceleration:
+                    target = Mathf.InverseLerp(startLimit, endLimit, acceleration);
+                    break;
 
-                    default:
-                        break;
-                }
-                vignette.settings = settings;
+                default:
+                    break;
             }
+            currentValue = Mathf.SmoothDamp(currentValue, target, ref currentDeltaVelocity, dampTime, maxDampDelta);
+            newSettings.intensity = Mathf.Lerp(0, maxFadeIntensity, currentValue);
+            vignette.settings = newSettings;
             lastBodyPos = pos;
             lastBodyVelocity = velocity;
             lastBodyAcceleration = acceleration;
