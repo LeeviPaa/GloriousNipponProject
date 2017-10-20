@@ -47,7 +47,7 @@ public class Lootable : MonoBehaviour
 		//Call passive indicator effect
 		if (spawnIndicatorEffect)
 		{
-			//EffectItem effect = GameManager.effectManager.GetEffect("GlitterEffect", false, transform.position, transform.rotation, transform);
+			EffectItem effect = GameManager.effectManager.GetEffect("GlitterEffect", true, transform.position, transform.rotation, transform);
 		}
 
 

@@ -9,7 +9,9 @@ public class LootableIndicatorEffectController : MonoBehaviour
     ParticleSystem[] effects;
 
     private void OnEnable()
-    {
+	{
+		effects = GetComponentsInChildren<ParticleSystem>();
+
 		Transform _parent = transform.parent;
 		if (_parent)
 		{
@@ -22,9 +24,7 @@ public class LootableIndicatorEffectController : MonoBehaviour
 				interactableObjectScript.InteractableObjectUngrabbed += OnEndGrab;
 			}
 		}
-
-		effects = GetComponentsInChildren<ParticleSystem>();
-    }
+	}
 
     private void OnDisable()
     {
