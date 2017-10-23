@@ -49,6 +49,7 @@ ModelImporter:
     2300012: Cube.006
     2300014: Cube.008
     2300016: Cylinder
+    2300018: //RootNode
     3300000: Cube
     3300002: Cube.001
     3300004: Cube.002
@@ -58,6 +59,7 @@ ModelImporter:
     3300012: Cube.006
     3300014: Cube.008
     3300016: Cylinder
+    3300018: //RootNode
     4300000: Cylinder
     4300002: Cube.008
     4300004: Cube.006
@@ -67,6 +69,7 @@ ModelImporter:
     4300012: Cube.002
     4300014: Cube.001
     4300016: Cube
+    4300018: Chair
     10800000: Lamp
     10800002: Lamp.001
     10800004: Lamp.002
