@@ -16,6 +16,7 @@ public class PlayerDragMovement : MonoBehaviour
     private Vector3 controllerDragStartLocalPos = Vector3.zero;
     private Vector3 playAreaDragStartPos = Vector3.zero;
     private GameObject currentUsedController;
+	private GameObject currentPressedController;
 
     public struct PlayerDragMovementEventArgs
     {
@@ -74,6 +75,10 @@ public class PlayerDragMovement : MonoBehaviour
 
     void Update()
     {
+		if (dragState == State.WaitingForConfirmation)
+		{
+			BeginDrag();
+		}
         if (dragState == State.Active && playArea)
         {
             Vector3 finalPos = playAreaDragStartPos + ((controllerDragStartLocalPos - currentUsedController.transform.localPosition) * dragSpeed);
@@ -82,11 +87,11 @@ public class PlayerDragMovement : MonoBehaviour
         }
     }
 
-    void BeginDrag(GameObject controller)
+    void BeginDrag()
     {
         dragState = State.Active;
-        currentUsedController = controller;
-        controllerDragStartLocalPos = currentUsedController.transform.localPosition;
+		currentUsedController = currentPressedController;
+		controllerDragStartLocalPos = currentUsedController.transform.localPosition;
 		playAreaDragStartPos = playArea.position;
 	}
 
@@ -98,16 +103,20 @@ public class PlayerDragMovement : MonoBehaviour
 
     void OnPlayerGrabButtonPressed(object sender, ControllerInteractionEventArgs e)
     {
-        if (dragState == State.WaitingForInput)
-        {
-            currentUsedController = e.controllerReference.actual;
-            dragState = State.WaitingForConfirmation;
+		currentPressedController = e.controllerReference.actual;
+		if (dragState == State.WaitingForInput || dragState == State.Active)
+        {			
+			dragState = State.WaitingForConfirmation;
         }
     }
 
     void OnPlayerGrabButtonReleased(object sender, ControllerInteractionEventArgs e)
     {
-        if (dragState == State.Active && currentUsedController == e.controllerReference.actual)
+		if (currentPressedController == e.controllerReference.actual)
+		{
+			currentPressedController = null;
+		}
+		if (dragState == State.Active && currentUsedController == e.controllerReference.actual)
         {
             EndDrag();
         }
@@ -115,25 +124,31 @@ public class PlayerDragMovement : MonoBehaviour
 
     void OnPlayerGrabObject(object sender, ObjectInteractEventArgs e)
 	{
-        VRTK_BaseGrabAttach grabType = e.target.GetComponent<VRTK_BaseGrabAttach>();
-        if (grabType)
+		VRTK_BaseGrabAttach grabType = e.target.GetComponent<VRTK_BaseGrabAttach>();
+		if (grabType && dragState == State.WaitingForConfirmation)
         {
-            if (grabType.IsClimbable())
-            {
-                dragState = State.Locked;
-            }
-            else if (dragState == State.WaitingForConfirmation || dragState == State.Active)
-            {
-                BeginDrag(e.controllerReference.actual);
-            }
-        }
+			if (grabType.IsClimbable())
+			{
+				dragState = State.Locked;
+				currentUsedController = e.controllerReference.actual;
+			}
+			else if (currentUsedController)
+			{
+				dragState = State.Active;
+			}
+			else
+			{
+				dragState = State.WaitingForInput;
+			}
+		}
     }
 
     void OnPlayerUngrabObject(object sender, ObjectInteractEventArgs e)
     {
-        if (currentUsedController == e.controllerReference.actual)
+		if (currentUsedController == e.controllerReference.actual)
         {
             dragState = State.WaitingForInput;
+			currentUsedController = null;
         }
     }
 }
