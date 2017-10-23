@@ -13,9 +13,9 @@ public class LootBag : MonoBehaviour
     private GameObject[] bagMeshes;
     [SerializeField]
     Transform lootDestinationTransform;
-	[SerializeField]
-	bool initialState = false;
-	List<Lootable> lootablesInLootTrigger = new List<Lootable>();
+    [SerializeField]
+    bool initialState = false;
+    List<Lootable> lootablesInLootTrigger = new List<Lootable>();
     int lootCount = -1;
     int lootTotalValue = -1;
     bool isActive = false;
@@ -24,23 +24,20 @@ public class LootBag : MonoBehaviour
     public event IntVoid OnLootCountChange;
     public event IntVoid OnLootTotalValueChange;
 
-	public delegate void BoolIntVoid(bool boolean, int integer);
-	public event BoolIntVoid OnLootBagActiveStateChange;
+    public delegate void BoolIntVoid(bool boolean, int integer);
+    public event BoolIntVoid OnLootBagActiveStateChange;
 
-	//TODO: Implement timer after ungrab to the Lootable script, to prevent looting all lootables by just waving the bag
-	//Lootable would have to have been ungrabbed within half a second or so for the lootBag to accept it as a viable loot
+    //TODO: Implement bag streching as it fills
+    //TODO: Implement bag physics (joints)
 
-	//TODO: Implement bag streching as it fills
-	//TODO: Implement bag physics (joints)
-
-	private void Start()
+    private void Start()
     {
-		int count = bagMeshes.Length;
-		for (int i = 0; i < count; i++)
-		{
-			isActive = true;
-			SetActiveState(initialState, i);
-		}
+        int count = bagMeshes.Length;
+        for (int i = 0; i < count; i++)
+        {
+            isActive = true;
+            SetActiveState(initialState, i);
+        }
 
         lootCount = 0;
         lootTotalValue = 0;
@@ -65,9 +62,9 @@ public class LootBag : MonoBehaviour
                         lootablesInLootTrigger[i].Loot(lootDestinationTransform);
                         lootablesInLootTrigger.RemoveAt(i);
 
-						//Call looting effect
-						GameManager.effectManager.GetEffect("LootBurst", true, transform.position, transform.rotation);
-					}
+                        //Call looting effect
+                        GameManager.effectManager.GetEffect("LootBurst", true, transform.position, transform.rotation);
+                    }
                 }
             }
         }
@@ -77,48 +74,48 @@ public class LootBag : MonoBehaviour
     {
         //Set a new transform for the loot bag to follow
         transform.SetParent(newParent);
-		transform.localPosition = Vector3.zero;
-		transform.localRotation = Quaternion.identity;
+        transform.localPosition = Vector3.zero;
+        transform.localRotation = Quaternion.identity;
     }
 
     public void SetActiveState(bool newState, int bagMeshIndex = 0)
     {
-		//Set whether the bag is active or not
-		bool oldState = isActive;
+        //Set whether the bag is active or not
+        bool oldState = isActive;
         isActive = newState;
 
-		if(oldState != isActive)
-		{
-			if (isActive)
-			{
-				lootAreaTrigger.enabled = true;
+        if (oldState != isActive)
+        {
+            if (isActive)
+            {
+                lootAreaTrigger.enabled = true;
 
-				if (bagMeshes[bagMeshIndex] != null)
-				{
-					bagMeshes[bagMeshIndex].SetActive(true);
-				}
-			}
-			else
-			{
-				lootAreaTrigger.enabled = false;
+                if (bagMeshes[bagMeshIndex] != null)
+                {
+                    bagMeshes[bagMeshIndex].SetActive(true);
+                }
+            }
+            else
+            {
+                lootAreaTrigger.enabled = false;
 
-				if (bagMeshes[bagMeshIndex] != null)
-				{
-					bagMeshes[bagMeshIndex].SetActive(false);
-				}
-			}
+                if (bagMeshes[bagMeshIndex] != null)
+                {
+                    bagMeshes[bagMeshIndex].SetActive(false);
+                }
+            }
 
-			OnLootBagActiveStateChange(isActive, bagMeshIndex);
-		}
-	}
+            OnLootBagActiveStateChange(isActive, bagMeshIndex);
+        }
+    }
 
-	public void SetActiveState(bool newState, Transform newParent, int bagMeshIndex = 0)
-	{
-		SetParentTransform(newParent);
-		SetActiveState(newState, bagMeshIndex);
-	}
+    public void SetActiveState(bool newState, Transform newParent, int bagMeshIndex = 0)
+    {
+        SetParentTransform(newParent);
+        SetActiveState(newState, bagMeshIndex);
+    }
 
-	private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         if (isActive)
         {
@@ -127,25 +124,25 @@ public class LootBag : MonoBehaviour
             if (lootable)
             {
                 //If it is not currently grabbed
-                if (!lootable.GetIsGrabbed())
-                {
-                    //Loot it
-                    lootable.OnLootingFinished += OnLootableLooted;
-                    lootable.Loot(lootDestinationTransform);
+                //if (!lootable.GetIsGrabbed())
+                //{
+                //Loot it
+                lootable.OnLootingFinished += OnLootableLooted;
+                lootable.Loot(lootDestinationTransform);
 
-					//Call looting effect
-					GameManager.effectManager.GetEffect("LootBurst", true, transform.position, transform.rotation);
-				}
-                else
-                {
-                    //Else, add it to the list of lootables inside the trigger
-                    lootablesInLootTrigger.Add(lootable);
-                }
+                //Call looting effect
+                GameManager.effectManager.GetEffect("LootBurst", true, transform.position, transform.rotation);
+                //}
+                //else
+                //{
+                //Else, add it to the list of lootables inside the trigger
+                //lootablesInLootTrigger.Add(lootable);
+                //}
             }
         }
 
     }
-    
+
     private void OnTriggerExit(Collider other)
     {
         if (isActive)
@@ -168,7 +165,7 @@ public class LootBag : MonoBehaviour
     private void OnLootableLooted(int lootValue)
     {
         lootCount++;
-        if(OnLootCountChange != null)
+        if (OnLootCountChange != null)
         {
             OnLootCountChange(lootCount);
         }
@@ -179,8 +176,8 @@ public class LootBag : MonoBehaviour
             OnLootTotalValueChange(lootTotalValue);
         }
 
-		//Call appropriate visual / sound effects here if the effects are the same regardless of the lootable
-		//GameManager.audioManager.GetAudio("LootingFinished", pos: transform.position);
+        //Call appropriate visual / sound effects here if the effects are the same regardless of the lootable
+        //GameManager.audioManager.GetAudio("LootingFinished", pos: transform.position);
     }
 
     public bool GetActiveState()
