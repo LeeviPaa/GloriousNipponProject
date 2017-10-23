@@ -9,7 +9,6 @@ public class HandAnimationController : MonoBehaviour
 	{
 		RIGHT,
 		LEFT,
-
 	}
 
 	[SerializeField]
@@ -27,8 +26,16 @@ public class HandAnimationController : MonoBehaviour
 
 	GameObject vrtk_grabber;
 
+	float closedValueDelta = 10f;
+	float closedValueThreshold = 1f;
+	float openValueThreshold = 0f;
+	int closingState = 0; //0 = not currently chaning, 1 = closing, 2 = opening
+	float closedValue = -1f;
+
 	private void OnEnable()
 	{
+		closingState = 0;
+		closedValue = 0f;
 		handAnimator = GetComponent<Animator>();
 		//lootBag.OnLootBagActiveStateChange += OnLootBagActiveStateChange;
 
@@ -60,6 +67,31 @@ public class HandAnimationController : MonoBehaviour
 				controllerEvents.GripReleased += OnGripReleased;
 			}
 		}
+
+		if (closingState == 1)
+		{
+			closedValue += closedValueDelta * Time.deltaTime;
+
+			if (closedValue >= closedValueThreshold)
+			{
+				closingState = 0;
+				closedValue = closedValueThreshold;
+			}
+
+			handAnimator.SetFloat("ClosedValue", closedValue);
+		}
+		else if (closingState == 2)
+		{
+			closedValue -= closedValueDelta * Time.deltaTime;
+
+			if (closedValue <= openValueThreshold)
+			{
+				closingState = 0;
+				closedValue = openValueThreshold;
+			}
+
+			handAnimator.SetFloat("ClosedValue", closedValue);
+		}
 	}
 
 	void FindControllerReferencesIfNotYetFound()
@@ -89,20 +121,24 @@ public class HandAnimationController : MonoBehaviour
 
 	private void OnGripPressed(object sender, ControllerInteractionEventArgs e)
 	{
-		if (!holdingLootBag)
-		{
-			//Close hand
-			handAnimator.Play("Hand_Closed");
-		}
+		//if (!holdingLootBag)
+		//{
+		//	//Close hand
+		//	handAnimator.Play("Hand_Closed");
+		//}
+
+		closingState = 1;
 	}
 
 	private void OnGripReleased(object sender, ControllerInteractionEventArgs e)
 	{
-		if (!holdingLootBag)
-		{
-			//Open hand
-			handAnimator.Play("Hand_Idle");
-		}
+		//if (!holdingLootBag)
+		//{
+		//	//Open hand
+		//	handAnimator.Play("Hand_Idle");
+		//}
+
+		closingState = 2;
 	}
 
 	private void OnLootBagActiveStateChange(bool bagActive, int bagMesh)
@@ -114,42 +150,42 @@ public class HandAnimationController : MonoBehaviour
 				holdingLootBag = true;
 
 				//Close hand
-				handAnimator.Play("Hand_Closed");
-				
-				if (controllerObject)
-				{
-					VRTK_InteractGrab grab = controllerObject.GetComponent<VRTK_InteractGrab>();
-					if (grab)
-					{
-						grab.enabled = false;
-					}
-					VRTK_InteractTouch touch = controllerObject.GetComponent<VRTK_InteractTouch>();
-					if (touch)
-					{
-						touch.enabled = false;
-					}
-				}
+				//handAnimator.Play("Hand_Closed");
+
+				//if (controllerObject)
+				//{
+				//	VRTK_InteractGrab grab = controllerObject.GetComponent<VRTK_InteractGrab>();
+				//	if (grab)
+				//	{
+				//		grab.enabled = false;
+				//	}
+				//	VRTK_InteractTouch touch = controllerObject.GetComponent<VRTK_InteractTouch>();
+				//	if (touch)
+				//	{
+				//		touch.enabled = false;
+				//	}
+				//}
 			}
 			else
 			{
 				holdingLootBag = false;
 
 				//Close hand
-				handAnimator.Play("Hand_Idle");
+				//handAnimator.Play("Hand_Idle");
 
-				if (controllerObject)
-				{
-					VRTK_InteractGrab grab = controllerObject.GetComponent<VRTK_InteractGrab>();
-					if (grab)
-					{
-						grab.enabled = true;
-					}
-					VRTK_InteractTouch touch = controllerObject.GetComponent<VRTK_InteractTouch>();
-					if (touch)
-					{
-						touch.enabled = true;
-					}
-				}
+				//if (controllerObject)
+				//{
+				//	VRTK_InteractGrab grab = controllerObject.GetComponent<VRTK_InteractGrab>();
+				//	if (grab)
+				//	{
+				//		grab.enabled = true;
+				//	}
+				//	VRTK_InteractTouch touch = controllerObject.GetComponent<VRTK_InteractTouch>();
+				//	if (touch)
+				//	{
+				//		touch.enabled = true;
+				//	}
+				//}
 			}
 		}
 	}
