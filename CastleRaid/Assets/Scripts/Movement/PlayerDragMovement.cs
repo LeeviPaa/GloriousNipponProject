@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using VRTK;
+using VRTK.GrabAttachMechanics;
 
 public class PlayerDragMovement : MonoBehaviour
 {
@@ -73,11 +74,6 @@ public class PlayerDragMovement : MonoBehaviour
 
     void Update()
     {
-        if (dragState == State.WaitingForConfirmation)
-        {
-            BeginDrag();
-        }
-           
         if (dragState == State.Active && playArea)
         {
             Vector3 finalPos = playAreaDragStartPos + ((controllerDragStartLocalPos - currentUsedController.transform.localPosition) * dragSpeed);
@@ -86,10 +82,11 @@ public class PlayerDragMovement : MonoBehaviour
         }
     }
 
-    void BeginDrag()
+    void BeginDrag(GameObject controller)
     {
         dragState = State.Active;
-		controllerDragStartLocalPos = currentUsedController.transform.localPosition;
+        currentUsedController = controller;
+        controllerDragStartLocalPos = currentUsedController.transform.localPosition;
 		playAreaDragStartPos = playArea.position;
 	}
 
@@ -118,9 +115,17 @@ public class PlayerDragMovement : MonoBehaviour
 
     void OnPlayerGrabObject(object sender, ObjectInteractEventArgs e)
 	{
-        if (currentUsedController == e.controllerReference.actual)
+        VRTK_BaseGrabAttach grabType = e.target.GetComponent<VRTK_BaseGrabAttach>();
+        if (grabType)
         {
-            dragState = State.Locked;
+            if (grabType.IsClimbable())
+            {
+                dragState = State.Locked;
+            }
+            else if (dragState == State.WaitingForConfirmation || dragState == State.Active)
+            {
+                BeginDrag(e.controllerReference.actual);
+            }
         }
     }
 
