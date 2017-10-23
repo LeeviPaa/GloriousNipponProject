@@ -24,8 +24,7 @@ public class Lootable : MonoBehaviour
 	[SerializeField]
 	bool spawnIndicatorEffect = true;
 
-	//TODO: Implement timer after ungrab to the Lootable script, to prevent looting all lootables by just waving the bag
-	//Lootable would have to have been ungrabbed within half a second or so for the lootBag to accept it as a viable loot
+    //TODO: Ensure that the lootable is ungrabbed when the lootBag starts looting it!
 
 	private void Start()
 	{
@@ -104,8 +103,8 @@ public class Lootable : MonoBehaviour
 
 	public void Loot(Transform lootingPoint)
 	{
-		//Set the lootable state to is looted
-		isLooted = true;
+        //Set the lootable state to is looted
+        isLooted = true;
 
 		//Start the loot "animation"
 		minimizingToBag = true;
