@@ -12,6 +12,11 @@ public class LootBagDisplayController : MonoBehaviour
         TOTALVALUE,
     }
 
+	[SerializeField]
+	Vector3 rightHandOffset;
+	[SerializeField]
+	Vector3 leftHandOffset;
+
     [SerializeField]
     EDisplayType displayType;
 	[SerializeField]
@@ -23,14 +28,14 @@ public class LootBagDisplayController : MonoBehaviour
 	[SerializeField]
 	bool floating = false;
 	Transform mainCameraTransform;
-	Vector3 floatingOffset;
+	//Vector3 floatingOffset;
 	bool headsetReferenceFound = false;
 
     private void OnEnable()
     {
 		if (floating)
 		{
-			floatingOffset = transform.localPosition;
+			//floatingOffset = transform.localPosition;
 			displayHolder.transform.SetParent(null);
 			displayHolder.transform.rotation = Quaternion.identity;
 
@@ -70,7 +75,7 @@ public class LootBagDisplayController : MonoBehaviour
 	{
 		if (floating)
 		{
-			displayHolder.transform.position = lootBag.transform.position + floatingOffset;
+			displayHolder.transform.position = lootBag.transform.position/* + floatingOffset*/;
 
 			if (headsetReferenceFound)
 			{

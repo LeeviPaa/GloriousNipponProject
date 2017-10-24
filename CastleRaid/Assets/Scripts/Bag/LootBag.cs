@@ -20,7 +20,12 @@ public class LootBag : MonoBehaviour
     int lootTotalValue = -1;
     bool isActive = false;
 
-    public delegate void IntVoid(int integer);
+	[SerializeField]
+	Vector3 rightHandOffset;
+	[SerializeField]
+	Vector3 leftHandOffset;
+
+	public delegate void IntVoid(int integer);
     public event IntVoid OnLootCountChange;
     public event IntVoid OnLootTotalValueChange;
 
@@ -120,7 +125,17 @@ public class LootBag : MonoBehaviour
     public void SetActiveState(bool newState, Transform newParent, int bagMeshIndex = 0)
     {
         SetParentTransform(newParent);
-        SetActiveState(newState, bagMeshIndex);
+
+		if(bagMeshIndex == 0)
+		{
+			transform.localPosition = rightHandOffset;
+		}
+		else if (bagMeshIndex == 1)
+		{
+			transform.localPosition = leftHandOffset;
+		}
+
+		SetActiveState(newState, bagMeshIndex);
     }
 
     private void OnTriggerEnter(Collider other)
