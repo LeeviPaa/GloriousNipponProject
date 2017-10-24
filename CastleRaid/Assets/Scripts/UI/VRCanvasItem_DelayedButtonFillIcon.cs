@@ -34,7 +34,6 @@ public class VRCanvasItem_DelayedButtonFillIcon : MonoBehaviour
 
     private void Update()
     {
-        print(button.GetClickProgress());
         fillImage.fillAmount = button.GetClickProgress();
     }
 }

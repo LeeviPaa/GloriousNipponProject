@@ -24,9 +24,10 @@ public class EffectManager : MonoBehaviour
 
     public int GetEffectIndex(string name)
     {
+        name = name.ToLower().Trim();
         for (int i = 0; i < effectPoolSettings.Length; i++)
         {
-            if (effectPoolSettings[i].name == name)
+            if (effectPoolSettings[i].name.ToLower().Trim() == name)
             {
                 return i;
             }

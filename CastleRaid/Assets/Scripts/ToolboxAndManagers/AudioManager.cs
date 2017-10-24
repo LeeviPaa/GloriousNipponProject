@@ -24,7 +24,7 @@ public class AudioManager : MonoBehaviour
     private AudioItemSettings[] _audioItemSettings;
     [SerializeField]
     private int _poolSize;
-    private List<AudioItem> _audioItemPool;
+    private List<AudioItem> _audioItemPool = new List<AudioItem>();
 
     private const string itemName = "[AUDIO]";
 
@@ -38,9 +38,10 @@ public class AudioManager : MonoBehaviour
 
     public int GetAudioIndex(string name)
     {
+        name = name.ToLower().Trim();
         for (int i = 0; i < _audioItemSettings.Length; i++)
         {
-            if (_audioItemSettings[i].name == name)
+            if (_audioItemSettings[i].name.ToLower().Trim() == name)
             {
                 return i;
             }
@@ -69,7 +70,7 @@ public class AudioManager : MonoBehaviour
     /// <param name="pos">World position.</param>
     public AudioItem GetAudio(int index, bool oneShot, Vector3 pos, Transform parent = null)
     {
-        if (index <= 0 || index >= _audioItemSettings.Length)
+        if (index < 0 || index >= _audioItemSettings.Length)
             return null;
         AudioItem audio = null;
         for (int i = 0; i < _audioItemPool.Count; i++)
@@ -88,6 +89,7 @@ public class AudioManager : MonoBehaviour
         {
             audio.transform.SetParent(parent);
         }
+        audio.gameObject.SetActive(true);
         audio.transform.position = pos;
         audio.source.clip = _audioItemSettings[index].clip;
         audio.source.outputAudioMixerGroup = _audioItemSettings[index].mixerGroup;
@@ -97,16 +99,17 @@ public class AudioManager : MonoBehaviour
         audio.source.loop = _audioItemSettings[index].loop;
         audio.source.mute = _audioItemSettings[index].mute;
         audio.autoReturnAfterPlaying = oneShot;
-        audio.name = itemName + " " + _audioItemSettings[index].name;
+        audio.name = itemName + " " + _audioItemSettings[index].name;  
         return audio;
     }
 
     private AudioItem AddAudioItem()
     {
         AudioItem audio = new GameObject(itemName, typeof(AudioSource), typeof(AudioItem)).GetComponent<AudioItem>();
-        _audioItemPool.Add(audio);
+        _audioItemPool.Add(audio);       
         audio.audioManager = this;
-        audio.Init(); 
+        audio.Init();
+        ReturnToPool(audio);
         return audio;
     }
 
