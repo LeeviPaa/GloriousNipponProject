@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: FlatMat
+  m_Shader: {fileID: 4800000, guid: 2cda8bf5090562048bc222ac94eeb4aa, type: 3}
+  m_ShaderKeywords: _LOWPOLY_ON _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _Clouds:
+        m_Texture: {fileID: 2800000, guid: b8291fc9f34e62947ac0a96d7f73d1c9, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DummyTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Texture0:
+        m_Texture: {fileID: 2800000, guid: 9789d23040cb1fb45ad60392430c3c15, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TextureSample1:
+        m_Texture: {fileID: 2800000, guid: 1b68d097f91ca084caa53ba878517cdf, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Water_Tex:
+        m_Texture: {fileID: 2800000, guid: 1b68d097f91ca084caa53ba878517cdf, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _flowmap_random2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _texcoord:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _CloseupTransparency: 0
+    - _Cloudssize: 139
+    - _Cutoff: 0.5
+    - _Debug: 31
+    - _Emission: 1.2
+    - _Fadedistance: 0
+    - _Float1: 0.75
+    - _Float2: 0
+    - _Float3: 0.02
+    - _FlowmapXSpeed: 0
+    - _FlowmapYSpeed: 0.02
+    - _Frequency: -75.9
+    - _T1Size: 4
+    - _T1XSpeed: 0.05
+    - _T1YSpeed: 0.12
+    - _T2Size: 6
+    - _T2XSpeed: 0.06
+    - _T2YSpeed: 0.85
+    - _TessMax: 25
+    - _TessMin: 10
+    - _TessValue: 3
+    - _WaveAmplitude: 31
+    - _WavetexXSpeed: 0.12
+    - _WavetexYSpeed: 0.18
+    - __dirty: 0
+    m_Colors:
+    - _SeaColor: {r: 0.8308824, g: 0.4643166, b: 0.4643166, a: 0}
+    - _SeaColor2: {r: 0.047037195, g: 0.21323532, b: 0.21323532, a: 0}
+    - _SeaColorBtm: {r: 0.15365483, g: 0.3022924, b: 0.42647058, a: 0}
+    - _SeaColorTop: {r: 0.83937067, g: 0.9355648, b: 0.99264705, a: 0}
