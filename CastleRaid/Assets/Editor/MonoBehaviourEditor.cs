@@ -13,18 +13,22 @@ public class MonoBehaviourEditor : Editor
     {
         DrawDefaultInspector();
 
-        if (Application.isPlaying)
-        {
-            Type type = target.GetType();
+        MonoBehaviour script = (MonoBehaviour)target;
 
-            foreach (var method in type.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance))
+        Type type = target.GetType();
+        MethodInfo[] methods = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+
+        foreach (MethodInfo method in type.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance))
+        {
+            object[] attributes = method.GetCustomAttributes(typeof(AddEditorInvokeButtonAttribute), true);
+            if (attributes.Length > 0)
             {
-                object[] attributes = method.GetCustomAttributes(typeof(AddEditorInvokeButtonAttribute), true);
-                if (attributes.Length > 0)
+                ParameterInfo[] parameters = method.GetParameters();
+                if (parameters.Length == 0)
                 {
                     if (GUILayout.Button("Invoke: " + method.Name))
                     {
-                        ((MonoBehaviour)target).Invoke(method.Name, 0f);
+                        method.Invoke(script, new object[0]);
                     }
                 }
             }
