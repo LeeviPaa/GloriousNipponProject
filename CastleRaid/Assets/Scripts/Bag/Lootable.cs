@@ -81,10 +81,11 @@ public class Lootable : MonoBehaviour
 	{
 		isGrabbed = true;
 
-		//Call grab visual / sound effects here
-		GameManager.effectManager.GetEffect("GrabBurst", true, transform.position, Quaternion.identity);
-		//GameManager.audioManager.GetAudio("LootGrab", pos: transform.position);
-	}
+        //Call grab visual / sound effects here
+        GameManager.effectManager.GetEffect("GrabBurst", true, transform.position, Quaternion.identity);
+        AudioItem lootGrabAudio = GameManager.audioManager.GetAudio("LootGrab", true, pos: transform.position);
+        lootGrabAudio.source.Play();
+    }
 
 	void OnEndGrab(object sender, InteractableObjectEventArgs e)
 	{

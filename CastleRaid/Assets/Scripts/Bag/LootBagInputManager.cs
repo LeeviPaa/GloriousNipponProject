@@ -43,10 +43,10 @@ public class LootBagInputManager : MonoBehaviour
 
 	private void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.L))
-		{
-			lootBag.SetActiveState(!lootBag.GetActiveState());
-		}
+		//if (Input.GetKeyDown(KeyCode.L))
+		//{
+		//	lootBag.SetActiveState(!lootBag.GetActiveState(), VRTK_DeviceFinder.GetControllerRightHand(false).transform, 0);
+		//}
 
 		if (!controllerReferencesFound)
 		{

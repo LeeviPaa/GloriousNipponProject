@@ -43,6 +43,14 @@ public class LootBag : MonoBehaviour
         lootTotalValue = 0;
     }
 
+    //private void Update()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.J))
+    //    {
+    //        OnLootableLooted(25);
+    //    }
+    //}
+
     private void FixedUpdate()
     {
         if (isActive)
@@ -177,7 +185,14 @@ public class LootBag : MonoBehaviour
         }
 
         //Call appropriate visual / sound effects here if the effects are the same regardless of the lootable
-        //GameManager.audioManager.GetAudio("LootingFinished", pos: transform.position);
+        AudioItem lootingFinishedAudio = GameManager.audioManager.GetAudio("LootingFinished", true, pos: transform.position);
+        lootingFinishedAudio.source.Play();
+
+        //Debug.Log("OnLootableLooted");
+        //EffectItem valueEffect = GameManager.effectManager.GetEffect("NumberDisplay", false, transform.position, transform.rotation);
+        //valueEffect.GetComponent<CreateTexture>().ChangeShowValue(lootValue);
+        //valueEffect.GetComponent<ParticleSystem>().Clear();
+        //valueEffect.GetComponent<ParticleSystem>().Play();
     }
 
     public bool GetActiveState()

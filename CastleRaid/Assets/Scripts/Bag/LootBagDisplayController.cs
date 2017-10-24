@@ -66,7 +66,7 @@ public class LootBagDisplayController : MonoBehaviour
         lootBag.OnLootTotalValueChange -= OnLootTotalValueChange;
     }
 
-	private void FixedUpdate()
+	private void LateUpdate()
 	{
 		if (floating)
 		{
