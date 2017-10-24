@@ -1,9 +1,13 @@
 fileFormatVersion: 2
-guid: 03efd26f2a6cff4449cc3b42479b0a2c
-timeCreated: 1508467900
+guid: 2cda8bf5090562048bc222ac94eeb4aa
+timeCreated: 1508467743
 licenseType: Free
 ShaderImporter:
-  defaultTextures: []
+  defaultTextures:
+  - _Water_Tex: {fileID: 2800000, guid: f5b7c32dad0dce44ebb918137d9e6ad3, type: 3}
+  - _TextureSample1: {fileID: 2800000, guid: f5b7c32dad0dce44ebb918137d9e6ad3, type: 3}
+  - _Texture0: {fileID: 2800000, guid: 9789d23040cb1fb45ad60392430c3c15, type: 3}
+  - _flowmap_random2: {fileID: 2800000, guid: 1fe6aee4a24a3574c88e514745fdd276, type: 3}
   userData: 
   assetBundleName: 
   assetBundleVariant: 
