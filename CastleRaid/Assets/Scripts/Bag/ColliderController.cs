@@ -11,11 +11,17 @@ public class ColliderController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        _OnTriggerEnter(this, other);
+		if(_OnTriggerEnter != null)
+		{
+			_OnTriggerEnter(this, other);
+		}
     }
 
     private void OnTriggerExit(Collider other)
-    {
-        _OnTriggerExit(this, other);
+	{
+		if (_OnTriggerExit != null)
+		{
+			_OnTriggerExit(this, other);
+		}
     }
 }

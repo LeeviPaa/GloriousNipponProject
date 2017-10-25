@@ -155,4 +155,9 @@ public class Lootable : MonoBehaviour
 		}
 	}
 
+	public bool GetIsLooted()
+	{
+		return isLooted;
+	}
+
 }

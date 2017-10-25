@@ -73,7 +73,7 @@ public class LootBagInputManager : MonoBehaviour
 				if (lootBag.transform.parent == rightController.transform)
 				{
 					//Toggle on current hand
-					if (lootBag.GetActiveState())
+					if (lootBag.GetActiveState() >= 0)
 					{
 						lootBag.SetActiveState(false, 0);
 					}
@@ -107,7 +107,7 @@ public class LootBagInputManager : MonoBehaviour
 				if (lootBag.transform.parent == leftController.transform)
 				{
 					//Toggle on current hand
-					if (lootBag.GetActiveState())
+					if (lootBag.GetActiveState() >= 0)
 					{
 						lootBag.SetActiveState(false, 1);
 					}

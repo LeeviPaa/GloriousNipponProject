@@ -6,24 +6,26 @@ using VRTK;
 [RequireComponent(typeof(LootBag))]
 public class LootBagDisplayController : MonoBehaviour
 {
-    enum EDisplayType
-    {
-        LOOTCOUNT,
-        TOTALVALUE,
-    }
+	enum EDisplayType
+	{
+		LOOTCOUNT,
+		TOTALVALUE,
+	}
 
 	[SerializeField]
 	Vector3 rightHandOffset;
 	[SerializeField]
 	Vector3 leftHandOffset;
 
-    [SerializeField]
-    EDisplayType displayType;
+	[SerializeField]
+	EDisplayType displayType;
 	[SerializeField]
 	GameObject displayHolder;
 	[SerializeField]
-    TextMesh textMesh; //Change to other than TextMesh if necessary in the future
-    LootBag lootBag;
+	TextMesh textMesh; //Change to other than TextMesh if necessary in the future
+	[SerializeField]
+	LootBagController lootBagController;
+	LootBag lootBag;
 
 	[SerializeField]
 	bool floating = false;
@@ -31,8 +33,8 @@ public class LootBagDisplayController : MonoBehaviour
 	//Vector3 floatingOffset;
 	bool headsetReferenceFound = false;
 
-    private void OnEnable()
-    {
+	private void OnEnable()
+	{
 		if (floating)
 		{
 			//floatingOffset = transform.localPosition;
@@ -49,27 +51,27 @@ public class LootBagDisplayController : MonoBehaviour
 		}
 
 		if (textMesh == null)
-        {
-            Debug.LogError("Missing text mesh reference!");
-        }
-        else
-        {
-            textMesh.text = 0.ToString();
-        }
+		{
+			Debug.LogError("Missing text mesh reference!");
+		}
+		else
+		{
+			textMesh.text = 0.ToString();
+		}
 
-        lootBag = GetComponent<LootBag>();
-
-        lootBag.OnLootCountChange += OnLootCountChange;
-        lootBag.OnLootTotalValueChange += OnLootTotalValueChange;
+		lootBag = GetComponent<LootBag>();
 		lootBag.OnLootBagActiveStateChange += OnLootBagActiveStateChange;
+		
+		lootBagController.OnLootCountChange += OnLootCountChange;
+		lootBagController.OnLootTotalValueChange += OnLootTotalValueChange;
 
 	}
 
-    private void OnDisable()
-    {
-        lootBag.OnLootCountChange -= OnLootCountChange;
-        lootBag.OnLootTotalValueChange -= OnLootTotalValueChange;
-    }
+	private void OnDisable()
+	{
+		lootBagController.OnLootCountChange -= OnLootCountChange;
+		lootBagController.OnLootTotalValueChange -= OnLootTotalValueChange;
+	}
 
 	private void LateUpdate()
 	{
@@ -94,24 +96,36 @@ public class LootBagDisplayController : MonoBehaviour
 	}
 
 	private void OnLootCountChange(int newLootCount)
-    {
-        if (displayType == EDisplayType.LOOTCOUNT)
-        {
-            textMesh.text = newLootCount.ToString();
-        }
-    }
+	{
+		if (displayType == EDisplayType.LOOTCOUNT)
+		{
+			textMesh.text = newLootCount.ToString();
+		}
+	}
 
-    private void OnLootTotalValueChange(int newLootTotalValue)
-    {
-        if (displayType == EDisplayType.TOTALVALUE)
-        {
-            textMesh.text = newLootTotalValue.ToString();
-        }
-    }
+	private void OnLootTotalValueChange(int newLootTotalValue)
+	{
+		if (displayType == EDisplayType.TOTALVALUE)
+		{
+			textMesh.text = newLootTotalValue.ToString();
+		}
+	}
 
 	private void OnLootBagActiveStateChange(bool newState, int bagMeshIndex)
 	{
-		if(displayHolder != null)
+		if (newState)
+		{
+			if (displayType == EDisplayType.LOOTCOUNT)
+			{
+				textMesh.text = lootBagController.GetLootCount().ToString();
+			}
+			else if (displayType == EDisplayType.TOTALVALUE)
+			{
+				textMesh.text = lootBagController.GetLootTotalValue().ToString();
+			}
+		}
+
+		if (displayHolder != null)
 		{
 			displayHolder.SetActive(newState);
 		}
