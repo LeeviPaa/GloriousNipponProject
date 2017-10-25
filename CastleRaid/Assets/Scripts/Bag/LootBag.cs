@@ -154,7 +154,7 @@ public class LootBag : MonoBehaviour
                 lootable.Loot(lootDestinationTransform);
 
                 //Call looting effect
-                GameManager.effectManager.GetEffect("LootBurst", true, transform.position, transform.rotation);
+                GameManager.effectManager.GetEffect("LootBurst", true, transform.position, transform.rotation, transform);
                 //}
                 //else
                 //{
