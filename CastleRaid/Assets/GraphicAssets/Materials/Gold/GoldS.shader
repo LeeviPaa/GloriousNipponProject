@@ -6,13 +6,13 @@ Shader ".Custom/Gold"
 	{
 		[HideInInspector] __dirty("", Int) = 1
 		_ASEOutlineWidth("Outline Width", Float) = 0
-		_ASEOutlineColor("Outline Color", Color) = (0, 0, 0, 0)
-		_MainColor("Main Color", Color) = (0.9411765, 0.8627451, 0.2196078, 0)
+		_ASEOutlineColor("Outline Color", Color) = (0,0,0,0)
+		_MainColor("Main Color", Color) = (0.9411765,0.8627451,0.2196078,0)
 		_Smoothness("Smoothness", Float) = 0.6
 		_Metallic("Metallic", Float) = 0.9
-		_GlowColor("Glow Color", Color) = (0.9882353, 1, 0.7803922, 0)
+		_GlowColor("Glow Color", Color) = (0.9882353,1,0.7803922,0)
 		_GlowMultiplier("Glow Multiplier", Float) = 1
-		_WaveColor("Wave Color", Color) = (0.9921569, 0.9411765, 0.6588235, 0)
+		_WaveColor("Wave Color", Color) = (0.9921569,0.9411765,0.6588235,0)
 		_WaveInterval("Wave Interval", Float) = 25
 		_WaveSpeed("Wave Speed", Float) = 0.15
 		_WaveOffset("Wave Offset", Float) = 0.6
@@ -23,14 +23,16 @@ Shader ".Custom/Gold"
 		_EffectSpeed("Effect Speed", Float) = 20
 		[Toggle]_YWave("Y Wave", Float) = 1
 		_Dirt("Dirt", 2D) = "white" {}
-	_DirtAdd("Dirt Add", Range(0, 1.5)) = 1.5
+	_DirtAdd("Dirt Add", Range(0 , 1.5)) = 1.5
 		[Toggle]_RandomTiming("Random Timing", Int) = 0
 		[Toggle]_Sweepingglow("Sweeping glow", Int) = 0
 		_MainTexture("Main Texture", 2D) = "white" {}
-	_SmoothnessTexture("Smoothness Texture", 2D) = "white" {}
+	_NormalTexture("Normal Texture", 2D) = "white" {}
 	_MetallicTexture("Metallic Texture", 2D) = "white" {}
-	[HideInInspector] _texcoord("", 2D) = "white" {}
+	_NormalMultiplier("Normal Multiplier", Float) = 1
+		[HideInInspector] _texcoord("", 2D) = "white" {}
 	}
+
 		SubShader
 	{
 		Tags{}
@@ -52,9 +54,10 @@ Shader ".Custom/Gold"
 		UNITY_INITIALIZE_OUTPUT(Input, o);
 		v.vertex.xyz += (v.normal * UNITY_ACCESS_INSTANCED_PROP(_ASEOutlineWidth));
 	}
-	inline fixed4 LightingOutline(SurfaceOutput s, half3 lightDir, half atten) { return fixed4(0, 0, 0, s.Alpha); }
+	inline fixed4 LightingOutline(SurfaceOutput s, half3 lightDir, half atten) { return fixed4(0,0,0, s.Alpha); }
 	void outlineSurf(Input i, inout SurfaceOutput o) { o.Emission = UNITY_ACCESS_INSTANCED_PROP(_ASEOutlineColor).rgb; o.Alpha = 1; }
 	ENDCG
+
 
 		Tags{ "RenderType" = "Opaque"  "Queue" = "Geometry+0" "IsEmissive" = "true" }
 		Cull Back
@@ -70,6 +73,10 @@ Shader ".Custom/Gold"
 		float2 uv_texcoord;
 		float3 worldPos;
 	};
+
+	uniform float _NormalMultiplier;
+	uniform sampler2D _NormalTexture;
+	uniform float4 _NormalTexture_ST;
 	uniform sampler2D _Dirt;
 	uniform float4 _Dirt_ST;
 	uniform float _DirtAdd;
@@ -90,21 +97,23 @@ Shader ".Custom/Gold"
 	uniform sampler2D _MetallicTexture;
 	uniform float4 _MetallicTexture_ST;
 	uniform float _Smoothness;
-	uniform sampler2D _SmoothnessTexture;
-	uniform float4 _SmoothnessTexture_ST;
+
 	UNITY_INSTANCING_CBUFFER_START(CustomGold)
 		UNITY_DEFINE_INSTANCED_PROP(float, _WaveOffset)
 		UNITY_DEFINE_INSTANCED_PROP(float, _EffectSpeed)
 		UNITY_INSTANCING_CBUFFER_END
-		void surf(Input i, inout SurfaceOutputStandard o)
+
+		void surf(Input i , inout SurfaceOutputStandard o)
 	{
+		float2 uv_NormalTexture = i.uv_texcoord * _NormalTexture_ST.xy + _NormalTexture_ST.zw;
+		o.Normal = (_NormalMultiplier * tex2D(_NormalTexture, uv_NormalTexture)).rgb;
 		float2 uv_Dirt = i.uv_texcoord * _Dirt_ST.xy + _Dirt_ST.zw;
 		float4 temp_output_162_0 = (tex2D(_Dirt, uv_Dirt) + _DirtAdd);
 		float _WaveOffset_Instance = UNITY_ACCESS_INSTANCED_PROP(_WaveOffset);
-		float3 ase_vertex3Pos = mul(unity_WorldToObject, float4(i.worldPos, 1));
+		float3 ase_vertex3Pos = mul(unity_WorldToObject, float4(i.worldPos , 1));
 		float _EffectSpeed_Instance = UNITY_ACCESS_INSTANCED_PROP(_EffectSpeed);
-		float clampResult45 = clamp(abs((((_WaveOffset_Instance + lerp(ase_vertex3Pos.x, ase_vertex3Pos.y, _YWave)) - (fmod(((_Time.y * 0.5) * _EffectSpeed_Instance), (_WaveInterval * 2.0)) * _WaveSpeed)) * _WaveSizeinvert)), 0.0, 1.0);
-		float4 lerpResult74 = lerp(_WaveColor, _MainColor, clampResult45);
+		float clampResult45 = clamp(abs((((_WaveOffset_Instance + lerp(ase_vertex3Pos.x,ase_vertex3Pos.y,_YWave)) - (fmod(((_Time.y * 0.5) * _EffectSpeed_Instance) , (_WaveInterval * 2.0)) * _WaveSpeed)) * _WaveSizeinvert)) , 0.0 , 1.0);
+		float4 lerpResult74 = lerp(_WaveColor , _MainColor , clampResult45);
 		float EffectTime103 = ((_EffectSpeed_Instance / _WaveInterval) * 0.5);
 		float3 ase_worldPos = i.worldPos;
 #ifdef _RANDOMTIMING_ON
@@ -118,7 +127,7 @@ Shader ".Custom/Gold"
 #else
 		float staticSwitch198 = 0.0;
 #endif
-		float clampResult112 = clamp(pow(sin((((EffectTime103 * UNITY_PI) * _Time.y) + staticSwitch198)), 5.0), 0.0, 1.0);
+		float clampResult112 = clamp(pow(sin((((EffectTime103 * UNITY_PI) * _Time.y) + staticSwitch198)) , 5.0) , 0.0 , 1.0);
 		float4 temp_output_138_0 = ((clampResult112 * _GlowColor) * _GlowMultiplier);
 		float4 temp_output_159_0 = (temp_output_162_0 * (lerpResult74 + temp_output_138_0));
 		float2 uv_MainTexture = i.uv_texcoord * _MainTexture_ST.xy + _MainTexture_ST.zw;
@@ -126,10 +135,10 @@ Shader ".Custom/Gold"
 		o.Emission = (((_BaseEmission * temp_output_159_0) + ((_GlowEmission * temp_output_138_0) * temp_output_159_0)) + (_WaveEmission * (1.0 - clampResult45))).rgb;
 		float2 uv_MetallicTexture = i.uv_texcoord * _MetallicTexture_ST.xy + _MetallicTexture_ST.zw;
 		o.Metallic = (_Metallic * tex2D(_MetallicTexture, uv_MetallicTexture).r);
-		float2 uv_SmoothnessTexture = i.uv_texcoord * _SmoothnessTexture_ST.xy + _SmoothnessTexture_ST.zw;
-		o.Smoothness = (_Smoothness * tex2D(_SmoothnessTexture, uv_SmoothnessTexture)).r;
+		o.Smoothness = _Smoothness;
 		o.Alpha = 1;
 	}
+
 	ENDCG
 	}
 		Fallback "Diffuse"
@@ -137,7 +146,7 @@ Shader ".Custom/Gold"
 }
 /*ASEBEGIN
 Version=13201
-1927;95;1312;754;-410.128;51.78259;1.498586;True;False
+1927;95;1312;754;108.6779;486.8993;2.482149;True;False
 Node;AmplifyShaderEditor.CommentaryNode;119;-1116.091,-618.6005;Float;False;606.3503;773.7742;;3;73;61;196;Calculate Panning;1,1,1,1;0;0
 Node;AmplifyShaderEditor.RangedFloatNode;47;-1075.215,53.02468;Float;False;Property;_WaveInterval;Wave Interval;6;0;25;0;0;0;1;FLOAT
 Node;AmplifyShaderEditor.WorldPosInputsNode;186;-2669.728,-463.8224;Float;False;0;4;FLOAT3;FLOAT;FLOAT;FLOAT
@@ -194,25 +203,26 @@ Node;AmplifyShaderEditor.RangedFloatNode;169;711.1528,-858.7411;Float;False;Prop
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;159;1034.222,-291.8082;Float;True;2;2;0;COLOR;0,0,0,0;False;1;COLOR;0.0,0,0,0;False;1;COLOR
 Node;AmplifyShaderEditor.RangedFloatNode;173;1137.2,-901.2914;Float;False;Property;_BaseEmission;Base Emission;12;0;0.15;0;0;0;1;FLOAT
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;171;939.4172,-788.6987;Float;True;2;2;0;FLOAT;0.0;False;1;COLOR;0;False;1;COLOR
-Node;AmplifyShaderEditor.RangedFloatNode;178;707.7361,-681.3295;Float;False;Property;_WaveEmission;Wave Emission;10;0;0.15;0;0;0;1;FLOAT
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;168;1142.411,-721.4083;Float;False;2;2;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR
 Node;AmplifyShaderEditor.OneMinusNode;176;778.1365,-512.1863;Float;False;1;0;FLOAT;0.0;False;1;FLOAT
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;174;1331.981,-788.9269;Float;False;2;2;0;FLOAT;0.0;False;1;COLOR;0;False;1;COLOR
+Node;AmplifyShaderEditor.TexturePropertyNode;210;1032.332,642.378;Float;True;Property;_NormalTexture;Normal Texture;20;0;None;False;white;Auto;0;1;SAMPLER2D
+Node;AmplifyShaderEditor.RangedFloatNode;178;707.7361,-681.3295;Float;False;Property;_WaveEmission;Wave Emission;10;0;0.15;0;0;0;1;FLOAT
 Node;AmplifyShaderEditor.TexturePropertyNode;203;897.7915,-35.70391;Float;True;Property;_MainTexture;Main Texture;19;0;None;False;white;Auto;0;1;SAMPLER2D
 Node;AmplifyShaderEditor.TexturePropertyNode;208;942.9474,252.1731;Float;True;Property;_MetallicTexture;Metallic Texture;21;0;None;False;white;Auto;0;1;SAMPLER2D
-Node;AmplifyShaderEditor.TexturePropertyNode;210;1030.138,642.378;Float;True;Property;_SmoothnessTexture;Smoothness Texture;20;0;None;False;white;Auto;0;1;SAMPLER2D
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;174;1331.981,-788.9269;Float;False;2;2;0;FLOAT;0.0;False;1;COLOR;0;False;1;COLOR
+Node;AmplifyShaderEditor.SamplerNode;207;1186.528,158.6304;Float;True;Property;_TextureSample2;Texture Sample 2;19;0;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0.0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1.0;False;5;COLOR;FLOAT;FLOAT;FLOAT;FLOAT
+Node;AmplifyShaderEditor.RangedFloatNode;211;1365.402,388.3899;Float;False;Property;_NormalMultiplier;Normal Multiplier;22;0;1;0;0;0;1;FLOAT
+Node;AmplifyShaderEditor.SamplerNode;209;1286.884,489.5872;Float;True;Property;_TextureSample3;Texture Sample 3;19;0;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0.0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1.0;False;5;COLOR;FLOAT;FLOAT;FLOAT;FLOAT
 Node;AmplifyShaderEditor.SimpleAddOpNode;172;1366.701,-610.5924;Float;False;2;2;0;COLOR;0.0,0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR
-Node;AmplifyShaderEditor.SamplerNode;209;1273.718,548.8352;Float;True;Property;_TextureSample3;Texture Sample 3;19;0;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0.0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1.0;False;5;COLOR;FLOAT;FLOAT;FLOAT;FLOAT
-Node;AmplifyShaderEditor.RangedFloatNode;3;979.8171,496.3601;Float;False;Property;_Smoothness;Smoothness;1;0;0.6;0;0;0;1;FLOAT
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;177;1020.08,-525.8844;Float;False;2;2;0;FLOAT;0.0;False;1;FLOAT;0.0;False;1;FLOAT
 Node;AmplifyShaderEditor.SamplerNode;202;1151.614,-64.8789;Float;True;Property;_TextureSample1;Texture Sample 1;19;0;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0.0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1.0;False;5;COLOR;FLOAT;FLOAT;FLOAT;FLOAT
-Node;AmplifyShaderEditor.SamplerNode;207;1186.528,158.6304;Float;True;Property;_TextureSample2;Texture Sample 2;19;0;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0.0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1.0;False;5;COLOR;FLOAT;FLOAT;FLOAT;FLOAT
 Node;AmplifyShaderEditor.RangedFloatNode;4;949.8604,193.3714;Float;False;Property;_Metallic;Metallic;2;0;0.9;0;0;0;1;FLOAT
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;205;1469.43,-95.9821;Float;False;2;2;0;FLOAT;0.0;False;1;FLOAT;0.0;False;1;FLOAT
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;206;1503.379,218.9829;Float;False;2;2;0;FLOAT;0.0;False;1;COLOR;0.0;False;1;COLOR
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;204;1358.756,-285.1501;Float;False;2;2;0;COLOR;0.0;False;1;COLOR;0,0,0,0;False;1;COLOR
-Node;AmplifyShaderEditor.SimpleAddOpNode;179;1441.894,-481.464;Float;False;2;2;0;COLOR;0,0,0,0;False;1;FLOAT;0,0,0,0;False;1;COLOR
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;196;-1023.495,-517.1639;Float;False;2;2;0;FLOAT;0.0;False;1;FLOAT;0.0;False;1;FLOAT
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;204;1358.756,-285.1501;Float;False;2;2;0;COLOR;0.0;False;1;COLOR;0,0,0,0;False;1;COLOR
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;206;1569.21,306.7576;Float;False;2;2;0;FLOAT;0.0;False;1;COLOR;0.0;False;1;COLOR
+Node;AmplifyShaderEditor.RangedFloatNode;3;979.8171,496.3601;Float;False;Property;_Smoothness;Smoothness;1;0;0.6;0;0;0;1;FLOAT
+Node;AmplifyShaderEditor.SimpleAddOpNode;179;1441.894,-481.464;Float;False;2;2;0;COLOR;0,0,0,0;False;1;FLOAT;0,0,0,0;False;1;COLOR
 Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;1846.815,-313.3666;Float;False;True;2;Float;ASEMaterialInspector;0;0;Standard;.Custom/Gold;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;Back;0;0;False;0;0;Opaque;0.5;True;True;0;False;Opaque;Geometry;All;True;True;True;True;True;True;True;True;True;True;True;True;True;True;True;True;True;False;0;255;255;0;0;0;0;False;0;4;10;25;False;0.5;True;0;Zero;Zero;0;Zero;Zero;Add;Add;0;True;0;0,0,0,0;VertexOffset;False;Cylindrical;False;Relative;0;;-1;-1;-1;-1;0;0;0;15;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0.0;False;4;FLOAT;0.0;False;5;FLOAT;0.0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0.0;False;9;FLOAT;0.0;False;10;OBJECT;0.0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
 Node;AmplifyShaderEditor.CommentaryNode;140;-476.8972,-199.2507;Float;False;260.2576;304.1504;Wave Speed;0;;1,1,1,1;0;0
 WireConnection;191;0;186;1
@@ -276,26 +286,27 @@ WireConnection;168;1;159;0
 WireConnection;176;0;45;0
 WireConnection;174;0;173;0
 WireConnection;174;1;159;0
+WireConnection;207;0;208;0
+WireConnection;209;0;210;0
 WireConnection;172;0;174;0
 WireConnection;172;1;168;0
-WireConnection;209;0;210;0
 WireConnection;177;0;178;0
 WireConnection;177;1;176;0
 WireConnection;202;0;203;0
-WireConnection;207;0;208;0
 WireConnection;205;0;4;0
 WireConnection;205;1;207;1
-WireConnection;206;0;3;0
-WireConnection;206;1;209;0
-WireConnection;204;0;159;0
-WireConnection;204;1;202;0
-WireConnection;179;0;172;0
-WireConnection;179;1;177;0
 WireConnection;196;0;184;0
 WireConnection;196;1;70;0
+WireConnection;204;0;159;0
+WireConnection;204;1;202;0
+WireConnection;206;0;211;0
+WireConnection;206;1;209;0
+WireConnection;179;0;172;0
+WireConnection;179;1;177;0
 WireConnection;0;0;204;0
+WireConnection;0;1;206;0
 WireConnection;0;2;179;0
 WireConnection;0;3;205;0
-WireConnection;0;4;206;0
+WireConnection;0;4;3;0
 ASEEND*/
-//CHKSM=24FAE74C8F26F00FE4EACD3405EDD9CF865D8460
+//CHKSM=6FD48F0168E0C73892F2022088B0E4B3F1265D26
