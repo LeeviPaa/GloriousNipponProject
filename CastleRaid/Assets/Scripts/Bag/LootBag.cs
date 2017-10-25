@@ -4,11 +4,18 @@ using UnityEngine;
 
 public class LootBag : MonoBehaviour
 {
-    //private AudioSource sound;
-    //private UnityEngine.UI.Text txtBelongings;
+    public enum EBagType
+    {
+        HAND,
+        BACK,
+
+    }
 
     [SerializeField]
-    private Collider lootAreaTrigger;
+    EBagType bagType;
+
+    [SerializeField]
+    private Collider[] lootAreaTriggers;
     [SerializeField]
     private GameObject[] bagMeshes;
     [SerializeField]
@@ -20,12 +27,12 @@ public class LootBag : MonoBehaviour
     int lootTotalValue = -1;
     bool isActive = false;
 
-	[SerializeField]
-	Vector3 rightHandOffset;
-	[SerializeField]
-	Vector3 leftHandOffset;
+    [SerializeField]
+    Vector3 rightHandOffset;
+    [SerializeField]
+    Vector3 leftHandOffset;
 
-	public delegate void IntVoid(int integer);
+    public delegate void IntVoid(int integer);
     public event IntVoid OnLootCountChange;
     public event IntVoid OnLootTotalValueChange;
 
@@ -37,6 +44,27 @@ public class LootBag : MonoBehaviour
 
     private void Start()
     {
+        if(bagType == EBagType.BACK)
+        {
+            int length = lootAreaTriggers.Length;
+            for (int i = 0; i < length; i++)
+            {
+                ColliderController colliderController = lootAreaTriggers[i].GetComponent<ColliderController>();
+                if(colliderController != null)
+                {
+                    colliderController._OnTriggerEnter += OnLootAreaTriggerEnter;
+                }
+                else
+                {
+                    Debug.LogError("lootAreaTrigger at array index " + i + " is missing a ColliderController component! " 
+                        + "(Detecting separate trigger events requires the ColliderController script on the triggers)");
+                }
+            }
+
+
+
+        }
+
         int count = bagMeshes.Length;
         for (int i = 0; i < count; i++)
         {
@@ -56,32 +84,28 @@ public class LootBag : MonoBehaviour
     //    }
     //}
 
-    private void FixedUpdate()
-    {
-        if (isActive)
-        {
-            //If there are any items in the list of lootables inside the looting trigger
-            int count = lootablesInLootTrigger.Count;
-            if (count > 0)
-            {
-                //Loop through all of them one by one
-                for (int i = 0; i < count; i++)
-                {
-                    //If the object is not currently grabbed
-                    if (!lootablesInLootTrigger[i].GetIsGrabbed())
-                    {
-                        //Loot it and remove it from the list
-                        lootablesInLootTrigger[i].OnLootingFinished += OnLootableLooted;
-                        lootablesInLootTrigger[i].Loot(lootDestinationTransform);
-                        lootablesInLootTrigger.RemoveAt(i);
-
-                        //Call looting effect
-                        GameManager.effectManager.GetEffect("LootBurst", true, transform.position, transform.rotation);
-                    }
-                }
-            }
-        }
-    }
+    //private void FixedUpdate()
+    //{
+    //    if (isActive)
+    //    {
+    //        //If there are any items in the list of lootables inside the looting trigger
+    //        int count = lootablesInLootTrigger.Count;
+    //        if (count > 0)
+    //        {
+    //            //Loop through all of them one by one
+    //            for (int i = 0; i < count; i++)
+    //            {
+    //                //If the object is not currently grabbed
+    //                if (!lootablesInLootTrigger[i].GetIsGrabbed())
+    //                {
+    //                    //Loot it and remove it from the list
+    //                    LootLootable(lootablesInLootTrigger[i]);
+    //                    lootablesInLootTrigger.RemoveAt(i);
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
 
     public void SetParentTransform(Transform newParent)
     {
@@ -101,7 +125,11 @@ public class LootBag : MonoBehaviour
         {
             if (isActive)
             {
-                lootAreaTrigger.enabled = true;
+                int count = lootAreaTriggers.Length;
+                for (int i = 0; i < count; i++)
+                {
+                    lootAreaTriggers[i].enabled = true;
+                }
 
                 if (bagMeshes[bagMeshIndex] != null)
                 {
@@ -110,7 +138,11 @@ public class LootBag : MonoBehaviour
             }
             else
             {
-                lootAreaTrigger.enabled = false;
+                int count = lootAreaTriggers.Length;
+                for (int i = 0; i < count; i++)
+                {
+                    lootAreaTriggers[i].enabled = false;
+                }
 
                 if (bagMeshes[bagMeshIndex] != null)
                 {
@@ -126,16 +158,29 @@ public class LootBag : MonoBehaviour
     {
         SetParentTransform(newParent);
 
-		if(bagMeshIndex == 0)
-		{
-			transform.localPosition = rightHandOffset;
-		}
-		else if (bagMeshIndex == 1)
-		{
-			transform.localPosition = leftHandOffset;
-		}
+        if (bagMeshIndex == 0)
+        {
+            transform.localPosition = rightHandOffset;
+        }
+        else if (bagMeshIndex == 1)
+        {
+            transform.localPosition = leftHandOffset;
+        }
 
-		SetActiveState(newState, bagMeshIndex);
+        SetActiveState(newState, bagMeshIndex);
+    }
+
+    private void LootLootable(Lootable lootable, bool playEffect = true)
+    {
+        //Subscribe to the LootingFinished event and loot the lootable
+        lootable.OnLootingFinished += OnLootableLooted;
+        lootable.Loot(lootDestinationTransform);
+
+        if (playEffect)
+        {
+            //Call looting effect
+            GameManager.effectManager.GetEffect("LootBurst", true, transform.position, transform.rotation, transform);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -146,44 +191,85 @@ public class LootBag : MonoBehaviour
             Lootable lootable = other.GetComponent<Lootable>();
             if (lootable)
             {
-                //If it is not currently grabbed
-                //if (!lootable.GetIsGrabbed())
-                //{
-                //Loot it
-                lootable.OnLootingFinished += OnLootableLooted;
-                lootable.Loot(lootDestinationTransform);
-
-                //Call looting effect
-                GameManager.effectManager.GetEffect("LootBurst", true, transform.position, transform.rotation, transform);
-                //}
-                //else
-                //{
-                //Else, add it to the list of lootables inside the trigger
-                //lootablesInLootTrigger.Add(lootable);
-                //}
-            }
-        }
-
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (isActive)
-        {
-            Lootable lootable = other.GetComponent<Lootable>();
-            //If the exiting object is a lootable
-            if (lootable)
-            {
-                //If it is contained in the list of lootables inside the trigger
-                if (lootablesInLootTrigger.Contains(lootable))
+                switch (bagType)
                 {
-                    //Remove it from the list
-                    lootablesInLootTrigger.Remove(lootable);
+                    //If the bagType is HAND
+                    case EBagType.HAND:
+                        Debug.Log("OnTriggerEnter bagType == HAND, this is ok!");
+                        LootLootable(lootable);
+                        break;
+
+                    //If the bagType is BACK
+                    case EBagType.BACK:
+                        Debug.Log("OnTriggerEnter bagType == BACK, this is NOT ok!");
+                        if (lootable.GetIsGrabbed())
+                        {
+                            LootLootable(lootable);
+                        }
+                        break;
+
+                    default:
+                        break;
                 }
             }
         }
 
     }
+
+    private void OnLootAreaTriggerEnter(ColliderController colliderController, Collider other)
+    {
+        //If the entering object is a lootable
+        Lootable lootable = other.GetComponent<Lootable>();
+        if (lootable)
+        {
+            //If the bagType is BACK
+            if (bagType == EBagType.BACK)
+            {
+                Debug.Log("OnLootAreaTriggerEnter");
+                //If the lootable is currently grabbed
+                if (lootable.GetIsGrabbed())
+                {
+                    LootLootable(lootable, false);
+
+                    //Determine which side the lootable was looted on
+                    Transform lootingEffectMarker = null;
+
+                    if(colliderController != null)
+                    {
+                        lootingEffectMarker = colliderController.transform;
+                    }
+
+                    if (lootingEffectMarker == null)
+                    {
+                        Debug.LogError("bagType == BACK, but determining looting side failed! Check if this happens, and fix if deemed necessary");
+                        lootingEffectMarker = transform;
+                    }
+
+                    //Spawn the LootBurst effect on the appropriate location
+                    GameManager.effectManager.GetEffect("LootBurst", true, lootingEffectMarker.position, lootingEffectMarker.rotation, lootingEffectMarker);
+                }
+            }
+        }
+    }
+
+    //private void OnTriggerExit(Collider other)
+    //{
+    //    if (isActive)
+    //    {
+    //        Lootable lootable = other.GetComponent<Lootable>();
+    //        //If the exiting object is a lootable
+    //        if (lootable)
+    //        {
+    //            //If it is contained in the list of lootables inside the trigger
+    //            if (lootablesInLootTrigger.Contains(lootable))
+    //            {
+    //                //Remove it from the list
+    //                lootablesInLootTrigger.Remove(lootable);
+    //            }
+    //        }
+    //    }
+
+    //}
 
     private void OnLootableLooted(int lootValue)
     {

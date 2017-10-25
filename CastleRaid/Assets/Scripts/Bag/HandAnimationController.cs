@@ -190,4 +190,9 @@ public class HandAnimationController : MonoBehaviour
 		}
 	}
 
+    public EHandSide GetHandSide()
+    {
+        return handSide;
+    }
+
 }
