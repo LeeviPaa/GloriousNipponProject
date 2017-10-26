@@ -139,12 +139,6 @@ public class BagActivationZoneController : MonoBehaviour
                             break;
                     }
                 }
-                else
-                {
-                    Debug.Log("HandAnimationController not found, the hand is holding an interactableObject, "
-                        + "or it has held an interactable object within the last " + interactableGrabCooldown + " seconds");
-                }
-
             }
         }
     }

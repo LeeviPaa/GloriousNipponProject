@@ -71,7 +71,6 @@ public class HandAnimationController : MonoBehaviour
 
 			if (controllerReferenceFound)
 			{
-                Debug.Log("This should only happen once!");
 				controllerEvents.GripPressed -= OnGripPressed;
 				controllerEvents.GripPressed += OnGripPressed;
 				controllerEvents.GripReleased -= OnGripReleased;
