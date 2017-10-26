@@ -374,12 +374,11 @@ public class LootBag : MonoBehaviour
         AudioItem lootingFinishedAudio = GameManager.audioManager.GetAudio("LootingFinished", true, pos: transform.position);
 		lootingFinishedAudio.source.Play();
 
-		//Debug.Log("OnLootableLooted");
-		//EffectItem valueEffect = GameManager.effectManager.GetEffect("NumberDisplay", false, transform.position, transform.rotation);
-		//valueEffect.GetComponent<CreateTexture>().ChangeShowValue(lootValue);
-		//valueEffect.GetComponent<ParticleSystem>().Clear();
-		//valueEffect.GetComponent<ParticleSystem>().Play();
-	}
+        //EffectItem lootTextEffect = GameManager.effectManager.GetEffect("FadingFloatingText", true, effectSpawnTransform.position, effectSpawnTransform.rotation, effectSpawnTransform);
+        //FadingFloatingTextController textController = lootTextEffect.GetComponentInChildren<FadingFloatingTextController>();
+        //textController.InitializeText("+" + lootValue.ToString());
+
+    }
 
 	public int GetActiveState()
 	{
