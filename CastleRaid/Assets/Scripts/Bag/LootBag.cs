@@ -25,6 +25,8 @@ public class LootBag : MonoBehaviour
 	bool initialState = false;
 	List<Lootable> lootablesInLootTrigger = new List<Lootable>();
 
+    Stack<Transform> lootBurstSpawnPoints = new Stack<Transform>();
+
 	int activeState = -1;
 
 	Transform transformToFollow;
@@ -64,7 +66,7 @@ public class LootBag : MonoBehaviour
 
 	private void Start()
 	{
-		backTransformInitialized = false;
+        backTransformInitialized = false;
 
 		if (bagType == EBagType.BACK)
 		{
@@ -240,7 +242,7 @@ public class LootBag : MonoBehaviour
 		if (playEffect)
 		{
 			//Call looting effect
-			GameManager.effectManager.GetEffect("LootBurst", true, transform.position, transform.rotation, transform);
+			//GameManager.effectManager.GetEffect("LootBurst", true, transform.position, transform.rotation, transform);
 		}
 	}
 
@@ -310,9 +312,11 @@ public class LootBag : MonoBehaviour
 							lootingEffectMarker = transform;
 						}
 
-						//Spawn the LootBurst effect on the appropriate location
-						GameManager.effectManager.GetEffect("LootBurst", true, lootingEffectMarker.position, lootingEffectMarker.rotation, lootingEffectMarker);
-					}
+                        //Spawn the LootBurst effect on the appropriate location
+                        //GameManager.effectManager.GetEffect("LootBurst", true, lootingEffectMarker.position, lootingEffectMarker.rotation, lootingEffectMarker);
+
+                        lootBurstSpawnPoints.Push(lootingEffectMarker);
+                    }
 				}
 			}
 		}
@@ -354,10 +358,20 @@ public class LootBag : MonoBehaviour
 		if (OnLootableLooted != null)
 		{
 			OnLootableLooted(lootValue);
-		}
+        }
 
-		//Call appropriate visual / sound effects here if the effects are the same regardless of the lootable
-		AudioItem lootingFinishedAudio = GameManager.audioManager.GetAudio("LootingFinished", true, pos: transform.position);
+        //Call looting effect
+        Transform effectSpawnTransform = transform;
+
+        if (lootBurstSpawnPoints.Count > 0)
+        {
+             effectSpawnTransform = lootBurstSpawnPoints.Pop();
+        }
+
+        GameManager.effectManager.GetEffect("LootBurst", true, effectSpawnTransform.position, effectSpawnTransform.rotation, effectSpawnTransform);
+
+        //Call appropriate visual / sound effects here if the effects are the same regardless of the lootable
+        AudioItem lootingFinishedAudio = GameManager.audioManager.GetAudio("LootingFinished", true, pos: transform.position);
 		lootingFinishedAudio.source.Play();
 
 		//Debug.Log("OnLootableLooted");
