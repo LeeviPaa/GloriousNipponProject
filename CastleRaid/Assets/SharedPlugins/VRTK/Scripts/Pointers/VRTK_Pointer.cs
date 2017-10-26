@@ -488,14 +488,15 @@ namespace VRTK
 
         protected virtual void SubscribeActivationButton()
         {
-            if (subscribedActivationButton != VRTK_ControllerEvents.ButtonAlias.Undefined)
+			
+			if (subscribedActivationButton != VRTK_ControllerEvents.ButtonAlias.Undefined)
             {
                 UnsubscribeActivationButton();
             }
 
             if (controller != null)
             {
-                controller.SubscribeToButtonAliasEvent(activationButton, true, DoActivationButtonPressed);
+				controller.SubscribeToButtonAliasEvent(activationButton, true, DoActivationButtonPressed);
                 controller.SubscribeToButtonAliasEvent(activationButton, false, DoActivationButtonReleased);
                 subscribedActivationButton = activationButton;
             }
@@ -505,7 +506,7 @@ namespace VRTK
         {
             if (controller != null && subscribedActivationButton != VRTK_ControllerEvents.ButtonAlias.Undefined)
             {
-                controller.UnsubscribeToButtonAliasEvent(subscribedActivationButton, true, DoActivationButtonPressed);
+				controller.UnsubscribeToButtonAliasEvent(subscribedActivationButton, true, DoActivationButtonPressed);
                 controller.UnsubscribeToButtonAliasEvent(subscribedActivationButton, false, DoActivationButtonReleased);
                 subscribedActivationButton = VRTK_ControllerEvents.ButtonAlias.Undefined;
             }
@@ -513,10 +514,11 @@ namespace VRTK
 
         protected virtual void DoActivationButtonPressed(object sender, ControllerInteractionEventArgs e)
         {
-            OnActivationButtonPressed(controller.SetControllerEvent(ref activationButtonPressed, true));
+			OnActivationButtonPressed(controller.SetControllerEvent(ref activationButtonPressed, true));
+			
             if (EnabledPointerRenderer())
             {
-                controllerReference = e.controllerReference;
+				controllerReference = e.controllerReference;
                 Toggle(true);
             }
         }
