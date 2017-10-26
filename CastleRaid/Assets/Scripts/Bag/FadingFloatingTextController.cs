@@ -30,13 +30,13 @@ public class FadingFloatingTextController : MonoBehaviour
         mainCameraTransform = VRTK.VRTK_DeviceFinder.HeadsetCamera();
     }
 
-    //[AddEditorInvokeButton]
-    //void TestInitializator()
-    //{
-    //    InitializeText("Test");
-    //}
+	[AddEditorInvokeButton]
+	void TestInitializator()
+	{
+		InitializeText("+25");
+	}
 
-    public void InitializeText(string textToDisplay)
+	public void InitializeText(string textToDisplay)
     {
         textMesh = textParent.GetComponentInChildren<TextMesh>();
 

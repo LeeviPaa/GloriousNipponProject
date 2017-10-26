@@ -25,7 +25,7 @@ public class LootBag : MonoBehaviour
 	bool initialState = false;
 	List<Lootable> lootablesInLootTrigger = new List<Lootable>();
 
-    Stack<Transform> lootBurstSpawnPoints = new Stack<Transform>();
+    Queue<Transform> lootBurstSpawnPoints = new Queue<Transform>();
 
 	int activeState = -1;
 
@@ -260,13 +260,13 @@ public class LootBag : MonoBehaviour
 					{
 						//If the bagType is HAND
 						case EBagType.HAND:
-							Debug.Log("OnTriggerEnter bagType == HAND, this is ok!");
+							//Debug.Log("OnTriggerEnter bagType == HAND, this is ok!");
 							LootLootable(lootable);
 							break;
 
 						//If the bagType is BACK
 						case EBagType.BACK:
-							Debug.Log("OnTriggerEnter bagType == BACK, this is NOT ok!");
+							//Debug.Log("OnTriggerEnter bagType == BACK, this is NOT ok!");
 							if (lootable.GetIsGrabbed())
 							{
 								LootLootable(lootable);
@@ -315,7 +315,7 @@ public class LootBag : MonoBehaviour
                         //Spawn the LootBurst effect on the appropriate location
                         //GameManager.effectManager.GetEffect("LootBurst", true, lootingEffectMarker.position, lootingEffectMarker.rotation, lootingEffectMarker);
 
-                        lootBurstSpawnPoints.Push(lootingEffectMarker);
+                        lootBurstSpawnPoints.Enqueue(lootingEffectMarker);
                     }
 				}
 			}
@@ -365,20 +365,30 @@ public class LootBag : MonoBehaviour
 
         if (lootBurstSpawnPoints.Count > 0)
         {
-             effectSpawnTransform = lootBurstSpawnPoints.Pop();
+             effectSpawnTransform = lootBurstSpawnPoints.Dequeue();
         }
-
+		
         GameManager.effectManager.GetEffect("LootBurst", true, effectSpawnTransform.position, effectSpawnTransform.rotation, effectSpawnTransform);
 
         //Call appropriate visual / sound effects here if the effects are the same regardless of the lootable
         AudioItem lootingFinishedAudio = GameManager.audioManager.GetAudio("LootingFinished", true, pos: transform.position);
 		lootingFinishedAudio.source.Play();
 
-        //EffectItem lootTextEffect = GameManager.effectManager.GetEffect("FadingFloatingText", true, effectSpawnTransform.position, effectSpawnTransform.rotation, effectSpawnTransform);
-        //FadingFloatingTextController textController = lootTextEffect.GetComponentInChildren<FadingFloatingTextController>();
-        //textController.InitializeText("+" + lootValue.ToString());
+		EffectItem lootTextEffect = null;
+		if (bagType == EBagType.HAND)
+		{
+			lootTextEffect = GameManager.effectManager.GetEffect("FadingFloatingText", true, effectSpawnTransform.position + Vector3.up * 0.1f, Quaternion.identity/*, effectSpawnTransform*/);
+		}
+		else if (bagType == EBagType.BACK)
+		{
+			lootTextEffect = GameManager.effectManager.GetEffect("FadingFloatingText", true, transform.position + transform.forward * 1f + transform.up * -0.5f, transform.rotation/*, effectSpawnTransform*/);
+		}
 
-    }
+
+		FadingFloatingTextController textController = lootTextEffect.GetComponentInChildren<FadingFloatingTextController>();
+		textController.InitializeText("+" + lootValue.ToString());
+
+	}
 
 	public int GetActiveState()
 	{
