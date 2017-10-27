@@ -10,10 +10,13 @@ public abstract class LevelInstance_Game : LevelInstance
     public GameObject[] playerSpawnPoints;
     public float levelTimeLimit;
     public float levelTimeLeft = 0f;
-    public string returnScene = "MainMenu";
+    public int returnScene = 0;
+    public bool useBgmAudio;
+    public string bgmAudioName;
 
     private bool timerActive = false;
     private Transform playArea;
+    private AudioItem bgmAudio;
     #endregion
 
     #region Events
@@ -46,6 +49,7 @@ public abstract class LevelInstance_Game : LevelInstance
         playArea = VRTK_DeviceFinder.PlayAreaTransform();
         SetRandomSpawnpoint();
         StartLevel();
+        InitBgmAudio();
     }
 
     protected virtual void Update()
@@ -58,6 +62,18 @@ public abstract class LevelInstance_Game : LevelInstance
                 levelTimeLeft = 0f;
                 timerActive = false;
                 OnLevelTimeEnded(new LevelEventArgs());
+            }
+        }
+    }
+
+    protected virtual void InitBgmAudio()
+    {
+        if (useBgmAudio)
+        {
+            bgmAudio = GameManager.audioManager.GetAudio(bgmAudioName, true, false, Vector3.zero, transform);
+            if (!bgmAudio)
+            {
+                useBgmAudio = false;
             }
         }
     }

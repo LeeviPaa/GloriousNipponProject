@@ -213,9 +213,11 @@ namespace VRTK
             {
                 Destroy(canvasRigidBody);
             }
-
-            StopCoroutine(draggablePanelCreation);
-            var draggablePanel = canvas.transform.Find(CANVAS_DRAGGABLE_PANEL);
+			if (draggablePanelCreation != null)
+			{
+				StopCoroutine(draggablePanelCreation);
+			}
+			var draggablePanel = canvas.transform.Find(CANVAS_DRAGGABLE_PANEL);
             if (draggablePanel)
             {
                 Destroy(draggablePanel.gameObject);

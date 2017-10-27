@@ -8,4 +8,9 @@ public class ButtonEventRerouter : MonoBehaviour
     {
         GameManager.ChangeScene(name);
     }
+
+    public void ChangeScene(int index)
+    {
+        GameManager.ChangeScene(index);
+    }
 }

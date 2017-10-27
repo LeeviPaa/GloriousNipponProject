@@ -56,9 +56,9 @@ public class AudioManager : MonoBehaviour
     /// <param name="oneShot">Automatically return to pool after playing once.</param>
     /// <param name="parent">Parent of the object. Null attachs the object to AudioManager.</param>
     /// <param name="pos">World position.</param>
-    public AudioItem GetAudio(string name, bool oneShot, Vector3 pos, Transform parent = null)
+    public AudioItem GetAudio(string name, bool play, bool oneShot, Vector3 pos, Transform parent = null)
     {
-        return GetAudio(GetAudioIndex(name), oneShot, pos, parent);
+        return GetAudio(GetAudioIndex(name), play, oneShot, pos, parent);
     }
 
     /// <summary>
@@ -68,7 +68,7 @@ public class AudioManager : MonoBehaviour
     /// <param name="oneShot">Automatically return to pool after playing once.</param>
     /// <param name="parent">Parent of the object. Null attachs the object to AudioManager.</param>
     /// <param name="pos">World position.</param>
-    public AudioItem GetAudio(int index, bool oneShot, Vector3 pos, Transform parent = null)
+    public AudioItem GetAudio(int index, bool play, bool oneShot, Vector3 pos, Transform parent = null)
     {
         if (index < 0 || index >= _audioItemSettings.Length)
             return null;
@@ -99,7 +99,11 @@ public class AudioManager : MonoBehaviour
         audio.source.loop = _audioItemSettings[index].loop;
         audio.source.mute = _audioItemSettings[index].mute;
         audio.autoReturnAfterPlaying = oneShot;
-        audio.name = itemName + " " + _audioItemSettings[index].name;  
+        audio.name = itemName + " " + _audioItemSettings[index].name;
+        if (play)
+        {
+            audio.source.Play();
+        }
         return audio;
     }
 
