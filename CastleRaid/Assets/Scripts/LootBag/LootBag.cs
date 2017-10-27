@@ -155,12 +155,7 @@ public class LootBag : MonoBehaviour
                 if (initialized)
                 {
                     //Call bag activation sound effect
-                    AudioItem bagActivationSoundEffect = GameManager.audioManager.GetAudio("BagActivation", true, pos: transform.position);
-
-                    if (bagActivationSoundEffect)
-                    {
-                        bagActivationSoundEffect.source.Play();
-                    }
+                    AudioItem bagActivationSoundEffect = GameManager.audioManager.GetAudio("BagActivation", true, true, pos: transform.position);
                 }
             }
 			else
@@ -309,8 +304,7 @@ public class LootBag : MonoBehaviour
         GameManager.effectManager.GetEffect("LootBurst", true, effectSpawnTransform.position, effectSpawnTransform.rotation, effectSpawnTransform);
 
         //Call appropriate visual / sound effects here if the effects are the same regardless of the lootable
-        AudioItem lootingFinishedAudio = GameManager.audioManager.GetAudio("LootingFinished", true, pos: transform.position);
-		lootingFinishedAudio.source.Play();
+        AudioItem lootingFinishedAudio = GameManager.audioManager.GetAudio("LootingFinished", true, true, pos: transform.position);
 
 		EffectItem lootTextEffect = null;
 		if (bagType == EBagType.HAND)

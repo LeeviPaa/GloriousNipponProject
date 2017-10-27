@@ -68,4 +68,9 @@ public static class GameManager
     {
         SceneManager.LoadScene(name);
     }
+
+    public static void ChangeScene(int index)
+    {
+        SceneManager.LoadScene(index);
+    }
 }
