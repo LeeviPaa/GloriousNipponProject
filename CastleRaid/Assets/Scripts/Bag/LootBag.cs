@@ -381,7 +381,8 @@ public class LootBag : MonoBehaviour
 		}
 		else if (bagType == EBagType.BACK)
 		{
-			lootTextEffect = GameManager.effectManager.GetEffect("FadingFloatingText", true, transform.position + transform.forward * 1f + transform.up * -0.5f, transform.rotation/*, effectSpawnTransform*/);
+			//transform.position + transform.forward * 1f + transform.up * -0.5f
+			lootTextEffect = GameManager.effectManager.GetEffect("FadingFloatingText", true, effectSpawnTransform.position + effectSpawnTransform.up * 0.5f, effectSpawnTransform.rotation/*, effectSpawnTransform*/);
 		}
 
 

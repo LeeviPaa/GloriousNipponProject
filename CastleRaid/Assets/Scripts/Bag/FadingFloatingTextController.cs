@@ -30,11 +30,11 @@ public class FadingFloatingTextController : MonoBehaviour
         mainCameraTransform = VRTK.VRTK_DeviceFinder.HeadsetCamera();
     }
 
-	[AddEditorInvokeButton]
-	void TestInitializator()
-	{
-		InitializeText("+25");
-	}
+	//[AddEditorInvokeButton]
+	//void TestInitializator()
+	//{
+	//	InitializeText("+25");
+	//}
 
 	public void InitializeText(string textToDisplay)
     {
@@ -63,7 +63,7 @@ public class FadingFloatingTextController : MonoBehaviour
     {
         if (active)
         {
-            transform.localPosition += transform.up * finalFloatingDelta * Time.fixedDeltaTime;
+            transform.localPosition += Vector3.up * finalFloatingDelta * Time.fixedDeltaTime;
 
             Color newColor = textMesh.color;
             newColor.a -= finalFadingDelta * Time.fixedDeltaTime;
