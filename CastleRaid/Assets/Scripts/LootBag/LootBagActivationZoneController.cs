@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using VRTK;
 
-public class BagActivationZoneController : MonoBehaviour
+public class LootBagActivationZoneController : MonoBehaviour
 {
     enum EToggleType
     {
@@ -34,7 +34,7 @@ public class BagActivationZoneController : MonoBehaviour
         if (initialized)
         {
             //If the entering collider is a bagActivationTrigger
-            if (other.GetComponent<BagActivationTriggerTag>())
+            if (other.GetComponent<LootBagActivatorTriggerTag>())
             {
                 HandAnimationController handAnimationController = other.transform.parent.GetComponentInChildren<HandAnimationController>();
                 //If the entering colliders sibling transform contains a HandAnimationController,
