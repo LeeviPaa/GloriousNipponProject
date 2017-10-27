@@ -24,7 +24,6 @@ public class VRCanvasItem_DelayedButton : Selectable
     public override void OnPointerDown(PointerEventData e)
     {
         base.OnPointerDown(e);
-
         buttonPressedState = true;
     }
 

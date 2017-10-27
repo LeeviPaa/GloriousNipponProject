@@ -21,7 +21,12 @@ public class VRCanvasItem_TimeIndicator : MonoBehaviour
             }
         }
         levelInstance = ((LevelInstance_Game)GameManager.levelInstance);
-    }
+		if (!levelInstance)
+		{
+				enabled = false;
+				return;
+		}
+	}
 
     void Update()
     {
