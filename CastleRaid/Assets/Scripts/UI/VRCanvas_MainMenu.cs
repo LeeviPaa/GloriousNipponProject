@@ -4,8 +4,5 @@ using UnityEngine;
 
 public class VRCanvas_MainMenu : MonoBehaviour
 {
-    public void ButtonChangeScene(string name)
-    {
-        GameManager.ChangeScene(name);
-    }
+
 }

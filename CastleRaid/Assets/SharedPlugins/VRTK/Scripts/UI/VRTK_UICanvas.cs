@@ -22,12 +22,31 @@ namespace VRTK
         public bool clickOnPointerCollision = false;
         [Tooltip("Determines if a UI Pointer will be auto activated if a UI Pointer game object comes within the given distance of this canvas. If a value of `0` is given then no auto activation will occur.")]
         public float autoActivateWithinDistance = 0f;
+		[Tooltip("Canvas Collider z-scale world size.")]
+		public float colliderZSize = 0.1f;
 
         protected BoxCollider canvasBoxCollider;
         protected Rigidbody canvasRigidBody;
         protected Coroutine draggablePanelCreation;
         protected const string CANVAS_DRAGGABLE_PANEL = "VRTK_UICANVAS_DRAGGABLE_PANEL";
         protected const string ACTIVATOR_FRONT_TRIGGER_GAMEOBJECT = "VRTK_UICANVAS_ACTIVATOR_FRONT_TRIGGER";
+
+		public bool GetColliderState()
+		{
+			if (canvasBoxCollider)
+			{
+				return canvasBoxCollider.enabled;
+			}
+			return false;
+		}
+
+		public void SetColliderState(bool active)
+		{
+			if (canvasBoxCollider)
+			{
+				canvasBoxCollider.enabled = active;
+			}
+		}
 
         protected virtual void OnEnable()
         {
@@ -92,12 +111,11 @@ namespace VRTK
                 defaultRaycaster.enabled = false;
             }
 
-            //add a box collider and background image to ensure the rays always hit
-            if (!canvas.gameObject.GetComponent<BoxCollider>())
-            {
-                Vector2 pivot = canvasRectTransform.pivot;
-                float zSize = 0.1f;
-                float zScale = zSize / canvasRectTransform.localScale.z;
+			//add a box collider and background image to ensure the rays always hit
+			if (!canvas.gameObject.GetComponent<BoxCollider>())
+			{
+				Vector2 pivot = canvasRectTransform.pivot;
+				float zScale = colliderZSize / canvasRectTransform.localScale.z;
 
                 canvasBoxCollider = canvas.gameObject.AddComponent<BoxCollider>();
                 canvasBoxCollider.size = new Vector3(canvasSize.x, canvasSize.y, zScale);

@@ -20,23 +20,27 @@ public class HandAnimationController : MonoBehaviour
 
 	GameObject controllerObject;
 	VRTK_ControllerEvents controllerEvents;
-	bool controllerReferenceFound = false;
+    VRTK_InteractGrab controllerGrabScript;
+    bool controllerReferenceFound = false;
 
 	bool holdingLootBag;
-
-	GameObject vrtk_grabber;
 
 	float closedValueDelta = 10f;
 	float closedValueThreshold = 1f;
 	float openValueThreshold = 0f;
-	int closingState = 0; //0 = not currently chaning, 1 = closing, 2 = opening
+	int closingState = 0; //0 = not currently changing, 1 = closing, 2 = opening
 	float closedValue = -1f;
+
+    bool isGrabbingInteractable = false;
+    float grabEndTime = 0f;
 
 	private void OnEnable()
 	{
 		closingState = 0;
 		closedValue = 0f;
-		handAnimator = GetComponent<Animator>();
+        isGrabbingInteractable = false;
+        grabEndTime = Time.time;
+        handAnimator = GetComponent<Animator>();
 		//lootBag.OnLootBagActiveStateChange += OnLootBagActiveStateChange;
 
 		controllerReferenceFound = false;
@@ -50,10 +54,16 @@ public class HandAnimationController : MonoBehaviour
 		{
 			controllerEvents.GripPressed -= OnGripPressed;
 			controllerEvents.GripReleased -= OnGripReleased;
-		}
-	}
+        }
 
-	private void Update()
+        if (controllerGrabScript)
+        {
+            controllerGrabScript.ControllerGrabInteractableObject -= OnControllerGrabInteractableObject;
+            controllerGrabScript.ControllerUngrabInteractableObject -= OnControllerUngrabInteractableObject;
+        }
+    }
+
+    private void Update()
 	{
 		if (!controllerReferenceFound)
 		{
@@ -65,7 +75,12 @@ public class HandAnimationController : MonoBehaviour
 				controllerEvents.GripPressed += OnGripPressed;
 				controllerEvents.GripReleased -= OnGripReleased;
 				controllerEvents.GripReleased += OnGripReleased;
-			}
+
+                controllerGrabScript.ControllerGrabInteractableObject -= OnControllerGrabInteractableObject;
+                controllerGrabScript.ControllerGrabInteractableObject += OnControllerGrabInteractableObject;
+                controllerGrabScript.ControllerUngrabInteractableObject -= OnControllerUngrabInteractableObject;
+                controllerGrabScript.ControllerUngrabInteractableObject += OnControllerUngrabInteractableObject;
+            }
 		}
 
 		if (closingState == 1)
@@ -111,9 +126,11 @@ public class HandAnimationController : MonoBehaviour
 		if (controllerObject != null)
 		{
 			controllerEvents = controllerObject.GetComponent<VRTK_ControllerEvents>();
-		}
+            controllerGrabScript = controllerObject.GetComponent<VRTK_InteractGrab>();
 
-		if (controllerEvents)
+        }
+
+		if (controllerEvents && controllerGrabScript)
 		{
 			controllerReferenceFound = true;
 		}
@@ -139,7 +156,7 @@ public class HandAnimationController : MonoBehaviour
 		//}
 
 		closingState = 2;
-	}
+    }
 
 	private void OnLootBagActiveStateChange(bool bagActive, int bagMesh)
 	{
@@ -188,6 +205,32 @@ public class HandAnimationController : MonoBehaviour
 				//}
 			}
 		}
-	}
+    }
+
+    void OnControllerGrabInteractableObject(object sender, ObjectInteractEventArgs e)
+    {
+        isGrabbingInteractable = true;
+    }
+
+    void OnControllerUngrabInteractableObject(object sender, ObjectInteractEventArgs e)
+    {
+        grabEndTime = Time.time;
+        isGrabbingInteractable = false;
+    }
+
+    public EHandSide GetHandSide()
+    {
+        return handSide;
+    }
+
+    public bool GetIsGrabbingInteractable()
+    {
+        return isGrabbingInteractable;
+    }
+
+    public float GetGrabEndTime()
+    {
+        return grabEndTime;
+    }
 
 }

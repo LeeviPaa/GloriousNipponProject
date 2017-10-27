@@ -27,8 +27,9 @@ public class Lootable : MonoBehaviour
     //TODO: Ensure that the lootable is ungrabbed when the lootBag starts looting it!
 
 	private void Start()
-	{
-		minimizingToBag = false;
+    {
+        isLooted = false;
+        minimizingToBag = false;
 	}
 
 	void OnEnable()
@@ -104,15 +105,18 @@ public class Lootable : MonoBehaviour
 
 	public void Loot(Transform lootingPoint)
 	{
-        //Set the lootable state to is looted
-        isLooted = true;
+        if (!isLooted)
+        {
+            //Set the lootable state to is looted
+            isLooted = true;
 
-		//Start the loot "animation"
-		minimizingToBag = true;
-		transform.SetParent(lootingPoint);
-		minimizingStartPos = transform.localPosition;
-		minimizingStartScale = transform.localScale;
-		minimizingStartTime = Time.time;
+            //Start the loot "animation"
+            minimizingToBag = true;
+            transform.SetParent(lootingPoint);
+            minimizingStartPos = transform.localPosition;
+            minimizingStartScale = transform.localScale;
+            minimizingStartTime = Time.time;
+        }
 	}
 
 	private void MinimizeToLootBag()
@@ -149,6 +153,11 @@ public class Lootable : MonoBehaviour
 		{
 			MinimizeToLootBag();
 		}
+	}
+
+	public bool GetIsLooted()
+	{
+		return isLooted;
 	}
 
 }
