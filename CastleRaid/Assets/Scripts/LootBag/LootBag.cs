@@ -26,18 +26,10 @@ public class LootBag : MonoBehaviour
 	List<Lootable> lootablesInLootTrigger = new List<Lootable>();
 
     Queue<Transform> lootBurstSpawnPoints = new Queue<Transform>();
-
-	int activeState = -1;
-
 	Transform transformToFollow;
 
-	//Change these to not be static
-	//Allow linking of lootBags
-	//When ever one of the lootBags loots something, update it to all the linked lootbags (create and subscribe to onLootLooted event on all linked lootBags)
-	//static int lootCount = -1;
-	//static int lootTotalValue = -1;
-
-	bool isActive = false;
+    int activeState = -1;
+    bool isActive = false;
 	bool backTransformInitialized = false;
 
 	[SerializeField]
@@ -45,12 +37,9 @@ public class LootBag : MonoBehaviour
 	[SerializeField]
 	Vector3 leftHandOffset;
 
-	//[SerializeField]
-	//LootBagController lootBagController;
+    bool initialized = false;
 
 	public delegate void IntVoid(int integer);
-	//public event IntVoid OnLootCountChange;
-	//public event IntVoid OnLootTotalValueChange;
 	public event IntVoid OnLootableLooted;
 
 	public delegate void BoolIntVoid(bool boolean, int integer);
@@ -84,9 +73,6 @@ public class LootBag : MonoBehaviour
 						+ "(Detecting separate trigger events requires the ColliderController script on the triggers)");
 				}
 			}
-
-
-
 		}
 
 		int count = bagMeshes.Length;
@@ -96,25 +82,17 @@ public class LootBag : MonoBehaviour
 			SetActiveState(initialState, i);
 		}
 
-		//lootCount = 0;
-		//lootTotalValue = 0;
-	}
+        initialized = true;
+    }
 
 	private void Update()
 	{
-		//if (Input.GetKeyDown(KeyCode.J))
-		//{
-		//	OnLootableLooted(25);
-		//}
-
 		if (bagType == EBagType.BACK && !backTransformInitialized)
 		{
 			Transform vrCameraTransform = VRTK_DeviceFinder.HeadsetCamera();
 
 			if (vrCameraTransform != null)
 			{
-				//SetParentTransform(vrCameraTransform);
-
 				transformToFollow = vrCameraTransform;
 				backTransformInitialized = true;
 			}
@@ -131,26 +109,6 @@ public class LootBag : MonoBehaviour
 			finalRotation.z = 0;
 			transform.rotation = Quaternion.Euler(finalRotation);
 		}
-
-		//    if (isActive)
-		//    {
-		//        //If there are any items in the list of lootables inside the looting trigger
-		//        int count = lootablesInLootTrigger.Count;
-		//        if (count > 0)
-		//        {
-		//            //Loop through all of them one by one
-		//            for (int i = 0; i < count; i++)
-		//            {
-		//                //If the object is not currently grabbed
-		//                if (!lootablesInLootTrigger[i].GetIsGrabbed())
-		//                {
-		//                    //Loot it and remove it from the list
-		//                    LootLootable(lootablesInLootTrigger[i]);
-		//                    lootablesInLootTrigger.RemoveAt(i);
-		//                }
-		//            }
-		//        }
-		//    }
 	}
 
 	public void SetParentTransform(Transform newParent)
@@ -192,8 +150,19 @@ public class LootBag : MonoBehaviour
 					{
 						bagMeshes[bagMeshIndex].SetActive(true);
 					}
-				}
-			}
+                }
+
+                if (initialized)
+                {
+                    //Call bag activation sound effect
+                    AudioItem bagActivationSoundEffect = GameManager.audioManager.GetAudio("BagActivation", true, pos: transform.position);
+
+                    if (bagActivationSoundEffect)
+                    {
+                        bagActivationSoundEffect.source.Play();
+                    }
+                }
+            }
 			else
 			{
 				int count = lootAreaTriggers.Length;
@@ -239,12 +208,12 @@ public class LootBag : MonoBehaviour
 		lootable.OnLootingFinished += OnLootingFinished;
 		lootable.Loot(lootDestinationTransform);
 
-		if (playEffect)
-		{
-			//Call looting effect
-			//GameManager.effectManager.GetEffect("LootBurst", true, transform.position, transform.rotation, transform);
-		}
-	}
+        //if (playEffect)
+        //{
+        //    //Call looting effect
+        //    GameManager.effectManager.GetEffect("LootBurst", true, transform.position, transform.rotation, transform);
+        //}
+    }
 
 	private void OnTriggerEnter(Collider other)
 	{
@@ -322,39 +291,8 @@ public class LootBag : MonoBehaviour
 		}
 	}
 
-	//private void OnTriggerExit(Collider other)
-	//{
-	//    if (isActive)
-	//    {
-	//        Lootable lootable = other.GetComponent<Lootable>();
-	//        //If the exiting object is a lootable
-	//        if (lootable)
-	//        {
-	//            //If it is contained in the list of lootables inside the trigger
-	//            if (lootablesInLootTrigger.Contains(lootable))
-	//            {
-	//                //Remove it from the list
-	//                lootablesInLootTrigger.Remove(lootable);
-	//            }
-	//        }
-	//    }
-
-	//}
-
 	private void OnLootingFinished(int lootValue)
 	{
-		//lootCount++;
-		//if (OnLootCountChange != null)
-		//{
-		//	OnLootCountChange(lootCount);
-		//}
-
-		//lootTotalValue += lootValue;
-		//if (OnLootTotalValueChange != null)
-		//{
-		//	OnLootTotalValueChange(lootTotalValue);
-		//}
-
 		if (OnLootableLooted != null)
 		{
 			OnLootableLooted(lootValue);
