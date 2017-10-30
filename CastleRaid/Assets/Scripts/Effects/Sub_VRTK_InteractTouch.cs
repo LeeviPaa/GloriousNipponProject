@@ -5,10 +5,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using VRTK;
 
-public class Sub_VRTK_InteractTouch : VRTK_InteractTouch {
+public class Sub_VRTK_InteractTouch : VRTK_InteractTouch
+{
 
     [SerializeField]
-    [ColorUsage(false,true,0f,10f,0.125f,3f)]
+    [ColorUsage(false, true, 0f, 10f, 0.125f, 3f)]
     private Color climbableIndicateColor;
 
     protected override void OnTriggerStay(Collider collider)
