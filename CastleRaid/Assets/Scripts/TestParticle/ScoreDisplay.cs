@@ -11,13 +11,6 @@ public class ScoreDisplay : MonoBehaviour
 	float upScale = 5.0f;
 	bool isFadeing = false;
 
-
-	// Use this for initialization
-	void Start()
-	{
-		DisplayScore(300);
-	}
-
 	// Update is called once per frame
 	void Update()
 	{
