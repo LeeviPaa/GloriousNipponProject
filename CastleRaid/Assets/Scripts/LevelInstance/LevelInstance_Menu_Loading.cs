@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LevelInstance_Level01 : LevelInstance_Game
+public class LevelInstance_Menu_Loading : LevelInstance_Menu
 {
-	
+    
 }

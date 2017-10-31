@@ -4,7 +4,7 @@ using UnityEngine;
 using VRTK;
 
 [RequireComponent(typeof(CanvasGroup))]
-public class VRCanvas_Hand : MonoBehaviour
+public class VRCanvas_Hand : VRCanvas
 {
     [Tooltip("Angle after fading out is complete")]
     public float fadeCompleteAngleLimit;
@@ -14,28 +14,24 @@ public class VRCanvas_Hand : MonoBehaviour
     private Transform headset;
     private CanvasGroup canvasGroup;
 
-    protected virtual void Awake()
+    protected override void Start()
     {
-        VRTK_SDKManager.instance.AddBehaviourToToggleOnLoadedSetupChange(this);
-    }
+        base.Start();
 
-    protected virtual void Start()
-    {
         canvasGroup = GetComponent<CanvasGroup>();
     }
 
-    protected virtual void OnEnable()
+    protected override void OnEnable()
     {
+        base.OnEnable();
+
         headset = VRTK_DeviceFinder.HeadsetCamera();
     }
 
-    protected virtual void OnDisable()
+    protected override void Update()
     {
-        
-    }
+        base.Update();
 
-    protected virtual void Update()
-    {
         if (headset)
         {
             float angle = Vector3.Angle(transform.forward, transform.position - headset.transform.position);
