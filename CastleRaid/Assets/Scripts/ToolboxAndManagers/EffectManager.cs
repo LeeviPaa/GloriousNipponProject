@@ -10,6 +10,8 @@ public class EffectManager : MonoBehaviour
 
     void Awake()
     {
+        GameManager.effectManager = this;
+
         effectPool = new List<EffectItem>[effectPoolSettings.Length];
         for (int i = 0; i < effectPoolSettings.Length; i++)
         {

@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class TestScript1 : MonoBehaviour {
+public class TestScript1 : MonoBehaviour
+{
 
     EventManager E;
-    
+
     private void Start()
     {
 
@@ -14,9 +15,15 @@ public class TestScript1 : MonoBehaviour {
     }
     private void Update()
     {
-        if(Input.GetButton("Jump"))
+        if (Input.GetButton("Jump"))
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
+    }
+
+    [AddEditorInvokeButton]
+    public void LoadMenuSceneForTest()
+    {
+        GameManager.ChangeScene("MainMenu");
     }
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class VRCanvas_MainMenu : MonoBehaviour
+public class VRCanvas_MainMenu : VRCanvas
 {
 
 }

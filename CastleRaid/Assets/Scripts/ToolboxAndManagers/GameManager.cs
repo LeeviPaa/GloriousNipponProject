@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Events;
 
 public static class GameManager
 {
@@ -9,68 +10,104 @@ public static class GameManager
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
         SceneManager.sceneUnloaded += OnSceneUnloaded;
-        OnSceneLoaded(SceneManager.GetActiveScene(), LoadSceneMode.Single);
     }
+    public delegate void SceneLoadDelegate(Scene scene, LoadSceneMode mode);
+    public static event SceneLoadDelegate sceneLoaded;
 
-    public static LevelInstance levelInstance
+    public delegate void SceneUnloadDelegate(Scene scene);
+    public static event SceneUnloadDelegate sceneUnloaded;
+
+    public delegate void MonoEventDelegate();
+    public static event MonoEventDelegate levelAwake;
+    public static event MonoEventDelegate levelStart;
+    public static event MonoEventDelegate levelUpdate;
+
+    public static LevelInstance levelInstance;
+    public static EffectManager effectManager;
+    public static AudioManager audioManager;
+
+    public static SceneLoader sceneLoader;
+
+    public static void OnLevelAwake()
     {
-        get
+        if (levelAwake != null)
         {
-            if (!_levelInstance)
-            {
-                _levelInstance = Object.FindObjectOfType<LevelInstance>();
-            }
-            return _levelInstance;
+            levelAwake.Invoke();
         }
     }
 
-    private static LevelInstance _levelInstance;
-
-    public static EffectManager effectManager
+    public static void OnLevelStart()
     {
-        get
+        if (levelStart != null)
         {
-            if (!_effectManager)
-            {
-                _effectManager = Object.FindObjectOfType<EffectManager>();
-            }
-            return _effectManager;
+            levelStart.Invoke();
         }
     }
 
-    private static EffectManager _effectManager;
-
-    public static AudioManager audioManager
+    public static void OnLevelUpdate()
     {
-        get
+        if (levelUpdate != null)
         {
-            if (!_audioManager)
-            {
-                _audioManager = Object.FindObjectOfType<AudioManager>();
-            }
-            return _audioManager;
+            levelUpdate.Invoke();
         }
     }
-
-    private static AudioManager _audioManager;
 
     static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-
+        if (sceneLoaded != null)
+        {
+            sceneLoaded.Invoke(scene, mode);
+        }
     }
 
     static void OnSceneUnloaded(Scene scene)
     {
-
+        if (sceneLoaded != null)
+        {
+            sceneUnloaded.Invoke(scene);
+        }
     }
 
     public static void ChangeScene(string name)
     {
-        SceneManager.LoadScene(name);
+        Scene scene = SceneManager.GetSceneByName(name);
+        if (scene.IsValid())
+        {
+            ChangeScene(scene);
+        }
+        else
+        {
+            Debug.LogWarning("Scene with name [" + name + "] was not found");
+        }
     }
 
     public static void ChangeScene(int index)
     {
-        SceneManager.LoadScene(index);
+        Scene scene = SceneManager.GetSceneByBuildIndex(index);
+        if (scene.IsValid())
+        {
+            ChangeScene(scene);
+        }
+        else
+        {
+            Debug.LogWarning("Scene with index [" + index + "] was not found");
+        }
+    }
+
+    static void ChangeScene(Scene scene)
+    {
+        if (!sceneLoader)
+        {
+            sceneLoader = new GameObject("SceneLoader", typeof(SceneLoader)).GetComponent<SceneLoader>();
+            sceneLoader.Begin(scene.name);
+            //sceneLoader.loadCompleted += () =>
+            //{
+
+            //};
+        }
+        else
+        {
+            Debug.LogWarning("Scene loading is already in progress.");
+        }
     }
 }
