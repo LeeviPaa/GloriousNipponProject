@@ -6,7 +6,10 @@ public class Sub_VRTK_InteractGrab : VRTK_InteractGrab
 {
     void Start()
     {
-
+        var device0 = SteamVR_Controller.Input(0);
+        device0.TriggerHapticPulse(2000);
+        var device1 = SteamVR_Controller.Input(1);
+        device1.TriggerHapticPulse(2000);
     }
     protected override void OnEnable()
     {
@@ -31,8 +34,10 @@ public class Sub_VRTK_InteractGrab : VRTK_InteractGrab
         if (grabbedObject)
             if (grabbedObject.GetComponent<VRTK.GrabAttachMechanics.VRTK_ClimbableGrabAttach>())
             {
-                print("Viveration!!");
-                SteamVR_Controller.Input((int)VRTK_DeviceFinder.GetControllerHand(gameObject)).TriggerHapticPulse(100);
+                SDK_BaseController.ControllerHand hand = VRTK_DeviceFinder.GetControllerHand(gameObject);
+                var device = SteamVR_Controller.Input((int)hand);
+                device.TriggerHapticPulse(2000);
+                print(device.ToString()+hand.ToString() + " Viveration!!");
             }
     }
 }
