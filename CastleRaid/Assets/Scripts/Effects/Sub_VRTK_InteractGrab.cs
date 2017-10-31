@@ -12,18 +12,27 @@ public class Sub_VRTK_InteractGrab : VRTK_InteractGrab
     {
         base.OnEnable();
 
-        GetComponent<VRTK_ControllerEvents>().GripPressed += OnGrabbed;
-        
+        var e = GetComponent<VRTK_ControllerEvents>();
+        if (e)
+            e.GripPressed += OnGrabbed;
+
     }
 
     protected override void OnDisable()
     {
         base.OnDisable();
-        GetComponent<VRTK_ControllerEvents>().GripPressed -= OnGrabbed;
+        var e = GetComponent<VRTK_ControllerEvents>();
+        if (e)
+            e.GripPressed -= OnGrabbed;
 
     }
     private void OnGrabbed(object sender, ControllerInteractionEventArgs e)
     {
-        print("Grabbed");
+        if (grabbedObject)
+            if (grabbedObject.GetComponent<VRTK.GrabAttachMechanics.VRTK_ClimbableGrabAttach>())
+            {
+                print("Viveration!!");
+                SteamVR_Controller.Input((int)VRTK_DeviceFinder.GetControllerHand(gameObject)).TriggerHapticPulse(100);
+            }
     }
 }
