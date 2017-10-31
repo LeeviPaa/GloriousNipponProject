@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using VRTK;
 
-public class ClimbingInteractor : MonoBehaviour
+public class ClimbingIndicator : MonoBehaviour
 {
     [SerializeField]
     GameObject[] hands;
