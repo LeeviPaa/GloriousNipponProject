@@ -5,9 +5,9 @@ using VRTK;
 
 public abstract class LevelInstance : MonoBehaviour
 {
-    private VRTK_HeadsetFade headsetFade;
-
-    private Color headsetFadeColor = Color.black;
+    protected VRTK_HeadsetFade headsetFade;
+	protected Color headsetFadeColor = Color.black;
+	protected Transform playArea;
 
     protected virtual void Awake()
     {
@@ -40,7 +40,8 @@ public abstract class LevelInstance : MonoBehaviour
 
     protected virtual void OnEnable()
     {
-        headsetFade = VRTK_DeviceFinder.PlayAreaTransform().GetComponent<VRTK_HeadsetFade>();
+		playArea = VRTK_DeviceFinder.PlayAreaTransform();
+		headsetFade = playArea.GetComponent<VRTK_HeadsetFade>();
     }
 
     protected virtual void OnDisable()

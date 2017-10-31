@@ -68,38 +68,17 @@ public static class GameManager
         }
     }
 
-    public static void ChangeScene(string name)
-    {
-        Scene scene = SceneManager.GetSceneByName(name);
-        if (scene.IsValid())
-        {
-            ChangeScene(scene);
-        }
-        else
-        {
-            Debug.LogWarning("Scene with name [" + name + "] was not found");
-        }
-    }
-
     public static void ChangeScene(int index)
     {
-        Scene scene = SceneManager.GetSceneByBuildIndex(index);
-        if (scene.IsValid())
-        {
-            ChangeScene(scene);
-        }
-        else
-        {
-            Debug.LogWarning("Scene with index [" + index + "] was not found");
-        }
+        Debug.LogError("prkl");
     }
 
-    static void ChangeScene(Scene scene)
+    public static void ChangeScene(string scene)
     {
         if (!sceneLoader)
         {
             sceneLoader = new GameObject("SceneLoader", typeof(SceneLoader)).GetComponent<SceneLoader>();
-            sceneLoader.Begin(scene.name);
+            sceneLoader.Begin(scene);
             //sceneLoader.loadCompleted += () =>
             //{
 
