@@ -13,7 +13,7 @@ public class SceneLoader : MonoBehaviour
     private bool loadTargetScene;
 
     private const string loadingSceneName = "Loading";
-    private const float sceneChangingWaitTime = 0.5f;
+    private const float sceneChangingWaitTime = 1f;
 
     public void Begin(string sceneName)
     {
@@ -87,6 +87,11 @@ public class SceneLoader : MonoBehaviour
         GameManager.levelInstance.ScreenFade(sceneChangingWaitTime);
         yield return new WaitForSeconds(sceneChangingWaitTime);
         loadOperation.allowSceneActivation = true;
-        loadOperation = null;
-    }
+		while (!loadOperation.isDone)
+		{
+			yield return null;
+		}
+
+		loadOperation = null;
+	}
 }
