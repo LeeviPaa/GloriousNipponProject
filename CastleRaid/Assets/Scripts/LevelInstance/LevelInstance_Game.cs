@@ -15,7 +15,6 @@ public abstract class LevelInstance_Game : LevelInstance
     public string bgmAudioName;
 
     private bool timerActive = false;
-    private Transform playArea;
     private AudioItem bgmAudio;
     #endregion
 
@@ -37,23 +36,28 @@ public abstract class LevelInstance_Game : LevelInstance
     }
     #endregion
 
-    protected virtual void Awake()
+    protected override void Awake()
     {
-        levelTimeLeft = levelTimeLimit;
+		base.Awake();
+
+		levelTimeLeft = levelTimeLimit;
 
         levelTimeEnded += EndScene;
     }
 
-    protected virtual void Start()
+    protected override void Start()
     {
-        playArea = VRTK_DeviceFinder.PlayAreaTransform();
+		base.Start();
+
         SetRandomSpawnpoint();
         StartLevel();
         InitBgmAudio();
     }
 
-    protected virtual void Update()
+    protected override void Update()
     {
+		base.Update();
+
         if (timerActive && levelTimeLimit != 0f)
         {
             levelTimeLeft -= Time.deltaTime;

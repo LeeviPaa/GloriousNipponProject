@@ -4,13 +4,14 @@ using UnityEngine;
 using VRTK;
 using UnityEngine.UI;
 
-public class VRCanvas_DebugHUD : MonoBehaviour
+public class VRCanvas_DebugHUD : VRCanvas
 {
-    public Canvas canvas;
     public Text timerText;
 
-    void Start()
+    protected override void Start()
     {
+        base.Start();
+
         if (canvas != null)
         {
             canvas.planeDistance = 0.5f;
@@ -23,8 +24,10 @@ public class VRCanvas_DebugHUD : MonoBehaviour
         }
     }
 
-    void Update()
+    protected override void Update()
     {
+        base.Update();
+
         timerText.text = ((LevelInstance_Game)GameManager.levelInstance).levelTimeLeft.ToString();
     }
 }

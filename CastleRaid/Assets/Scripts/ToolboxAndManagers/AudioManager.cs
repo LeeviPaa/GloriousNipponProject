@@ -30,6 +30,8 @@ public class AudioManager : MonoBehaviour
 
     void Awake()
     {
+        GameManager.audioManager = this;
+
         for (int i = 0; i < _poolSize; i++)
         {
             AddAudioItem();
