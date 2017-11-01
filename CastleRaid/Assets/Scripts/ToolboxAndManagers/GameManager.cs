@@ -70,12 +70,13 @@ public static class GameManager
 
     public static void ChangeScene(int index)
     {
-        Debug.LogError("prkl");
+        SceneManager.LoadSceneAsync(index);
     }
 
     public static void ChangeScene(string scene)
     {
-        if (!sceneLoader)
+        SceneManager.LoadSceneAsync(scene);
+        /*if (!sceneLoader)
         {
             sceneLoader = new GameObject("SceneLoader", typeof(SceneLoader)).GetComponent<SceneLoader>();
             sceneLoader.Begin(scene);
@@ -87,6 +88,6 @@ public static class GameManager
         else
         {
             Debug.LogWarning("Scene loading is already in progress.");
-        }
+        }*/
     }
 }

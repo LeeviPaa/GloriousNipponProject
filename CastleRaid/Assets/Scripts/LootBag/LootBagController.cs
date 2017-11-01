@@ -16,11 +16,14 @@ public class LootBagController : MonoBehaviour
 	public event IntVoid OnLootCountChange;
 	public event IntVoid OnLootTotalValueChange;
 
-	private void Start()
+    public const string lootTotalValueSaveKey = "TotalLootValue";
+
+    private void Start()
 	{
 		lootCount = 0;
 		lootTotalValue = 0;
-	}
+        ((LevelInstance_Game)GameManager.levelInstance).levelTimeEnded += OnLevelTimeEnd;
+    }
 
 	private void OnEnable()
 	{
@@ -74,4 +77,9 @@ public class LootBagController : MonoBehaviour
 	{
 		return lootTotalValue;
 	}
+
+    void OnLevelTimeEnd(object sender, LevelInstance_Game.LevelEventArgs e)
+    {
+        DataStorage.StoreData(lootTotalValueSaveKey, lootTotalValue);
+    }
 }
