@@ -10,7 +10,7 @@ public abstract class LevelInstance_Game : LevelInstance
     public GameObject[] playerSpawnPoints;
     public float levelTimeLimit;
     public float levelTimeLeft = 0f;
-    public int returnScene = 0;
+    public string completeScene = "LevelComplete";
     public bool useBgmAudio;
     public string bgmAudioName;
 
@@ -24,7 +24,7 @@ public abstract class LevelInstance_Game : LevelInstance
 
     public class LevelEventArgs : EventArgs
     {
-
+       
     }
 
     protected virtual void OnLevelTimeEnded(LevelEventArgs e)
@@ -33,6 +33,8 @@ public abstract class LevelInstance_Game : LevelInstance
         {
             levelTimeEnded(this, e);
         }
+
+		EndScene();
     }
     #endregion
 
@@ -41,8 +43,6 @@ public abstract class LevelInstance_Game : LevelInstance
 		base.Awake();
 
 		levelTimeLeft = levelTimeLimit;
-
-        levelTimeEnded += EndScene;
     }
 
     protected override void Start()
@@ -90,9 +90,9 @@ public abstract class LevelInstance_Game : LevelInstance
         }
     }
 
-    protected virtual void EndScene(object sender, LevelEventArgs e)
+    protected virtual void EndScene()
     {
-        GameManager.ChangeScene(returnScene);
+        GameManager.ChangeScene(completeScene);
     }
 
     public virtual void StartLevel()

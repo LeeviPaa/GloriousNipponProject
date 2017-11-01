@@ -1,29 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using VRTK;
 
 public class TestScript1 : MonoBehaviour
 {
+	public Transform playArea;
 
-    EventManager E;
-
-    private void Start()
+	[AddEditorInvokeButton]
+    public void FadeTest()
     {
-
-        E = Toolbox.RegisterComponent<EventManager>();
-    }
-    private void Update()
-    {
-        if (Input.GetButton("Jump"))
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        }
-    }
-
-    [AddEditorInvokeButton]
-    public void LoadMenuSceneForTest()
-    {
-        GameManager.ChangeScene("MainMenu");
+		VRTK_HeadsetFade fadez = playArea.GetComponent<VRTK_HeadsetFade>();
+		fadez.Fade(Color.black, 5f);
     }
 }
