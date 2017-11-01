@@ -26,7 +26,8 @@ public class LootShower : MonoBehaviour
             lootTotalValue = (int)data;
         }
         spawnTimer = spawnInterval;
-        lootCurrentValue = lootTotalValue;
+		lootTotalValue = 2000;
+		lootCurrentValue = 0;
     }
 
     void Update()
@@ -37,7 +38,9 @@ public class LootShower : MonoBehaviour
                 if (lootCurrentValue < lootTotalValue)
                 {
                     lootCurrentValue += lootDrainSpeed * Time.deltaTime;
-                    if (lootCurrentValue >= lootTotalValue)
+					spawnTimer -= Time.deltaTime;
+
+					if (lootCurrentValue >= lootTotalValue)
                     {
                         FinishCurrentState();
                     }
@@ -47,9 +50,10 @@ public class LootShower : MonoBehaviour
                     if (spawnTimer <= 0f)
                     {
                         float x = Random.Range(-spawnAreaExtents.x / 2, spawnAreaExtents.x / 2);
-                        float y = Random.Range(-spawnAreaExtents.y / 2, spawnAreaExtents.y / 2);
-                        Vector3 pos = spawnAreaCenter.position + new Vector3(x, y, 0f);
-                        Instantiate(lootPrefabs[Random.Range(0, lootPrefabs.Length)]);
+                        float z = Random.Range(-spawnAreaExtents.y / 2, spawnAreaExtents.y / 2);
+                        Vector3 pos = spawnAreaCenter.position + new Vector3(x, 0f, z);
+                        Instantiate(lootPrefabs[Random.Range(0, lootPrefabs.Length)], pos, Random.rotation);
+						spawnTimer = spawnInterval;
                     }
                 }
                 break;
@@ -64,7 +68,7 @@ public class LootShower : MonoBehaviour
         switch (state)
         {
             case 0:
-                lootCurrentValue = 0f;
+                lootCurrentValue = lootTotalValue;
                 buttonText.text = "Continue";
                 break;
 

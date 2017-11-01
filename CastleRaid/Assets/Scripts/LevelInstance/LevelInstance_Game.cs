@@ -33,6 +33,8 @@ public abstract class LevelInstance_Game : LevelInstance
         {
             levelTimeEnded(this, e);
         }
+
+		EndScene();
     }
     #endregion
 
@@ -41,8 +43,6 @@ public abstract class LevelInstance_Game : LevelInstance
 		base.Awake();
 
 		levelTimeLeft = levelTimeLimit;
-
-        levelTimeEnded += EndScene;
     }
 
     protected override void Start()
@@ -90,7 +90,7 @@ public abstract class LevelInstance_Game : LevelInstance
         }
     }
 
-    protected virtual void EndScene(object sender, LevelEventArgs e)
+    protected virtual void EndScene()
     {
         GameManager.ChangeScene(completeScene);
     }
