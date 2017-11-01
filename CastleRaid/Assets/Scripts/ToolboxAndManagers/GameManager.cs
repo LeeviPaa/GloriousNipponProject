@@ -70,24 +70,20 @@ public static class GameManager
 
     public static void ChangeScene(int index)
     {
-        SceneManager.LoadSceneAsync(index);
+		string[] splitPath = SceneUtility.GetScenePathByBuildIndex(index).Split('/');
+		ChangeScene(splitPath[splitPath.Length - 1]);
     }
 
     public static void ChangeScene(string scene)
     {
-        SceneManager.LoadSceneAsync(scene);
-        /*if (!sceneLoader)
+        if (!sceneLoader)
         {
             sceneLoader = new GameObject("SceneLoader", typeof(SceneLoader)).GetComponent<SceneLoader>();
             sceneLoader.Begin(scene);
-            //sceneLoader.loadCompleted += () =>
-            //{
-
-            //};
         }
         else
         {
             Debug.LogWarning("Scene loading is already in progress.");
-        }*/
+        }
     }
 }

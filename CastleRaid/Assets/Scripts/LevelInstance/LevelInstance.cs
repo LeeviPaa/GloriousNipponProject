@@ -29,13 +29,15 @@ public abstract class LevelInstance : MonoBehaviour
 
     public virtual void ScreenFade(float duration)
     {
+		print(headsetFade + " fade");
         if (headsetFade)
             headsetFade.Fade(headsetFadeColor, duration);
     }
 
     public virtual void ScreenUnfade(float duration)
     {
-        if (headsetFade)
+		print(headsetFade + " unfade");
+		if (headsetFade)
             headsetFade.Unfade(duration);
     }
 

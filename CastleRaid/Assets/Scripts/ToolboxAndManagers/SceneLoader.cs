@@ -83,7 +83,6 @@ public class SceneLoader : MonoBehaviour
             }
             yield return null;
         }
-        GameManager.levelInstance.ScreenUnfade(0f);
         GameManager.levelInstance.ScreenFade(sceneChangingWaitTime);
         yield return new WaitForSeconds(sceneChangingWaitTime);
         loadOperation.allowSceneActivation = true;
