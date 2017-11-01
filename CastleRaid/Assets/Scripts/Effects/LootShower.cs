@@ -26,7 +26,6 @@ public class LootShower : MonoBehaviour
             lootTotalValue = (int)data;
         }
         spawnTimer = spawnInterval;
-		lootTotalValue = 2000;
 		lootCurrentValue = 0;
     }
 
