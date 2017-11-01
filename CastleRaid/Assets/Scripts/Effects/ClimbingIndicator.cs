@@ -53,6 +53,7 @@ public class ClimbingIndicator : MonoBehaviour
         //  controllerRightHandEvents.GripPressed -= OnGrabbed;
 
     }
+
     private void OnGrabbed(object sender, ObjectInteractEventArgs e)
     {
         print(e.controllerReference.hand + "Grabbed!");
