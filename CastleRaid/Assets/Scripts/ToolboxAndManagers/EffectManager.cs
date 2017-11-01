@@ -103,7 +103,7 @@ public class EffectManager : MonoBehaviour
                 break;
             }
         }
-        if (effect)
+        if (!effect)
         {
             effect = AddEffectPoolItem(index);
         }       
