@@ -22,7 +22,11 @@ public class LootBagController : MonoBehaviour
 	{
 		lootCount = 0;
 		lootTotalValue = 0;
-        ((LevelInstance_Game)GameManager.levelInstance).levelTimeEnded += OnLevelTimeEnd;
+        LevelInstance_Game li = GameManager.levelInstance as LevelInstance_Game;
+        if (li)
+        {
+            li.levelTimeEnded += OnLevelTimeEnd;
+        }
     }
 
 	private void OnEnable()
