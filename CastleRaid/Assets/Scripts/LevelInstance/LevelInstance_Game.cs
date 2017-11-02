@@ -86,7 +86,7 @@ public abstract class LevelInstance_Game : LevelInstance
     {
         if (playerSpawnPoints.Length > 0)
         {
-            playArea.position = playerSpawnPoints[UnityEngine.Random.Range(0, playerSpawnPoints.Length)].transform.position;
+            playerRelocator.RelocatePlayer(playerSpawnPoints[UnityEngine.Random.Range(0, playerSpawnPoints.Length)].transform.position, Quaternion.identity);
         }
     }
 
@@ -98,5 +98,14 @@ public abstract class LevelInstance_Game : LevelInstance
     public virtual void StartLevel()
     {
         timerActive = true;
+    }
+
+    public void InprisonPlayer()
+    {
+        GameObject go = GameObject.FindGameObjectWithTag("Prison");
+        if (go)
+        {
+            playerRelocator.RelocatePlayer(go.transform.position, go.transform.rotation);
+        }
     }
 }

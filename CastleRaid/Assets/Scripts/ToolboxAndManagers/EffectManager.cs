@@ -38,19 +38,6 @@ public class EffectManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Get predefined Effect object from pool at specified location.
-    /// </summary>
-    /// <param name="name">Name of the effect in settings.</param>
-    /// <param name="play">Autoplay.</param>
-    /// <param name="pos">World position.</param>
-    /// <param name="rot">World rotation.</param>
-    /// <param name="parent">Parent of the object. Null attachs the object to EffectManager.</param>
-    public EffectItem GetEffect(string name, bool play, Vector3 pos, Quaternion rot, Transform parent = null)
-    {
-        return GetEffect(GetEffectIndex(name), play, pos, rot, parent);
-    }
-
-    /// <summary>
     /// Get predefined Effect object from pool at specified location
     /// </summary>
     /// <param name="name">Name of the effect in settings.</param>
@@ -59,25 +46,9 @@ public class EffectManager : MonoBehaviour
     /// <param name="pos">World position.</param>
     /// <param name="rot">World rotation.</param>
     /// <param name="parent">Parent of the object. Null attachs the object to EffectManager.</param>
-    public EffectItem GetEffect(string name, float lifetime, bool play, Vector3 pos, Quaternion rot, Transform parent = null)
+    public EffectItem GetEffect(string name, bool play, bool oneShot, Vector3 pos, Quaternion rot, Transform parent = null)
     {
-        return GetEffect(name, lifetime, play, pos, rot, parent);
-    }
-
-    /// <summary>
-    /// Get predefined Effect object from pool at specified location
-    /// </summary>
-    /// <param name="index">Index of the effect in settings.</param>
-    /// <param name="play">Autoplay.</param>
-    /// <param name="lifetime">Duration before automatically returned to pool.</param>
-    /// <param name="pos">World position.</param>
-    /// <param name="rot">World rotation.</param>
-    /// <param name="parent">Parent of the object. Null attachs the object to EffectManager.</param>
-    public EffectItem GetEffect(int index, float lifetime, bool play, Vector3 pos, Quaternion rot, Transform parent = null)
-    {
-        EffectItem item = GetEffect(index, lifetime, play, pos, rot, parent);
-        item.SetLifetime(lifetime);
-        return item;
+        return GetEffect(GetEffectIndex(name), play, oneShot, pos, rot, parent);
     }
 
     /// <summary>
@@ -88,7 +59,7 @@ public class EffectManager : MonoBehaviour
     /// <param name="pos">World position.</param>
     /// <param name="rot">World rotation.</param>
     /// <param name="parent">Parent of the object. Null leaves the object to pool location.</param>
-    public EffectItem GetEffect(int index, bool play, Vector3 pos, Quaternion rot, Transform parent = null)
+    public EffectItem GetEffect(int index, bool play, bool oneShot, Vector3 pos, Quaternion rot, Transform parent = null)
     {
         if (index < 0 || index >= effectPool.Length)
 		{
@@ -118,6 +89,14 @@ public class EffectManager : MonoBehaviour
 		{
 			effect.PlayAllParticleSystems();
 		}
+		if (oneShot)
+		{
+			effect.lifetimeActive = true;
+		}
+		else
+		{
+			effect.lifetimeActive = false;
+		}
 		return effect;
     }
 
@@ -140,7 +119,8 @@ public class EffectManager : MonoBehaviour
         effect.effectManager = this;
         effect.poolIndex = index;
         effect.name = effectPoolSettings[index].name + "[" + effectPool[index].Count + "]";
-        effect.Init(); 
+		effect.currentLifetime = effectPoolSettings[index].lifetime;
+		effect.Init(); 
         effectPool[index].Add(effect);
         return effect;
     }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ColliderController : MonoBehaviour
 {
-    public delegate void ColliderControllerColliderVoid(ColliderController coliderController, Collider collider);
+    public delegate void ColliderControllerColliderVoid(ColliderController colliderController, Collider collider);
     public event ColliderControllerColliderVoid _OnTriggerEnter;
     public event ColliderControllerColliderVoid _OnTriggerExit;
 

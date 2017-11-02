@@ -93,11 +93,13 @@ public class AudioManager : MonoBehaviour
         }
         audio.gameObject.SetActive(true);
         audio.transform.position = pos;
-        audio.source.clip = _audioItemSettings[index].clip;
+		audio.transform.localRotation = Quaternion.identity;
+		audio.transform.localScale = Vector3.one;
+		audio.source.clip = _audioItemSettings[index].clip;
         audio.source.outputAudioMixerGroup = _audioItemSettings[index].mixerGroup;
         audio.source.volume = _audioItemSettings[index].volume;
         audio.source.priority = _audioItemSettings[index].priority;
-        audio.source.spatialBlend = _audioItemSettings[index].spatialBlend ? 0f : 1f;
+        audio.source.spatialBlend = _audioItemSettings[index].spatialBlend ? 1f : 0f;
         audio.source.loop = _audioItemSettings[index].loop;
         audio.source.mute = _audioItemSettings[index].mute;
         audio.autoReturnAfterPlaying = oneShot;
