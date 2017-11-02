@@ -619,14 +619,14 @@ public class EnemyPatroller : MonoBehaviour
     #endregion
 
     #region External events
-    public void GetHit(GameObject hittingObject)
+    public void Hit(GameObject hittingObject)
     {
         //TODO: Implement properly 
         //Check object mass / velocity or detect if proper knockouter and act accordingly
         KnockOut();
     }
 
-    public void HearSound(Vector3 soundPosition)
+    public void Distract(Vector3 soundPosition)
     {
         switch (alertnessState)
         {
@@ -646,7 +646,7 @@ public class EnemyPatroller : MonoBehaviour
         }
     }
 
-    public void GetAlerted(GameObject newTarget)
+    public void Alert(GameObject newTarget)
     {
         if (alertnessState != EAlertnessState.ALERTED)
         {
