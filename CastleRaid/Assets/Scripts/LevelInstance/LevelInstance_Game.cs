@@ -86,7 +86,7 @@ public abstract class LevelInstance_Game : LevelInstance
     {
         if (playerSpawnPoints.Length > 0)
         {
-            playArea.position = playerSpawnPoints[UnityEngine.Random.Range(0, playerSpawnPoints.Length)].transform.position;
+            playerRelocator.RelocatePlayer(playerSpawnPoints[UnityEngine.Random.Range(0, playerSpawnPoints.Length)].transform.position, Quaternion.identity);
         }
     }
 
@@ -100,13 +100,12 @@ public abstract class LevelInstance_Game : LevelInstance
         timerActive = true;
     }
 
-	public virtual void PutPlayerToPrison()
-	{
-		GameObject prison = GameObject.FindGameObjectWithTag("Prison");
-		if (prison)
-		{
-			playArea.transform.position = prison.transform.position;
-			playArea.transform.rotation = prison.transform.rotation;
-		}
-	}
+    public void InprisonPlayer()
+    {
+        GameObject go = GameObject.FindGameObjectWithTag("Prison");
+        if (go)
+        {
+            playerRelocator.RelocatePlayer(go.transform.position, go.transform.rotation);
+        }
+    }
 }
