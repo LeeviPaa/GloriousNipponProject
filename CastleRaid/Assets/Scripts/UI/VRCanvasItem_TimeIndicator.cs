@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using VRTK;
 
 public class VRCanvasItem_TimeIndicator : MonoBehaviour
 {
@@ -11,13 +12,25 @@ public class VRCanvasItem_TimeIndicator : MonoBehaviour
     public float tickAudioIntensifyTimeStart;
     public float tickAudioIntensifyTimeEnd;
     public float tickAudioIntensifyVolume;
+	public float tickAudioIntensifyPitch;
 
-    private LevelInstance_Game levelInstance;
+	private LevelInstance_Game levelInstance;
     private AudioItem tickAudio;
     private float tickAudioInitialVolume;
+	private float tickAudioInitialPitch;
     private bool tickAudioIsIntensifying = false;
 
-    void Start()
+	void Awake()
+	{
+		VRTK_SDKManager.instance.AddBehaviourToToggleOnLoadedSetupChange(this);
+	}
+
+	void Start()
+	{
+
+	}
+
+	void OnEnable()
     {
         if (!timeIcon)
         {
@@ -37,15 +50,21 @@ public class VRCanvasItem_TimeIndicator : MonoBehaviour
 
         if (useTickAudio)
         {
-            tickAudio = GameManager.audioManager.GetAudio(tickAudioName, true, false, transform.position, transform);
-            if (!tickAudio)
+			if (!tickAudio)
+			{
+				tickAudio = GameManager.audioManager.GetAudio(tickAudioName, false, false, transform.position, transform);
+			}
+
+			if (!tickAudio)
             {
                 useTickAudio = false;
             }
             else
             {
                 tickAudioInitialVolume = tickAudio.source.volume;
-            }
+				tickAudioInitialPitch = tickAudio.source.pitch;
+				tickAudio.source.Play();
+			}
         }
     }
 
@@ -66,10 +85,15 @@ public class VRCanvasItem_TimeIndicator : MonoBehaviour
                 {
                     tickAudioIsIntensifying = false;
                 }
-                tickAudio.source.volume =
-                    Mathf.Lerp(tickAudioInitialVolume, tickAudioIntensifyVolume,
-                    Mathf.InverseLerp(tickAudioIntensifyTimeStart, tickAudioIntensifyTimeEnd, levelInstance.levelTimeLeft));
-            }
+				float t = Mathf.InverseLerp(tickAudioIntensifyTimeStart, tickAudioIntensifyTimeEnd, levelInstance.levelTimeLeft);
+				tickAudio.source.volume = Mathf.Lerp(tickAudioInitialVolume, tickAudioIntensifyVolume, t);
+				tickAudio.source.pitch = Mathf.Lerp(tickAudioInitialPitch, tickAudioIntensifyPitch, t);
+			}
         }
     }
+
+	void OnDestroy()
+	{
+		VRTK_SDKManager.instance.RemoveBehaviourToToggleOnLoadedSetupChange(this);
+	}
 }
