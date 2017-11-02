@@ -45,15 +45,26 @@ public class LootBag : MonoBehaviour
 	public delegate void BoolIntVoid(bool boolean, int integer);
 	public event BoolIntVoid OnLootBagActiveStateChange;
 
-	//TODO: Implement bag streching as it fills
-	//TODO: Implement bag physics (joints)
+    [SerializeField]
+    private string itemLootedSoundSmall = "LootingFinished";
+    [SerializeField]
+    private int itemLootedSoundMediumThreshold = 250;
+    [SerializeField]
+    private string itemLootedSoundMedium = "LootingFinished";
+    [SerializeField]
+    private int itemLootedSoundLargeThreshold = 500;
+    [SerializeField]
+    private string itemLootedSoundLarge = "LootingFinished";
 
-	//public void SetLootBagController(LootBagController _lootBagController)
-	//{
-	//	lootBagController = _lootBagController;
-	//}
+    //TODO: Implement bag streching as it fills
+    //TODO: Implement bag physics (joints)
 
-	private void Start()
+    //public void SetLootBagController(LootBagController _lootBagController)
+    //{
+    //	lootBagController = _lootBagController;
+    //}
+
+    private void Start()
 	{
         backTransformInitialized = false;
 
@@ -304,7 +315,18 @@ public class LootBag : MonoBehaviour
         GameManager.effectManager.GetEffect("LootBurst", true, true, effectSpawnTransform.position, effectSpawnTransform.rotation, effectSpawnTransform);
 
         //Call appropriate visual / sound effects here if the effects are the same regardless of the lootable
-        AudioItem lootingFinishedAudio = GameManager.audioManager.GetAudio("LootingFinished", true, true, pos: transform.position);
+        if (lootValue < itemLootedSoundMediumThreshold)
+        {
+            GameManager.audioManager.GetAudio(itemLootedSoundSmall, true, true, pos: transform.position);
+        }
+        if (lootValue >= itemLootedSoundMediumThreshold && lootValue < itemLootedSoundLargeThreshold)
+        {
+            GameManager.audioManager.GetAudio(itemLootedSoundMedium, true, true, pos: transform.position);
+        }
+        else
+        {
+            GameManager.audioManager.GetAudio(itemLootedSoundLarge, true, true, pos: transform.position);
+        }
 
 		EffectItem lootTextEffect = null;
 		if (bagType == EBagType.HAND)
