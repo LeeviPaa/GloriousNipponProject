@@ -30,6 +30,11 @@ public class Lootable : MonoBehaviour
     {
         isLooted = false;
         minimizingToBag = false;
+
+		if (spawnIndicatorEffect)
+		{
+			EffectItem effect = GameManager.effectManager.GetEffect("GlitterEffect", true, false, transform.position, transform.rotation, transform);
+		}
 	}
 
 	void OnEnable()
@@ -45,10 +50,6 @@ public class Lootable : MonoBehaviour
 		}
 
 		//Call passive indicator effect
-		if (spawnIndicatorEffect)
-		{
-			EffectItem effect = GameManager.effectManager.GetEffect("GlitterEffect", true, transform.position, transform.rotation, transform);
-		}
 
 
 		//Loot effect plays a world origin for a frame. This script is at world origin at OnEnable. Why? It should be at the spawn position!
@@ -83,7 +84,7 @@ public class Lootable : MonoBehaviour
 		isGrabbed = true;
 
         //Call grab visual / sound effects here
-        GameManager.effectManager.GetEffect("GrabBurst", true, transform.position, Quaternion.identity);
+        GameManager.effectManager.GetEffect("GrabBurst", true, true, transform.position, Quaternion.identity);
         AudioItem lootGrabAudio = GameManager.audioManager.GetAudio("LootGrab", true, true, pos: transform.position);
     }
 

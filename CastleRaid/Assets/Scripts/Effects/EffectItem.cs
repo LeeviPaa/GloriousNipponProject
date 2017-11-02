@@ -10,24 +10,23 @@ public class EffectItem : MonoBehaviour
 	public int poolIndex;
 
 	public bool lifetimeActive = false;
+	public float currentLifetime = 0f;
 	public float lifetime = 0f;
-
-	protected float _lifetimeMax = 0f;
 
 	protected ParticleSystem[] _particleSystems;
 
 	public virtual void Init()
 	{
 		_particleSystems = GetComponentsInChildren<ParticleSystem>();
-		_lifetimeMax = lifetime;
+		currentLifetime = lifetime;
 	}
 
     protected virtual void Update()
     {
         if (lifetimeActive)
         {
-            lifetime -= Time.deltaTime;
-            if (lifetime <= 0f)
+            currentLifetime -= Time.deltaTime;
+            if (currentLifetime <= 0f)
             {
                 ReturnToPool();
             }
@@ -58,16 +57,15 @@ public class EffectItem : MonoBehaviour
         }
     }
 
-    public virtual void SetLifetime(float seconds)
+    public virtual void Reset()
     {
-        lifetimeActive = true;
-        lifetime = _lifetimeMax = seconds;
-    }
+        currentLifetime = lifetime;
+		StopAllParticleSystems();
+	}
 
     public void ReturnToPool()
     {
-        StopAllParticleSystems();
-        lifetime = _lifetimeMax;
+		Reset();
         effectManager.ReturnToPool(this);
     }
 }

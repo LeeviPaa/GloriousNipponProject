@@ -10,4 +10,5 @@ public class PoolSettings
     public int poolSize;
     [HideInInspector]
     public Transform parent;
+	public float lifetime;
 }

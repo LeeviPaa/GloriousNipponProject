@@ -301,7 +301,7 @@ public class LootBag : MonoBehaviour
              effectSpawnTransform = lootBurstSpawnPoints.Dequeue();
         }
 		
-        GameManager.effectManager.GetEffect("LootBurst", true, effectSpawnTransform.position, effectSpawnTransform.rotation, effectSpawnTransform);
+        GameManager.effectManager.GetEffect("LootBurst", true, true, effectSpawnTransform.position, effectSpawnTransform.rotation, effectSpawnTransform);
 
         //Call appropriate visual / sound effects here if the effects are the same regardless of the lootable
         AudioItem lootingFinishedAudio = GameManager.audioManager.GetAudio("LootingFinished", true, true, pos: transform.position);
@@ -309,12 +309,12 @@ public class LootBag : MonoBehaviour
 		EffectItem lootTextEffect = null;
 		if (bagType == EBagType.HAND)
 		{
-			lootTextEffect = GameManager.effectManager.GetEffect("FadingFloatingText", true, effectSpawnTransform.position + Vector3.up * 0.1f, Quaternion.identity/*, effectSpawnTransform*/);
+			lootTextEffect = GameManager.effectManager.GetEffect("FadingFloatingText", true, true, effectSpawnTransform.position + Vector3.up * 0.1f, Quaternion.identity/*, effectSpawnTransform*/);
 		}
 		else if (bagType == EBagType.BACK)
 		{
 			//transform.position + transform.forward * 1f + transform.up * -0.5f
-			lootTextEffect = GameManager.effectManager.GetEffect("FadingFloatingText", true, effectSpawnTransform.position + effectSpawnTransform.up * 0.5f, effectSpawnTransform.rotation/*, effectSpawnTransform*/);
+			lootTextEffect = GameManager.effectManager.GetEffect("FadingFloatingText", true, true, effectSpawnTransform.position + effectSpawnTransform.up * 0.5f, effectSpawnTransform.rotation/*, effectSpawnTransform*/);
 		}
 
 
