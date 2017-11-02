@@ -99,4 +99,14 @@ public abstract class LevelInstance_Game : LevelInstance
     {
         timerActive = true;
     }
+
+	public virtual void PutPlayerToPrison()
+	{
+		GameObject prison = GameObject.FindGameObjectWithTag("Prison");
+		if (prison)
+		{
+			playArea.transform.position = prison.transform.position;
+			playArea.transform.rotation = prison.transform.rotation;
+		}
+	}
 }

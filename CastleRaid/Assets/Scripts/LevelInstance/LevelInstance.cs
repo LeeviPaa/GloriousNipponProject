@@ -8,8 +8,9 @@ public abstract class LevelInstance : MonoBehaviour
     protected VRTK_HeadsetFade headsetFade;
 	protected Color headsetFadeColor = Color.black;
 	protected Transform playArea;
+	protected GameObject playerScriptHolder;
 
-    protected virtual void Awake()
+	protected virtual void Awake()
     {
         VRTK_SDKManager.instance.AddBehaviourToToggleOnLoadedSetupChange(this);
         GameManager.levelInstance = this;
@@ -17,8 +18,8 @@ public abstract class LevelInstance : MonoBehaviour
     }
 
     protected virtual void Start()
-    {
-        GameManager.OnLevelStart();
+    {	
+		GameManager.OnLevelStart();
     }
 
     protected virtual void Update()
@@ -28,21 +29,27 @@ public abstract class LevelInstance : MonoBehaviour
 
     public virtual void ScreenFade(float duration)
     {
+		print(headsetFade + " fade");
         if (headsetFade)
             headsetFade.Fade(headsetFadeColor, duration);
     }
 
     public virtual void ScreenUnfade(float duration)
     {
-        if (headsetFade)
+		print(headsetFade + " unfade");
+		if (headsetFade)
             headsetFade.Unfade(duration);
     }
 
     protected virtual void OnEnable()
     {
 		playArea = VRTK_DeviceFinder.PlayAreaTransform();
-		headsetFade = playArea.GetComponent<VRTK_HeadsetFade>();
-    }
+		playerScriptHolder = GameObject.FindGameObjectWithTag("PlayerScriptHolder");
+		if (playerScriptHolder)
+		{
+			headsetFade = playerScriptHolder.GetComponent<VRTK_HeadsetFade>();
+		}			
+	}
 
     protected virtual void OnDisable()
     {
