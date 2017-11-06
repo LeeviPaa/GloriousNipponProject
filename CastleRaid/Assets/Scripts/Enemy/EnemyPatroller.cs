@@ -120,7 +120,7 @@ public class EnemyPatroller : MonoBehaviour
     {
         navAgent.enabled = true;
         currentPatrolPointIndex = 0;
-        //navAgent.Warp(patrolPoints[currentPatrolPointIndex].transform.position);
+        navAgent.Warp(patrolPoints[currentPatrolPointIndex].transform.position);
         transform.rotation = patrolPoints[currentPatrolPointIndex].transform.rotation;
 
         rb.isKinematic = true;
@@ -162,36 +162,36 @@ public class EnemyPatroller : MonoBehaviour
     #region MonoBehaviour
     private void Update()
     {
-        UpdateEnemyState(Time.deltaTime);
-        UpdateNavigation(Time.deltaTime);
+        if (!ragdolled) 
+		{
+			UpdateEnemyState(Time.deltaTime);
+			UpdateNavigation(Time.deltaTime);
 
-        if (!ragdolled)
-        {
-            rb.velocity = Vector3.zero;
+			rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
-        }
 
-        if (meleeAttackCooldownTimer > 0)
-        {
-            meleeAttackCooldownTimer -= Time.deltaTime;
+			if (meleeAttackCooldownTimer > 0) 
+			{
+				meleeAttackCooldownTimer -= Time.deltaTime;
 
-            if (meleeAttackCooldownTimer <= 0)
-            {
-                meleeAttackCooldownTimer = 0;
-            }
-        }
+				if (meleeAttackCooldownTimer <= 0) 
+				{
+					meleeAttackCooldownTimer = 0;
+				}
+			}
 
-        if (alertingNearbyEnemies)
-        {
-            alertNearbyEnemiesTimer -= Time.deltaTime;
+			if (alertingNearbyEnemies) 
+			{
+				alertNearbyEnemiesTimer -= Time.deltaTime;
 
-            if (alertNearbyEnemiesTimer <= 0)
-            {
-                alertingNearbyEnemies = false;
-                alertColliderController._OnTriggerEnter -= OnColliderControllerTriggerEnter;
-                alertColliderController.gameObject.SetActive(false);
-            }
-        }
+				if (alertNearbyEnemiesTimer <= 0) 
+				{
+					alertingNearbyEnemies = false;
+					alertColliderController._OnTriggerEnter -= OnColliderControllerTriggerEnter;
+					alertColliderController.gameObject.SetActive(false);
+				}
+			}
+		}
     }
     #endregion
 
@@ -701,23 +701,16 @@ public class EnemyPatroller : MonoBehaviour
     #endregion
 
     #region External events
-    public void Hit(GameObject hittingObject)
-    {
-        //TODO: Implement properly 
-        //Check object mass / velocity or detect if proper knockouter and act accordingly
-        Ragdoll();
-    }
-
-    public void Distract(Vector3 soundPosition)
+    public void Distract(Vector3 distractorPosition)
     {
         switch (alertnessState)
         {
             case EAlertnessState.PATROLLING:
-                SetNewNavDestination(soundPosition);
+                SetNewNavDestination(distractorPosition);
                 SetAlertnessState(EAlertnessState.SUSPICIOUS);
                 break;
             case EAlertnessState.SUSPICIOUS:
-                SetNewNavDestination(soundPosition);
+                SetNewNavDestination(distractorPosition);
                 SetAlertnessState(EAlertnessState.SUSPICIOUS);
                 break;
             case EAlertnessState.ALERTED:
@@ -741,17 +734,21 @@ public class EnemyPatroller : MonoBehaviour
     #region Collision detection
     private void OnCollisionEnter(Collision collision)
     {
-        //TODO: Remove the public "Hit()" method
-
         Rigidbody collidingRigidbody = collision.rigidbody;
         if (collidingRigidbody != null)
         {
-            Debug.Log("EnemyPatroller: Collided with a rigidbody. Colliding rigidbody velocity magnitude: " + collidingRigidbody.velocity.magnitude);
-            float velocityThresholdToDamage = 5f;
-            if (collidingRigidbody.velocity.sqrMagnitude >= velocityThresholdToDamage * velocityThresholdToDamage) ;
+			float velocityThresholdToDamage = 5f;
+			Debug.Log("EnemyPatroller: Collided with a rigidbody. Colliding rigidbody velocity sqrMagnitude: " 
+				+ collidingRigidbody.velocity.sqrMagnitude + " , velocityThresholdToDamage^2: " 
+				+ velocityThresholdToDamage * velocityThresholdToDamage);       
+            if (collidingRigidbody.velocity.sqrMagnitude >= velocityThresholdToDamage * velocityThresholdToDamage)
             {
                 Ragdoll();
             }
+			else
+			{
+				Distract(collidingRigidbody.transform.position);
+			}
         }
     }
     #endregion
