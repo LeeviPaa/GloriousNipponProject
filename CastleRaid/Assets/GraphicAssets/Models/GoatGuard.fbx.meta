@@ -1,0 +1,172 @@
+fileFormatVersion: 2
+guid: cf860a3322c896944a1739def12be898
+timeCreated: 1509597317
+licenseType: Free
+ModelImporter:
+  serializedVersion: 21
+  fileIDToRecycleName:
+    100000: Chest
+    100002: Cube.001
+    100004: Cube.002
+    100006: Foot.l
+    100008: Foot.l_end
+    100010: Foot.r
+    100012: Foot.r_end
+    100014: //RootNode
+    100016: Guard_Armature
+    100018: Guard_Mod
+    100020: Hand.l
+    100022: Hand.r
+    100024: HandSlot.l
+    100026: HandSlot.l_end
+    100028: HandSlot.r
+    100030: HandSlot.r_end
+    100032: Head
+    100034: Head_end
+    100036: Hip
+    100038: LowArm.l
+    100040: LowArm.r
+    100042: LowLeg.l
+    100044: LowLeg.r
+    100046: MidBody
+    100048: MidLeg.l
+    100050: MidLeg.r
+    100052: Neck
+    100054: Root
+    100056: Shoulder.l
+    100058: Shoulder.r
+    100060: Stomach
+    100062: Tail1
+    100064: Tail2
+    100066: Tail3
+    100068: Tail3_end
+    100070: UpArm.l
+    100072: UpArm.r
+    100074: UpLeg.l
+    100076: UpLeg.r
+    400000: Chest
+    400002: Cube.001
+    400004: Cube.002
+    400006: Foot.l
+    400008: Foot.l_end
+    400010: Foot.r
+    400012: Foot.r_end
+    400014: //RootNode
+    400016: Guard_Armature
+    400018: Guard_Mod
+    400020: Hand.l
+    400022: Hand.r
+    400024: HandSlot.l
+    400026: HandSlot.l_end
+    400028: HandSlot.r
+    400030: HandSlot.r_end
+    400032: Head
+    400034: Head_end
+    400036: Hip
+    400038: LowArm.l
+    400040: LowArm.r
+    400042: LowLeg.l
+    400044: LowLeg.r
+    400046: MidBody
+    400048: MidLeg.l
+    400050: MidLeg.r
+    400052: Neck
+    400054: Root
+    400056: Shoulder.l
+    400058: Shoulder.r
+    400060: Stomach
+    400062: Tail1
+    400064: Tail2
+    400066: Tail3
+    400068: Tail3_end
+    400070: UpArm.l
+    400072: UpArm.r
+    400074: UpLeg.l
+    400076: UpLeg.r
+    4300000: Guard_Mod
+    4300002: Cube.002
+    4300004: Cube.001
+    7400000: Guard_Armature|Guard_ArmatureAction
+    7400002: Guard_Armature|Idle
+    7400004: Guard_Armature|Plane.001Action
+    7400006: Guard_Armature|Plane.001Action.001
+    7400008: Guard_Armature|Walk
+    9500000: //RootNode
+    13700000: Cube.001
+    13700002: Cube.002
+    13700004: Guard_Mod
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
