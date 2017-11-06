@@ -15,6 +15,8 @@ public class VirtualKeyBoard : MonoBehaviour
         "BS","BS","space","space",
     };
     GameObject[] keys = new GameObject[39];
+
+    string output = string.Empty;
     // Use this for initialization
     void Start()
     {
@@ -30,7 +32,9 @@ public class VirtualKeyBoard : MonoBehaviour
             x = vk_x + -1.25f + 0.25f * i;
             pos = new Vector3(x, vk_y, vk_z);
             keys[i] = Instantiate(keytop, pos, Quaternion.identity, transform);
+            keys[i].GetComponent<Keytop>().type = Keytop.EKeyType.character;
         }
+        keys[3].GetComponent<Keytop>().type = Keytop.EKeyType.shift;
         //qwertyuiop
         for (int i = 0; i < 10; i++)
         {
