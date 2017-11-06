@@ -33,7 +33,7 @@ public class VirtualDisplay : MonoBehaviour
     }
     public void DeleteOneCharacter()
     {
-        if (txt.text.Length > 1)
+        if (txt.text.Length > 0)
             txt.text = txt.text.Remove(txt.text.Length - 1, 1);
     }
 }
