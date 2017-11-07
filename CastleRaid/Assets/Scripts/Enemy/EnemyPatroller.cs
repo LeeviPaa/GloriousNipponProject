@@ -33,12 +33,12 @@ public class EnemyPatroller : MonoBehaviour
     int currentPatrolPointIndex = -1;
     float patrolPointFinishRange = 0.1f;
 
-    float suspiciousLocationCheckRange = 1f;
+    float suspiciousLocationCheckRange = 3f;
     float suspiciousStateExitDuration = 10f;
 
     GameObject currentTarget;
 
-    float meleeRange = 1.5f;
+    float meleeRange = 3f;
     float meleeAttackCooldownDuration = 3f;
     float meleeAttackCooldownTimer = -1f;
 
