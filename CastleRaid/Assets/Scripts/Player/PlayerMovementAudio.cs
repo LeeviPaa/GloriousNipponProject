@@ -85,7 +85,6 @@ public class PlayerMovementAudio : MonoBehaviour
     void OnTeleporting(object sender, DestinationMarkerEventArgs e)
     {
 		float distance = Vector3.Magnitude(e.destinationPosition - playArea.position);
-		print("Teleport distance " + distance);
 		if (distance >= minimumValidTeleportDistance)
 		{
 			GameManager.audioManager.GetAudio(teleportSound, true, true, playArea.position, playArea.transform);
