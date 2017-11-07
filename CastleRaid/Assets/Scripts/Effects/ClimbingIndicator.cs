@@ -11,15 +11,15 @@ public class ClimbingIndicator : MonoBehaviour
     [SerializeField]
     private VRTK_InteractGrab grab;
     [SerializeField]
-    private float vibrationDuration = 1f;
+    private float hapticDuration = 1f;
     [SerializeField]
-    private float vibrationStrength = 1f;
+    private float hapticStrength = 1f;
     [SerializeField]
     private string grabAudio = "";
 
     //ControllerInteractionEventArgs? temp = null;
 
-    void Start()
+    void Awake()
     {
         if (!grab)
         {
@@ -56,33 +56,38 @@ public class ClimbingIndicator : MonoBehaviour
 
     private void OnGrabbed(object sender, ObjectInteractEventArgs e)
     {
-        //print(e.controllerReference.hand + "Grabbed!");
-        //var hand = e.controllerReference.scriptAlias;
-        //var handGrab = hand.GetComponent<VRTK_InteractGrab>();
-        //if (!handGrab.GetGrabbedObject())
-        //{
-        //    //print(handGrab.GetGrabbedObject());
-        //    return;
-        //}
-        //if (!handGrab.GetGrabbedObject().GetComponent<VRTK.GrabAttachMechanics.VRTK_ClimbableGrabAttach>())
-        //    return;
+		//print(e.controllerReference.hand + "Grabbed!");
+		//var hand = e.controllerReference.scriptAlias;
+		//var handGrab = hand.GetComponent<VRTK_InteractGrab>();
+		//if (!handGrab.GetGrabbedObject())
+		//{
+		//    //print(handGrab.GetGrabbedObject());
+		//    return;
+		//}
+		//if (!handGrab.GetGrabbedObject().GetComponent<VRTK.GrabAttachMechanics.VRTK_ClimbableGrabAttach>())
+		//    return;
 
-        //var tracedObject = e.controllerReference.actual.GetComponent<SteamVR_TrackedObject>();
+		//var tracedObject = e.controllerReference.actual.GetComponent<SteamVR_TrackedObject>();
 
-        //if (!tracedObject)
-        //{
-        //    //print("Not steamVR " + e.controllerReference.actual);
-        //    return;
-        //}
+		//if (!tracedObject)
+		//{
+		//    //print("Not steamVR " + e.controllerReference.actual);
+		//    return;
+		//}
 
-        if (useHaptics)
-        {
-            VRTK_ControllerHaptics.TriggerHapticPulse(e.controllerReference, vibrationStrength, vibrationDuration, 0f);
-        }
-        if (useAudio)
-        {
-            GameManager.audioManager.GetAudio(grabAudio, true, true, transform.position, transform);
-        }
+		// For now the effect require a VRTK_ClimbableGrabAttach to trigger.
+		// May cause problems if there are other VRTK_ClimbableGrabAttach object that would not require the effects.
+		if (e.target.GetComponent<VRTK.GrabAttachMechanics.VRTK_ClimbableGrabAttach>())
+		{
+			if (useHaptics)
+			{
+				StartCoroutine(TriggerHapticPulse(e.controllerReference, hapticDuration));
+			}
+			if (useAudio)
+			{
+				GameManager.audioManager.GetAudio(grabAudio, true, true, transform.position, transform);
+			}
+		}
     }
    
     void Update()
@@ -93,4 +98,15 @@ public class ClimbingIndicator : MonoBehaviour
         //    //print(temp.Value.controllerReference.scriptAlias.GetComponent<VRTK_InteractGrab>().GetGrabbedObject());
         //}
     }
+
+	// This can be copied if haptic feedback is needed elsewhere
+	IEnumerator TriggerHapticPulse(VRTK_ControllerReference cont, float duration) 
+	{
+		while (duration > 0f) 
+		{
+			VRTK_ControllerHaptics.TriggerHapticPulse(cont, hapticStrength);
+			duration -= Time.deltaTime;
+			yield return null;
+		}
+	}
 }

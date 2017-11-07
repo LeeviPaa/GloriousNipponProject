@@ -35,7 +35,7 @@ public class VirtualKeyBoard : MonoBehaviour
         {
             x = vk_x + adjust_x + 0.25f * i;
             pos = new Vector3(x, vk_y, vk_z);
-            keys[i] = Instantiate(keytop, pos, Quaternion.identity, transform);
+            keys[i] = Instantiate(keytop, pos, transform.localRotation, transform);
             keys[i].GetComponent<Keytop>().Type = Keytop.EKeyType.character;
         }
         //qwertyuiop
@@ -44,7 +44,7 @@ public class VirtualKeyBoard : MonoBehaviour
             x = vk_x + adjust_x + 0.25f * i;
             y = vk_y + margin;
             pos = new Vector3(x, y, vk_z);
-            keys[10 + i] = Instantiate(keytop, new Vector3(x, y, vk_z), Quaternion.identity, transform);
+            keys[10 + i] = Instantiate(keytop, pos, transform.localRotation, transform);
             keys[10 + i].GetComponent<Keytop>().Type = Keytop.EKeyType.character;
 
         }
@@ -54,7 +54,7 @@ public class VirtualKeyBoard : MonoBehaviour
             x = vk_x + adjust_x + 0.125f + 0.25f * i;
             y = vk_y + margin * 2;
             pos = new Vector3(x, y, vk_z);
-            keys[20 + i] = Instantiate(keytop, pos, Quaternion.identity, transform);
+            keys[20 + i] = Instantiate(keytop, pos, transform.localRotation, transform);
             keys[20 + i].GetComponent<Keytop>().Type = Keytop.EKeyType.character;
 
         }
@@ -62,7 +62,7 @@ public class VirtualKeyBoard : MonoBehaviour
         x = vk_x + adjust_x + 0;
         y = vk_y + margin * 3;
         pos = new Vector3(x, y, vk_z);
-        keys[29] = Instantiate(keytop, pos, Quaternion.identity, transform);
+        keys[29] = Instantiate(keytop, pos, transform.localRotation, transform);
         keys[29].GetComponent<Keytop>().Type = Keytop.EKeyType.shift;
 
         var rect = keys[29].GetComponent<RectTransform>();
@@ -74,15 +74,16 @@ public class VirtualKeyBoard : MonoBehaviour
             x = vk_x + adjust_x + 0.375f + 0.25f * i;
             y = vk_y + margin * 3;
             pos = new Vector3(x, y, vk_z);
-            keys[30 + i] = Instantiate(keytop, pos, Quaternion.identity, transform);
+            keys[30 + i] = Instantiate(keytop, pos, transform.localRotation, transform);
             keys[30 + i].GetComponent<Keytop>().Type = Keytop.EKeyType.character;
 
         }
+        print(transform.parent);
         // back space 
-        x = vk_x + keys[36].transform.position.x + 0.25f;
+        x = vk_x + keys[36].transform.position.x - 3.19f;
         y = vk_y + margin * 3;
         pos = new Vector3(x, y, vk_z);
-        keys[37] = Instantiate(keytop, pos, Quaternion.identity, transform);
+        keys[37] = Instantiate(keytop, pos, transform.localRotation, transform);
         keys[37].GetComponent<Keytop>().Type = Keytop.EKeyType.back_space;
         rect = keys[37].GetComponent<RectTransform>();
         rect.sizeDelta = new Vector2(41.0f, 30.0f);
@@ -92,7 +93,7 @@ public class VirtualKeyBoard : MonoBehaviour
         x = vk_x + adjust_x;
         y = vk_y + margin * 4;
         pos = new Vector3(x, y, vk_z);
-        keys[38] = Instantiate(keytop, pos, Quaternion.identity, transform);
+        keys[38] = Instantiate(keytop, pos, transform.localRotation, transform);
         keys[38].GetComponent<Keytop>().Type = Keytop.EKeyType.space;
         rect = keys[38].GetComponent<RectTransform>();
         rect.sizeDelta = new Vector2(130.0f, 30.0f);
@@ -103,6 +104,8 @@ public class VirtualKeyBoard : MonoBehaviour
 
         //Default character is small.
         SetShiftKeyState(false);
+
+        transform.localRotation = transform.parent.localRotation;
     }
     public void SetShiftKeyState(bool value)
     {
