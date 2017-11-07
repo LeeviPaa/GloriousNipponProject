@@ -89,7 +89,7 @@ public class AudioManager : MonoBehaviour
         }
         if (parent)
         {
-            audio.transform.SetParent(parent);
+            audio.transform.SetParent(parent, true);
         }
         audio.gameObject.SetActive(true);
         audio.transform.position = pos;
@@ -124,7 +124,7 @@ public class AudioManager : MonoBehaviour
     public void ReturnToPool(AudioItem self)
     {
         self.gameObject.SetActive(false);
-        self.transform.SetParent(transform);
+        self.transform.SetParent(transform, true);
         self.transform.localPosition = Vector3.zero;
         self.name = itemName;
     }

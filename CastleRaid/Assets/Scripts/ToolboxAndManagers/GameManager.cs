@@ -79,7 +79,7 @@ public static class GameManager
         if (!sceneLoader)
         {
             sceneLoader = new GameObject("SceneLoader", typeof(SceneLoader)).GetComponent<SceneLoader>();
-            sceneLoader.Begin(scene);
+            sceneLoader.Begin(scene, false);
         }
         else
         {
