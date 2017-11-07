@@ -14,9 +14,8 @@ public class EnemySpawner : MonoBehaviour
         SpawnEnemy();
     }
 
-    private void SpawnEnemy()
-    {
-        GameObject enemyObject = Instantiate(enemyPrefab, patrolPoints[0].transform.position, patrolPoints[0].transform.rotation);
+    private void SpawnEnemy() {
+		GameObject enemyObject = Instantiate(enemyPrefab, patrolPoints[0].transform.position, patrolPoints[0].transform.rotation);
         EnemyPatroller enemyScript = enemyObject.GetComponent<EnemyPatroller>();
         
         if(enemyScript != null)
