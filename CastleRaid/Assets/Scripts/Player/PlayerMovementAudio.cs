@@ -9,12 +9,17 @@ public class PlayerMovementAudio : MonoBehaviour
     private VRTK_BodyPhysics bodyPhysics;
     [SerializeField]
     private VRTK_BasicTeleport teleporter;
-    [SerializeField]
+	[SerializeField]
+	private float minimumValidFallDistance;
+	[SerializeField]
     private string hitGroundSound;
-    [SerializeField]
+	[SerializeField]
+	private float minimumValidTeleportDistance;
+	[SerializeField]
     private string teleportSound;
 
     private Transform playArea;
+	private Vector3 fallStartPos;
 
     void Awake()
     {
@@ -36,8 +41,9 @@ public class PlayerMovementAudio : MonoBehaviour
 
         if (bodyPhysics)
         {
-            bodyPhysics.StopFalling += OnStopFalling;
-        }
+			bodyPhysics.StartFalling += OnStartFalling;
+			bodyPhysics.StopFalling += OnStopFalling;
+		}
         if (teleporter)
         {
             teleporter.Teleporting += OnTeleporting;
@@ -48,7 +54,8 @@ public class PlayerMovementAudio : MonoBehaviour
     {
         if (bodyPhysics)
         {
-            bodyPhysics.StopFalling -= OnStopFalling;
+			bodyPhysics.StartFalling -= OnStartFalling;
+			bodyPhysics.StopFalling -= OnStopFalling;
         }
         if (teleporter)
         {
@@ -56,18 +63,32 @@ public class PlayerMovementAudio : MonoBehaviour
         }
     }
 
-    void OnDestroy()
+	void OnDestroy()
     {
         VRTK_SDKManager.instance.RemoveBehaviourToToggleOnLoadedSetupChange(this);
     }
 
+	void OnStartFalling(object sender, BodyPhysicsEventArgs e)
+	{
+		fallStartPos = playArea.position;
+	}
+
     void OnStopFalling(object sender, BodyPhysicsEventArgs e)
     {
-        GameManager.audioManager.GetAudio(hitGroundSound, true, true, playArea.position, transform);
-    }
+		float distance = Vector3.Magnitude(fallStartPos - playArea.position);
+		if (distance >= minimumValidFallDistance)
+		{
+			GameManager.audioManager.GetAudio(hitGroundSound, true, true, playArea.position, transform);
+		}
+	}
 
     void OnTeleporting(object sender, DestinationMarkerEventArgs e)
     {
-        GameManager.audioManager.GetAudio(hitGroundSound, true, true, playArea.position, playArea.transform);
+		float distance = Vector3.Magnitude(e.destinationPosition - playArea.position);
+		print("Teleport distance " + distance);
+		if (distance >= minimumValidTeleportDistance)
+		{
+			GameManager.audioManager.GetAudio(teleportSound, true, true, playArea.position, playArea.transform);
+		}	
     }
 }
