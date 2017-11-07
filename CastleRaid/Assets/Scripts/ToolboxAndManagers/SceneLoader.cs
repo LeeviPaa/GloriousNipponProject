@@ -10,18 +10,26 @@ public class SceneLoader : MonoBehaviour
 
     private AsyncOperation loadOperation;
     private string targetSceneName;
-    private bool loadTargetScene;
+    private bool loadingSceneBeingLoaded;
 
     private const string loadingSceneName = "Loading";
     private const float sceneChangingWaitTime = 1f;
 
-    public void Begin(string sceneName)
+    public void Begin(string sceneName, bool useLoadingScreen)
     {
         DontDestroyOnLoad(gameObject);
-        targetSceneName = sceneName;
-        loadTargetScene = true;
+        targetSceneName = sceneName;       
         GameManager.levelStart += OnLevelStart;
-        StartCoroutine(SceneLoadRoutine(loadingSceneName));
+        if (useLoadingScreen)
+        {
+            loadingSceneBeingLoaded = true;
+            StartCoroutine(SceneLoadRoutine(loadingSceneName));
+        }
+        else
+        {
+            loadingSceneBeingLoaded = false;
+            StartCoroutine(SceneLoadRoutine(targetSceneName));
+        }
     }
 
     public bool IsLoading()
@@ -46,10 +54,10 @@ public class SceneLoader : MonoBehaviour
         GameManager.levelInstance.ScreenFade(0f);
         GameManager.levelInstance.ScreenUnfade(sceneChangingWaitTime);
 
-        if (loadTargetScene)
+        if (loadingSceneBeingLoaded)
         {
             StartCoroutine(SceneLoadRoutine(targetSceneName));
-            loadTargetScene = false;
+            loadingSceneBeingLoaded = false;
         }
         else
         {
