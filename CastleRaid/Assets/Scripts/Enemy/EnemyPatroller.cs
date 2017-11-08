@@ -114,6 +114,7 @@ public class EnemyPatroller : MonoBehaviour
         ResetEnemy();
 
         currentDestination = transform.position;
+        lastDestination = currentDestination;
     }
 
     public void ResetEnemy()
@@ -208,6 +209,7 @@ public class EnemyPatroller : MonoBehaviour
             {
                 navAgent.SetDestination(currentDestination);
                 lastDestination = currentDestination;
+                animationController.StartMovementAnimation();
             }
         }
     }
@@ -227,21 +229,19 @@ public class EnemyPatroller : MonoBehaviour
                 {
                     if (IsGuardablePatrolPoint(currentPatrolPointIndex))
                     {
-                        if (IsFacingInGivenDirection(patrolPoints[currentPatrolPointIndex].transform.forward))
+                        if (movementState != EMovementState.LOOKINGAROUND)
                         {
-                            if (movementState != EMovementState.LOOKINGAROUND)
-                            {
-                                GuardPoint();
-                            }
-
-                            if (IsDoneLookingAround(lookAroundStartTime, patrolPoints[currentPatrolPointIndex].GetGuardingDuration()))
-                            {
-                                SetNextPatrolPoint();
-                            }
+                            GuardPoint();
                         }
-                        else
+
+                        if (!IsFacingInGivenDirection(patrolPoints[currentPatrolPointIndex].transform.forward))
                         {
                             TurnTowardsGivenDirection(patrolPoints[currentPatrolPointIndex].transform.forward, deltaTime);
+                        }
+
+                        if (IsDoneLookingAround(lookAroundStartTime, patrolPoints[currentPatrolPointIndex].GetGuardingDuration()))
+                        {
+                            SetNextPatrolPoint();
                         }
                     }
                     else
@@ -443,7 +443,7 @@ public class EnemyPatroller : MonoBehaviour
                 {
                     visionLight.range = currentVisionRange;
                     visionLight.spotAngle = currentVisionAngle;
-                }
+                }             
                 break;
 
             case EAlertnessState.ALERTED:
@@ -470,6 +470,7 @@ public class EnemyPatroller : MonoBehaviour
                 break;
         }
     }
+
     void SetMovementState(EMovementState newState)
     {
         movementState = newState;
@@ -528,7 +529,7 @@ public class EnemyPatroller : MonoBehaviour
             default:
                 break;
         }
-    }
+    }   
     #endregion
 
     #region Actions
@@ -554,6 +555,7 @@ public class EnemyPatroller : MonoBehaviour
 
         lookAroundStartTime = Time.time;
         SetMovementState(EMovementState.LOOKINGAROUND);
+        animationController.StartGuardAnimation();
     }
 
     private void CheckPerimeter()
@@ -563,6 +565,7 @@ public class EnemyPatroller : MonoBehaviour
 
         lookAroundStartTime = Time.time;
         SetMovementState(EMovementState.LOOKINGAROUND);
+        animationController.StartCheckPerimeterAnimation();
     }
 
     private void TurnTowardsGivenDirection(Vector3 direction, float deltaTime)
@@ -746,8 +749,8 @@ public class EnemyPatroller : MonoBehaviour
                 Ragdoll();
             }
 			else
-			{
-				Distract(collidingRigidbody.transform.position);
+            {
+                Distract(collidingRigidbody.transform.position);
 			}
         }
     }
