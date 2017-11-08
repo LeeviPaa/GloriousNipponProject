@@ -13,12 +13,14 @@ public class VRCanvas_Hand : VRCanvas
 
     private Transform headset;
     private CanvasGroup canvasGroup;
+    private Collider canvasCollider;
 
     protected override void Start()
     {
         base.Start();
 
         canvasGroup = GetComponent<CanvasGroup>();
+        canvasCollider = GetComponent<Collider>();
     }
 
     protected override void OnEnable()
@@ -26,6 +28,14 @@ public class VRCanvas_Hand : VRCanvas
         base.OnEnable();
 
         headset = VRTK_DeviceFinder.HeadsetCamera();
+    }
+
+    private void SetInteraction(bool state)
+    {
+        if (canvasCollider && canvasCollider.enabled != state)
+            canvasCollider.enabled = state;
+        if (canvasGroup && canvasGroup.interactable != state)
+            canvasGroup.interactable = state;
     }
 
     protected override void Update()
@@ -39,11 +49,11 @@ public class VRCanvas_Hand : VRCanvas
             canvasGroup.alpha = value;
             if (value < 0.1f)
             {
-                canvasGroup.interactable = false;
+                SetInteraction(false);
             }
             else
             {
-                canvasGroup.interactable = true;
+                SetInteraction(true);
             }
         }
     }

@@ -97,10 +97,15 @@ public abstract class LevelInstance_Game : LevelInstance
 
     public virtual void StartLevel()
     {
-        timerActive = true;
+        SetTimerActive(true);
     }
 
-    public void InprisonPlayer()
+    public virtual void SetTimerActive(bool state)
+    {
+        timerActive = state;
+    }
+
+    public virtual void InprisonPlayer()
     {
         GameObject go = GameObject.FindGameObjectWithTag("Prison");
         if (go)

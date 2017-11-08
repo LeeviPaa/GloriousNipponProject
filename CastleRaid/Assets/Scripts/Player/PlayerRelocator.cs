@@ -88,6 +88,11 @@ public class PlayerRelocator : MonoBehaviour
         playArea.rotation = rot;
     }
 
+    public void RotatePlayArea(float degreesPerSec)
+    {
+        playArea.transform.rotation *= Quaternion.Euler(0f, degreesPerSec * Time.deltaTime, 0f);
+    }
+
     public Transform GetPlayArea()
     {
         return playArea;
