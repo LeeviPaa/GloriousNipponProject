@@ -9,6 +9,9 @@ public abstract class VRCanvas : MonoBehaviour
     public Canvas canvas;
     public VRTK_UICanvas canvasInteraction;
 
+    [SerializeField]
+    private VRCanvasWindow currentWindow;
+
     protected virtual void Awake()
     {
         VRTK_SDKManager.instance.AddBehaviourToToggleOnLoadedSetupChange(this);
@@ -16,7 +19,10 @@ public abstract class VRCanvas : MonoBehaviour
 
     protected virtual void Start()
     {
-        
+        if (currentWindow)
+        {
+            currentWindow.SetState(true);
+        }
     }
 
     protected virtual void OnEnable()
@@ -44,5 +50,17 @@ public abstract class VRCanvas : MonoBehaviour
     protected virtual void OnDestroy()
     {
         VRTK_SDKManager.instance.RemoveBehaviourToToggleOnLoadedSetupChange(this);
+    }
+
+    public void ChangeActiveWindow(VRCanvasWindow newWindow)
+    {
+        if (currentWindow)
+        {
+            currentWindow.SetState(false);
+        }
+        if (newWindow)
+        {
+            newWindow.SetState(true);
+        }
     }
 }
