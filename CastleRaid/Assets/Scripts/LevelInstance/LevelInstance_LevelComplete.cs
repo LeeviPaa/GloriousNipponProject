@@ -23,10 +23,10 @@ public class LevelInstance_LevelComplete : LevelInstance_Menu
     {
         base.Start();
 
-        object data;
-        if (DataStorage.GetStoredData(LootBagController.lootTotalValueSaveKey, out data, true))
+        int data;
+        if (DataStorage.TryGetInt(LootBagController.lootTotalValueSaveKey, out data))
         {
-            lootTotalValue = (int)data;
+            lootTotalValue = data;
         }
         spawnTimer = spawnInterval;
         lootCurrentValue = 0;

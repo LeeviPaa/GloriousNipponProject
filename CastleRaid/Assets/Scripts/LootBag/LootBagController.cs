@@ -84,6 +84,6 @@ public class LootBagController : MonoBehaviour
 
     void OnLevelTimeEnd(object sender, LevelInstance_Game.LevelEventArgs e)
     {
-        DataStorage.StoreData(lootTotalValueSaveKey, lootTotalValue);
+        DataStorage.SetInt(lootTotalValueSaveKey, lootTotalValue);
     }
 }

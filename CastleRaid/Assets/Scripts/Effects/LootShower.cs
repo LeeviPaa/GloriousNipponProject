@@ -20,10 +20,10 @@ public class LootShower : MonoBehaviour
 
     void Start()
     {
-        object data;
-        if (DataStorage.GetStoredData(LootBagController.lootTotalValueSaveKey, out data, true))
+        int data;
+        if (DataStorage.TryGetInt(LootBagController.lootTotalValueSaveKey, out data))
         {
-            lootTotalValue = (int)data;
+            lootTotalValue = data;
         }
         spawnTimer = spawnInterval;
 		lootCurrentValue = 0;

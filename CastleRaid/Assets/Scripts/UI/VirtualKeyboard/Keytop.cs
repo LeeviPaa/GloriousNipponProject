@@ -14,6 +14,7 @@ public class Keytop : MonoBehaviour
         shift,
         back_space,
         space,
+        submit
     }
     private EKeyType type;
     public EKeyType Type
@@ -59,6 +60,11 @@ public class Keytop : MonoBehaviour
                 break;
             case EKeyType.space:
                 vkb.display.Add(' ');
+                break;
+            case EKeyType.submit:
+                string temp = string.Empty;
+                vkb.display.Output(ref temp);
+                PlayerPrefs.SetString("USER_NAME", temp);
                 break;
             default:
                 break;

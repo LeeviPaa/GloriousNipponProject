@@ -36,4 +36,9 @@ public class VirtualDisplay : MonoBehaviour
         if (txt.text.Length > 0)
             txt.text = txt.text.Remove(txt.text.Length - 1, 1);
     }
+
+    public void Output(ref string reference)
+    {
+        reference = txt.text;
+    }
 }

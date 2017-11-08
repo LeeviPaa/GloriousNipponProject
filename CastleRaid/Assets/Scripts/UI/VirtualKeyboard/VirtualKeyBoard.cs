@@ -13,9 +13,9 @@ public class VirtualKeyBoard : MonoBehaviour
         "q","Q","w","W","e","E","r","R","t","T","y","Y","u","U","i","I","o","O","p","P",
         "a","A","s","S","d","D","f","F","g","G","h","H","j","J","k","K","l","L",
         "sft","SFT","z","Z","x","X","c","C","v","V","b","B","n","N","m","M",
-        "BS","BS","space","space",
+        "BS","BS","space","space","OK","OK",
     };
-    GameObject[] keys = new GameObject[39];
+    GameObject[] keys = new GameObject[40];
 
     bool shiftState;
 
@@ -78,7 +78,6 @@ public class VirtualKeyBoard : MonoBehaviour
             keys[30 + i].GetComponent<Keytop>().Type = Keytop.EKeyType.character;
 
         }
-        print(transform.parent);
         // back space 
         x = vk_x + keys[36].transform.position.x - 3.19f;
         y = vk_y + margin * 3;
@@ -100,6 +99,17 @@ public class VirtualKeyBoard : MonoBehaviour
         rect.anchoredPosition += new Vector2(249, 0f);
         rect = keys[38].transform.GetChild(0).GetComponent<RectTransform>();
         rect.sizeDelta = new Vector2(360.0f, 187.0f);
+
+        // okay
+        x = vk_x + 0.05f;
+        y = vk_y + margin * 2+0.01f;
+        pos = new Vector3(x, y, vk_z);
+        keys[39] = Instantiate(keytop, pos, transform.localRotation, transform);
+        keys[39].GetComponent<Keytop>().Type = Keytop.EKeyType.submit;
+        rect = keys[39].GetComponent<RectTransform>();
+        rect.sizeDelta = new Vector2(60.0f, 140.0f);
+        rect.anchoredPosition += new Vector2(300.0f, 0.0f);
+
 
 
         //Default character is small.
