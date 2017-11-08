@@ -62,5 +62,6 @@ public abstract class VRCanvas : MonoBehaviour
         {
             newWindow.SetState(true);
         }
+        currentWindow = newWindow;
     }
 }

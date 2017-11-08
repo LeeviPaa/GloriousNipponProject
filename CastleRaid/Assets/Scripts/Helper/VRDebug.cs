@@ -32,15 +32,16 @@ public class VRDebug : MonoBehaviour
     {
         LevelInstance_Game li = GameManager.levelInstance as LevelInstance_Game;
         if (li)
-        {
-            
+        {         
             li.SetTimerActive(state);
             if (state)
             {
+                li.SetTimerActive(false);
                 Debug.Log("Level timer paused for debug");
             }
             else
             {
+                li.SetTimerActive(true);
                 Debug.Log("Level timer started for debug");
             }
         }

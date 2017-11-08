@@ -30,7 +30,7 @@ public class PlayerRelocator : MonoBehaviour
         }
     }
 
-    void OnEnabled()
+    void OnEnable()
     {
         playArea = VRTK_DeviceFinder.PlayAreaTransform();
     }
