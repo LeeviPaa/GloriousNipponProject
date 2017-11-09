@@ -37,7 +37,7 @@ public class DataStorage
 
     public static void SetList<T>(string key, List<T> list)
     {
-        Savedatabase.SetList<T>(key, list);
+        Savedatabase.SetList(key, list);
     }
 
     public static List<T> GetList<T>(string key, List<T> _default)
@@ -177,7 +177,6 @@ public class DataStorage
             fileName = _fileName;
             saveDictionary = new Dictionary<string, string>();
             Load();
-
         }
 
         /// <summary>
