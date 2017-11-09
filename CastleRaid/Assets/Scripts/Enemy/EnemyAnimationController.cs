@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Animator))]
 public class EnemyAnimationController : MonoBehaviour
 {
     #region References & variables
     Animator animator;
     bool isActive = false;
+    [SerializeField]
+    GameObject animatedMesh;
     #endregion
 
     #region Initialization
@@ -20,7 +21,7 @@ public class EnemyAnimationController : MonoBehaviour
     {
         if (animator == null)
         {
-            animator = GetComponent<Animator>();
+            animator = animatedMesh.GetComponent<Animator>();
         }
     }
     #endregion
@@ -33,9 +34,19 @@ public class EnemyAnimationController : MonoBehaviour
         if (animator != null)
         {
             animator.enabled = newState;
+
+            if (newState)
+            {
+                ResetAnimator();
+            }
         }
 
         isActive = newState;
+    }
+
+    private void ResetAnimator()
+    {
+        animator.SetInteger("MovementSpeed", 0);
     }
     #endregion
 
@@ -44,33 +55,51 @@ public class EnemyAnimationController : MonoBehaviour
     {
         if (isActive)
         {
-            animator.Play("");
+            animator.SetTrigger("Attack");
         }
     }
 
-    public void PlayGuardAnimation()
+    public void PlayAlertedAnimation()
     {
         if (isActive)
         {
-            animator.Play("");
+            animator.SetTrigger("Alerted");
+        }
+    }
+    
+    public void StartGuardAnimation()
+    {
+        if (isActive)
+        {
+            animator.ResetTrigger("Move");
+            animator.SetTrigger("StartGuarding");
         }
     }
 
-    public void PlayCheckPerimeterAnimation()
+    public void StartCheckPerimeterAnimation()
     {
         if (isActive)
         {
-            animator.Play("");
+            animator.ResetTrigger("Move");
+            animator.SetTrigger("StartCheckingPerimeter");
+        }
+    }
+
+    public void StartMovementAnimation()
+    {
+        if (isActive)
+        {
+            animator.SetTrigger("Move");
         }
     }
     #endregion
 
     #region Animation states
-    public void SetMovementSpeed(float newSpeed)
+    public void SetMovementSpeed(int newSpeed)
     {
         if (isActive)
         {
-            animator.SetFloat("MovementSpeed", newSpeed);
+            animator.SetInteger("MovementSpeed", newSpeed);
         }
     }
     #endregion

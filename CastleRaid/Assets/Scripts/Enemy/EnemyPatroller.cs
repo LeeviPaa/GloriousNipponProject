@@ -95,6 +95,11 @@ public class EnemyPatroller : MonoBehaviour
     bool ragdolled = false;
     [SerializeField]
     Transform ragdollColliderParent;
+
+    [SerializeField]
+    ColliderController meleeCollider;
+
+    bool playingAlertedAnimation = false;
     #endregion
 
     #region Initialization
@@ -114,6 +119,7 @@ public class EnemyPatroller : MonoBehaviour
         ResetEnemy();
 
         currentDestination = transform.position;
+        lastDestination = currentDestination;
     }
 
     public void ResetEnemy()
@@ -162,36 +168,36 @@ public class EnemyPatroller : MonoBehaviour
     #region MonoBehaviour
     private void Update()
     {
-        if (!ragdolled) 
-		{
-			UpdateEnemyState(Time.deltaTime);
-			UpdateNavigation(Time.deltaTime);
+        if (!ragdolled)
+        {
+            UpdateEnemyState(Time.deltaTime);
+            UpdateNavigation(Time.deltaTime);
 
-			rb.velocity = Vector3.zero;
+            rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
 
-			if (meleeAttackCooldownTimer > 0) 
-			{
-				meleeAttackCooldownTimer -= Time.deltaTime;
+            if (meleeAttackCooldownTimer > 0)
+            {
+                meleeAttackCooldownTimer -= Time.deltaTime;
 
-				if (meleeAttackCooldownTimer <= 0) 
-				{
-					meleeAttackCooldownTimer = 0;
-				}
-			}
+                if (meleeAttackCooldownTimer <= 0)
+                {
+                    meleeAttackCooldownTimer = 0;
+                }
+            }
 
-			if (alertingNearbyEnemies) 
-			{
-				alertNearbyEnemiesTimer -= Time.deltaTime;
+            if (alertingNearbyEnemies)
+            {
+                alertNearbyEnemiesTimer -= Time.deltaTime;
 
-				if (alertNearbyEnemiesTimer <= 0) 
-				{
-					alertingNearbyEnemies = false;
-					alertColliderController._OnTriggerEnter -= OnColliderControllerTriggerEnter;
-					alertColliderController.gameObject.SetActive(false);
-				}
-			}
-		}
+                if (alertNearbyEnemiesTimer <= 0)
+                {
+                    alertingNearbyEnemies = false;
+                    alertColliderController._OnTriggerEnter -= OnColliderControllerTriggerEnter;
+                    alertColliderController.gameObject.SetActive(false);
+                }
+            }
+        }
     }
     #endregion
 
@@ -208,6 +214,7 @@ public class EnemyPatroller : MonoBehaviour
             {
                 navAgent.SetDestination(currentDestination);
                 lastDestination = currentDestination;
+                animationController.StartMovementAnimation();
             }
         }
     }
@@ -227,21 +234,19 @@ public class EnemyPatroller : MonoBehaviour
                 {
                     if (IsGuardablePatrolPoint(currentPatrolPointIndex))
                     {
-                        if (IsFacingInGivenDirection(patrolPoints[currentPatrolPointIndex].transform.forward))
+                        if (movementState != EMovementState.LOOKINGAROUND)
                         {
-                            if (movementState != EMovementState.LOOKINGAROUND)
-                            {
-                                GuardPoint();
-                            }
-
-                            if (IsDoneLookingAround(lookAroundStartTime, patrolPoints[currentPatrolPointIndex].GetGuardingDuration()))
-                            {
-                                SetNextPatrolPoint();
-                            }
+                            GuardPoint();
                         }
-                        else
+
+                        if (!IsFacingInGivenDirection(patrolPoints[currentPatrolPointIndex].transform.forward))
                         {
                             TurnTowardsGivenDirection(patrolPoints[currentPatrolPointIndex].transform.forward, deltaTime);
+                        }
+
+                        if (IsDoneLookingAround(lookAroundStartTime, patrolPoints[currentPatrolPointIndex].GetGuardingDuration()))
+                        {
+                            SetNextPatrolPoint();
                         }
                     }
                     else
@@ -284,40 +289,47 @@ public class EnemyPatroller : MonoBehaviour
                 break;
 
             case EAlertnessState.ALERTED:
-                if (IsGivenTargetInSight(currentTarget))
+                if (playingAlertedAnimation)
                 {
-                    SetNewNavDestination(currentTarget.transform.position);
-
-                    if (IsWithinGivenRangeOfDestination(meleeRange))
-                    {
-                        MeleeAttack();
-                    }
-                    else
-                    {
-                        //Continue walking towards current destination (and update position if necessary)
-
-                        //TODO: If deemed necessary, implement collision detection
-                    }
-                }
-                else if (IsAnyTargetInSight())
-                {
-                    SetNewNavDestination(currentTarget.transform.position);
-
-                    if (IsWithinGivenRangeOfDestination(meleeRange))
-                    {
-
-                        MeleeAttack();
-                    }
-                    else
-                    {
-                        //Continue walking towards current destination (and update position if necessary)
-
-                        //TODO: If deemed necessary, implement collision detection
-                    }
+                    TurnTowardsGivenDirection(currentTarget.transform.position - transform.position, deltaTime);
                 }
                 else
                 {
-                    SetAlertnessState(EAlertnessState.SUSPICIOUS);
+                    if (IsGivenTargetInSight(currentTarget))
+                    {
+                        SetNewNavDestination(currentTarget.transform.position);
+
+                        if (IsWithinGivenRangeOfDestination(meleeRange))
+                        {
+                            MeleeAttack();
+                        }
+                        else
+                        {
+                            //Continue walking towards current destination (and update position if necessary)
+
+                            //TODO: If deemed necessary, implement collision detection
+                        }
+                    }
+                    else if (IsAnyTargetInSight())
+                    {
+                        SetNewNavDestination(currentTarget.transform.position);
+
+                        if (IsWithinGivenRangeOfDestination(meleeRange))
+                        {
+
+                            MeleeAttack();
+                        }
+                        else
+                        {
+                            //Continue walking towards current destination (and update position if necessary)
+
+                            //TODO: If deemed necessary, implement collision detection
+                        }
+                    }
+                    else
+                    {
+                        SetAlertnessState(EAlertnessState.SUSPICIOUS);
+                    }
                 }
                 break;
 
@@ -458,7 +470,7 @@ public class EnemyPatroller : MonoBehaviour
 
                 if (currentTarget != null)
                 {
-                    SetNewNavDestination(currentTarget.transform.position);
+                    StartCoroutine(SetTargetPositionAfterDuration(0.835f));
                 }
                 else
                 {
@@ -470,6 +482,7 @@ public class EnemyPatroller : MonoBehaviour
                 break;
         }
     }
+
     void SetMovementState(EMovementState newState)
     {
         movementState = newState;
@@ -529,6 +542,28 @@ public class EnemyPatroller : MonoBehaviour
                 break;
         }
     }
+
+    IEnumerator EnableMeleeColliderForDuration(float duration)
+    {
+        meleeCollider._OnTriggerEnter -= OnMeleeColliderEnter;
+        meleeCollider._OnTriggerEnter += OnMeleeColliderEnter;
+        meleeCollider.GetComponent<Collider>().enabled = true;
+
+        yield return new WaitForSeconds(duration);
+
+        meleeCollider.GetComponent<Collider>().enabled = false;
+        meleeCollider._OnTriggerEnter -= OnMeleeColliderEnter;
+    }
+
+    IEnumerator SetTargetPositionAfterDuration(float duration)
+    {
+        playingAlertedAnimation = true;
+
+        yield return new WaitForSeconds(duration);
+
+        playingAlertedAnimation = false;
+        SetNewNavDestination(currentTarget.transform.position);
+    }
     #endregion
 
     #region Actions
@@ -537,13 +572,13 @@ public class EnemyPatroller : MonoBehaviour
         if (meleeAttackCooldownTimer <= 0)
         {
             meleeAttackCooldownTimer = meleeAttackCooldownDuration;
-            //Implement melee attack cooldown?
-
             navAgent.ResetPath();
-            //Does this require target transform or direction?
-            TurnTowardsGivenDirection(currentTarget.transform.position - transform.position, -1f);
 
             //Play melee attack animation
+            animationController.PlayAttackAnimation();
+
+            //Enable melee collider for the duration of the animation
+            StartCoroutine(EnableMeleeColliderForDuration(1.835f));
         }
     }
 
@@ -554,6 +589,7 @@ public class EnemyPatroller : MonoBehaviour
 
         lookAroundStartTime = Time.time;
         SetMovementState(EMovementState.LOOKINGAROUND);
+        animationController.StartGuardAnimation();
     }
 
     private void CheckPerimeter()
@@ -563,6 +599,7 @@ public class EnemyPatroller : MonoBehaviour
 
         lookAroundStartTime = Time.time;
         SetMovementState(EMovementState.LOOKINGAROUND);
+        animationController.StartCheckPerimeterAnimation();
     }
 
     private void TurnTowardsGivenDirection(Vector3 direction, float deltaTime)
@@ -592,6 +629,8 @@ public class EnemyPatroller : MonoBehaviour
         {
             c.enabled = newState;
         }
+
+        meleeCollider.GetComponent<Collider>().enabled = false;
 
         Rigidbody[] ragdollRigidbodies = ragdollColliderParent.GetComponentsInChildren<Rigidbody>(true);
         foreach (Rigidbody rb in ragdollRigidbodies)
@@ -737,18 +776,40 @@ public class EnemyPatroller : MonoBehaviour
         Rigidbody collidingRigidbody = collision.rigidbody;
         if (collidingRigidbody != null)
         {
-			float velocityThresholdToDamage = 5f;
-			Debug.Log("EnemyPatroller: Collided with a rigidbody. Colliding rigidbody velocity sqrMagnitude: " 
-				+ collidingRigidbody.velocity.sqrMagnitude + " , velocityThresholdToDamage^2: " 
-				+ velocityThresholdToDamage * velocityThresholdToDamage);       
+            float velocityThresholdToDamage = 5f;
+            Debug.Log("EnemyPatroller: Collided with a rigidbody. Colliding rigidbody velocity sqrMagnitude: "
+                + collidingRigidbody.velocity.sqrMagnitude + " , velocityThresholdToDamage^2: "
+                + velocityThresholdToDamage * velocityThresholdToDamage);
             if (collidingRigidbody.velocity.sqrMagnitude >= velocityThresholdToDamage * velocityThresholdToDamage)
             {
                 Ragdoll();
             }
-			else
-			{
-				Distract(collidingRigidbody.transform.position);
-			}
+            else
+            {
+                Distract(collidingRigidbody.transform.position);
+            }
+        }
+    }
+
+    private void OnMeleeColliderEnter(ColliderController controller, Collider collider)
+    {
+        TargetableByEnemy targetScript = collider.GetComponent<TargetableByEnemy>();
+        if (targetScript != null)
+        {
+            GameObject target = targetScript.GetMainObject();
+
+            if (target != null)
+            {
+                Debug.Log("EnemyPatroller: Target hit! Moving to prison.");
+
+                Transform prisonTransform = GameObject.FindGameObjectWithTag("Prison").transform;
+
+                if (prisonTransform != null)
+                {
+                    GameManager.levelInstance.GetPlayerRelocator().RelocatePlayer(prisonTransform.position, prisonTransform.rotation);
+                    Debug.Log("EnemyPatroller: Player moved to prison");
+                }
+            }
         }
     }
     #endregion

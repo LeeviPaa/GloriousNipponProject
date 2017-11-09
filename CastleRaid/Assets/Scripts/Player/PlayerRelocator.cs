@@ -8,6 +8,7 @@ public class PlayerRelocator : MonoBehaviour
     public VRTK_BodyPhysics bodyPhysics;
     public VRTK_BasicTeleport teleporter;
     public VRTK_PlayerClimb climb;
+    public float relocationFadeDuration;
 
     private bool movementEnabled = true;
     private Transform playArea;
@@ -84,8 +85,10 @@ public class PlayerRelocator : MonoBehaviour
 
     public void RelocatePlayer(Vector3 pos, Quaternion rot)
     {
+        GameManager.levelInstance.ScreenFade(relocationFadeDuration / 2);
         playArea.position = pos;
         playArea.rotation = rot;
+        GameManager.levelInstance.ScreenFade(relocationFadeDuration / 2);
     }
 
     public void RotatePlayArea(float degreesPerSec)

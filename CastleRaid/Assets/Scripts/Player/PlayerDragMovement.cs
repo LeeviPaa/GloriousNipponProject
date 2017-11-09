@@ -48,19 +48,9 @@ public class PlayerDragMovement : MonoBehaviour
             grab[i].GrabButtonPressed += OnPlayerGrabButtonPressed;
             grab[i].GrabButtonReleased += OnPlayerGrabButtonReleased;
         }
+
+        playArea = VRTK_DeviceFinder.PlayAreaTransform();
     }
-
-	void Start()
-	{
-		StartCoroutine(DelayedStart());
-	}
-
-	IEnumerator DelayedStart()
-	{
-		yield return null;
-
-		playArea = VRTK_DeviceFinder.PlayAreaTransform();
-	}
 
     void OnDisable()
     {
@@ -81,7 +71,7 @@ public class PlayerDragMovement : MonoBehaviour
 		}
         if (dragState == State.Active && playArea)
         {
-            Vector3 finalPos = playAreaDragStartPos + ((controllerDragStartLocalPos - currentUsedController.transform.localPosition) * dragSpeed);
+            Vector3 finalPos = playAreaDragStartPos + (playArea.rotation * (controllerDragStartLocalPos - currentUsedController.transform.localPosition) * dragSpeed);
             finalPos.y = playArea.position.y;
             playArea.position = finalPos;
         }
