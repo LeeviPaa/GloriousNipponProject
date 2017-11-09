@@ -88,7 +88,7 @@ public class PlayerRelocator : MonoBehaviour
         GameManager.levelInstance.ScreenFade(relocationFadeDuration / 2);
         playArea.position = pos;
         playArea.rotation = rot;
-        GameManager.levelInstance.ScreenFade(relocationFadeDuration / 2);
+        GameManager.levelInstance.ScreenUnfade(relocationFadeDuration / 2);
     }
 
     public void RotatePlayArea(float degreesPerSec)
