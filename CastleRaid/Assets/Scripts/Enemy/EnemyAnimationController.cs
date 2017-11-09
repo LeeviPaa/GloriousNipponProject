@@ -99,7 +99,7 @@ public class EnemyAnimationController : MonoBehaviour
     {
         if (isActive)
         {
-            animator.SetInteger("MovementSpeed", newSpeed);
+            animator.SetFloat("MovementSpeed", newSpeed);
         }
     }
     #endregion

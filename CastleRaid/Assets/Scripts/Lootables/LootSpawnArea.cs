@@ -39,7 +39,8 @@ public class LootSpawnArea : MonoBehaviour
 
 			if (lootableToSpawn != null && spawnTransform != null)
 			{
-				Instantiate(lootableToSpawn, spawnTransform.position, spawnTransform.rotation);
+				GameObject newLoot = Instantiate(lootableToSpawn, spawnTransform.position, spawnTransform.rotation);
+				newLoot.transform.SetParent(transform);
 			}
 		}
 	}
