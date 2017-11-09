@@ -29,7 +29,9 @@ public class PlayerDragMovement : MonoBehaviour
 
     void Awake()
     {
-        if (!bodyPhysics)
+		VRTK_SDKManager.instance.AddBehaviourToToggleOnLoadedSetupChange(this);
+
+		if (!bodyPhysics)
         {
             bodyPhysics = GetComponent<VRTK_BodyPhysics>();
         }
@@ -77,7 +79,12 @@ public class PlayerDragMovement : MonoBehaviour
         }
     }
 
-    void BeginDrag()
+	void OnDestroy()
+	{
+		VRTK_SDKManager.instance.RemoveBehaviourToToggleOnLoadedSetupChange(this);
+	}
+
+	void BeginDrag()
     {
         dragState = State.Active;
 		currentUsedController = currentPressedController;

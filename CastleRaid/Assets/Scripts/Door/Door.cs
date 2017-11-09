@@ -80,7 +80,7 @@ public class Door : MonoBehaviour {
 				hinge.useLimits = true;
 
 				locked = true;
-				Debug.Log("Door locked!");
+				//Debug.Log("Door locked!");
 			}
 		} else {
 			Debug.Log("Door Can not Lock, Lock is Broken");

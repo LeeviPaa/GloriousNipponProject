@@ -13,6 +13,7 @@ public class LevelInstance_LevelComplete : LevelInstance_Menu
     public float lootCounterSpeed;
     public Text proceedButtonText;
     public string nextLevel;
+    public string lootSpawnSound;
 
     private int lootTotalValue = 0;
     private float lootCurrentValue = 0;
@@ -58,6 +59,7 @@ public class LevelInstance_LevelComplete : LevelInstance_Menu
                         Vector3 pos = spawnAreaCenter.position + new Vector3(x, 0f, z);
                         Instantiate(lootPrefabs[Random.Range(0, lootPrefabs.Length)], pos, Random.rotation);
                         spawnTimer = spawnInterval;
+                        GameManager.audioManager.GetAudio(lootSpawnSound, true, true, pos, transform);
                     }
                 }
                 break;

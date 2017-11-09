@@ -339,9 +339,11 @@ public class LootBag : MonoBehaviour
 			lootTextEffect = GameManager.effectManager.GetEffect("FadingFloatingText", true, true, effectSpawnTransform.position + effectSpawnTransform.up * 0.5f, effectSpawnTransform.rotation/*, effectSpawnTransform*/);
 		}
 
-
-		FadingFloatingTextController textController = lootTextEffect.GetComponentInChildren<FadingFloatingTextController>();
-		textController.InitializeText("+" + lootValue.ToString());
+		if(lootTextEffect != null) 
+		{
+			FadingFloatingTextController textController = lootTextEffect.GetComponentInChildren<FadingFloatingTextController>();
+			textController.InitializeText("+" + lootValue.ToString());
+		}
 
 	}
 
