@@ -101,10 +101,13 @@ public class EnemyPatroller : MonoBehaviour {
 	bool targetInSightTrigger = false;
 
 	bool clearPath = false;
-	#endregion
 
-	#region Initialization
-	public void InitializeEnemy(PatrolPoint[] _patrolPoints) {
+    AudioItem walkingSound;
+    AudioItem lookAroundSound;
+    #endregion
+
+    #region Initialization
+    public void InitializeEnemy(PatrolPoint[] _patrolPoints) {
 		patrolPoints = _patrolPoints;
 		//if (patrolPoints == null || patrolPoints.Length == 0)
 		//{
@@ -116,7 +119,11 @@ public class EnemyPatroller : MonoBehaviour {
 		rb = GetComponent<Rigidbody>();
 		animationController = GetComponent<EnemyAnimationController>();
 
-		ResetEnemy();
+        //Initialize looping sound effects
+        walkingSound = GameManager.audioManager.GetAudio("FootStep", false, false, transform.position, transform);
+        lookAroundSound = GameManager.audioManager.GetAudio("GuardLookAround", false, false, transform.position, transform);
+
+        ResetEnemy();
 
 		currentDestination = transform.position;
 		lastDestination = currentDestination;
@@ -198,7 +205,17 @@ public class EnemyPatroller : MonoBehaviour {
 	private void UpdateNavigation(float updateLoopDeltaTime) {
 
 		if (!clearPath) {
-			navTickCounter += updateLoopDeltaTime;
+
+            if (!walkingSound.source.isPlaying)
+            {
+                walkingSound.source.Play();
+            }
+            if (lookAroundSound.source.isPlaying)
+            {
+                lookAroundSound.source.Stop();
+            }
+
+            navTickCounter += updateLoopDeltaTime;
 
 			if (navTickCounter >= navTickInterval) {
 				navTickCounter = 0;
@@ -302,11 +319,12 @@ public class EnemyPatroller : MonoBehaviour {
 		Vector3 currentPosition = transform.position;
 		Vector3 destination = currentDestination;
 
-		//currentDestination == lastDestination && navAgent.remainingDistance <= range
-		//if (Mathf.Abs(transform.position.y - currentDestination.y) <= navAgentDestinationHeightDifferenceIgnoreLimit)
-		//{
-		//}
-		currentPosition.y = 0;
+        //currentDestination == lastDestination && navAgent.remainingDistance <= range
+        //if (Mathf.Abs(transform.position.y - currentDestination.y) <= navAgentDestinationHeightDifferenceIgnoreLimit)
+        //{
+        //}
+
+        currentPosition.y = 0;
 		destination.y = 0;
 
 		if ((destination - currentPosition).sqrMagnitude <= range * range) {
@@ -385,7 +403,9 @@ public class EnemyPatroller : MonoBehaviour {
 			|| newState == EAlertnessState.ALERTED)) {
 			animationController.PlayAlertedAnimation();
 			StartCoroutine(PauseAIAndSetTargetPositionAsDestinationAfterDuration(0.8f));
-		}
+
+            AudioItem alertedSoundEffect = GameManager.audioManager.GetAudio("GuardNotice", true, true, transform.position, transform);
+        }
 
 		alertnessState = newState;
 
@@ -486,7 +506,7 @@ public class EnemyPatroller : MonoBehaviour {
 		}
 
 		clearPath = false;
-	}
+    }
 
 	IEnumerator EnableMeleeColliderForDuration(float duration) {
 		meleeCollider._OnTriggerEnter -= OnMeleeColliderEnter;
@@ -501,6 +521,9 @@ public class EnemyPatroller : MonoBehaviour {
 
 	IEnumerator PauseAIAndSetTargetPositionAsDestinationAfterDuration(float duration)
     {
+        //Pause walking sound effect
+        walkingSound.source.Stop();
+
         navAgent.ResetPath();
         clearPath = true;
         pauseBehaviorForAnimations = true;
@@ -527,7 +550,10 @@ public class EnemyPatroller : MonoBehaviour {
 
 			//Enable melee collider for the duration of the animation
 			StartCoroutine(EnableMeleeColliderForDuration(1.835f));
-		}
+
+            //Call melee sound effect
+            AudioItem meleeSoundEffect = GameManager.audioManager.GetAudio("GuardSwing", true, true, transform.position, transform);
+        }
 	}
 
 	private void GuardPoint() {
@@ -537,7 +563,10 @@ public class EnemyPatroller : MonoBehaviour {
 		lookAroundStartTime = Time.time;
 		SetMovementState(EMovementState.LOOKINGAROUND);
 		animationController.StartGuardAnimation();
-	}
+
+        //Call lookAround sound effect
+        lookAroundSound.source.Play();
+    }
 
 	private void CheckPerimeter() {
 		//Play checkPerimeter animation
@@ -546,7 +575,10 @@ public class EnemyPatroller : MonoBehaviour {
 		lookAroundStartTime = Time.time;
 		SetMovementState(EMovementState.LOOKINGAROUND);
 		animationController.StartCheckPerimeterAnimation();
-	}
+
+        //Call lookAround sound effect
+        lookAroundSound.source.Play();
+    }
 
 	private void TurnTowardsGivenDirection(Vector3 direction, float deltaTime) {
 		//TODO: Find out why the rotation "snaps" to place at the end
