@@ -59,6 +59,8 @@ namespace VRTK
         public VRTK_InteractUse interactUse;
         [Tooltip("A custom transform to use as the origin of the pointer. If no pointer origin transform is provided then the transform the script is attached to is used.")]
         public Transform customOrigin;
+        [Tooltip("A optional InteractGrab script that will be used to disable pointer when an object is grabbed.")]
+        public VRTK_InteractGrab interactGrab;
 
         /// <summary>
         /// Emitted when the pointer activation button is pressed.
@@ -102,6 +104,7 @@ namespace VRTK
         protected bool selectionButtonPressed;
         protected bool attemptControllerSetup;
         protected Transform originalCustomOrigin;
+        protected bool interactGrabActive = false;
 
         public virtual void OnActivationButtonPressed(ControllerInteractionEventArgs e)
         {
@@ -256,7 +259,7 @@ namespace VRTK
         /// <param name="state">If true the pointer will be enabled if possible, if false the pointer will be disabled if possible.</param>
         public virtual void Toggle(bool state)
         {
-            if (!CanActivate() || NoPointerRenderer() || CanActivateOnToggleButton(state) || (state && IsPointerActive()) || (!state && !IsPointerActive()))
+            if (!CanActivate() || NoPointerRenderer() || CanActivateOnToggleButton(state) || (state && IsPointerActive()) || (!state && !IsPointerActive()) || interactGrabActive)
             {
                 return;
             }
@@ -290,6 +293,7 @@ namespace VRTK
             base.OnEnable();
             VRTK_PlayerObject.SetPlayerObject(gameObject, VRTK_PlayerObject.ObjectTypes.Pointer);
             SetDefaultValues();
+            SubscribeGrabListeners();
 
             if (NoPointerRenderer())
             {
@@ -302,6 +306,7 @@ namespace VRTK
             base.OnDisable();
             UnsubscribeActivationButton();
             UnsubscribeSelectionButton();
+            UnsubscribeGrabListeners();
         }
 
         protected virtual void OnDestroy()
@@ -657,6 +662,35 @@ namespace VRTK
                     pointerInteractableObject.usingState++;
                 }
             }
+        }
+
+        protected virtual void SubscribeGrabListeners()
+        {
+            if (interactGrab)
+            {
+                interactGrab.ControllerGrabInteractableObject += OnGrabObject;
+                interactGrab.ControllerUngrabInteractableObject += OnUngrabObject;
+            }
+        }
+
+        protected virtual void UnsubscribeGrabListeners()
+        {
+            if (interactGrab)
+            {
+                interactGrab.ControllerGrabInteractableObject -= OnGrabObject;
+                interactGrab.ControllerUngrabInteractableObject -= OnUngrabObject;
+            }
+        }
+
+        protected virtual void OnGrabObject(object sender, ObjectInteractEventArgs e)
+        {
+            Toggle(false);
+            interactGrabActive = true;
+        }
+
+        protected virtual void OnUngrabObject(object sender, ObjectInteractEventArgs e)
+        {
+            interactGrabActive = false;
         }
 
         protected virtual void SetHoverSelectionTimer(Collider collider)
