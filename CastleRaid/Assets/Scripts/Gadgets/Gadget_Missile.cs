@@ -11,16 +11,27 @@ public class Gadget_Missile : MonoBehaviour
     [SerializeField]
     private float explosionRadius = 2f;
 
+	private Transform target;
+
     public void Shoot(Transform target)
     {
-        Vector3 dir = target.position - transform.position;
-        Quaternion targetRot = Quaternion.LookRotation(dir, Vector3.up);
-        Quaternion actualRot = Quaternion.RotateTowards(transform.rotation, targetRot, turnRate);
-        transform.rotation = actualRot;
-        transform.position += transform.forward * speed * Time.deltaTime;
+		this.target = target;
+
     }
 
-    void OnTriggerEnter(Collider other)
+	void Update()
+	{
+		if (target)
+		{
+			Vector3 dir = target.position - transform.position;
+			Quaternion targetRot = Quaternion.LookRotation(dir, Vector3.up);
+			Quaternion actualRot = Quaternion.RotateTowards(transform.rotation, targetRot, turnRate);
+			transform.rotation = actualRot;
+			transform.position += transform.forward * speed * Time.deltaTime;
+		}
+	}
+
+	void OnTriggerEnter(Collider other)
     {
         if (!other.isTrigger)
         {
