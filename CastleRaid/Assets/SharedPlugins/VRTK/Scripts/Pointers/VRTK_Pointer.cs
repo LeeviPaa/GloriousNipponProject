@@ -104,6 +104,7 @@ namespace VRTK
         protected bool selectionButtonPressed;
         protected bool attemptControllerSetup;
         protected Transform originalCustomOrigin;
+        protected bool interactGrabActive = false;
 
         public virtual void OnActivationButtonPressed(ControllerInteractionEventArgs e)
         {
@@ -258,7 +259,7 @@ namespace VRTK
         /// <param name="state">If true the pointer will be enabled if possible, if false the pointer will be disabled if possible.</param>
         public virtual void Toggle(bool state)
         {
-            if (!CanActivate() || NoPointerRenderer() || CanActivateOnToggleButton(state) || (state && IsPointerActive()) || (!state && !IsPointerActive()))
+            if (!CanActivate() || NoPointerRenderer() || CanActivateOnToggleButton(state) || (state && IsPointerActive()) || (!state && !IsPointerActive()) || interactGrabActive)
             {
                 return;
             }
@@ -683,12 +684,13 @@ namespace VRTK
 
         protected virtual void OnGrabObject(object sender, ObjectInteractEventArgs e)
         {
-            enabled = false;
+            Toggle(false);
+            interactGrabActive = true;
         }
 
         protected virtual void OnUngrabObject(object sender, ObjectInteractEventArgs e)
         {
-            enabled = true;
+            interactGrabActive = false;
         }
 
         protected virtual void SetHoverSelectionTimer(Collider collider)
