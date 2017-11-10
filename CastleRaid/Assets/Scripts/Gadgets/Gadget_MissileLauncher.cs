@@ -17,8 +17,10 @@ public class Gadget_MissileLauncher : MonoBehaviour
     private VRCanvasItem_TargetLockIndicator indicator;
     [SerializeField]
     private float lockTimeRequired = 1f;
+	[SerializeField]
+	private Collider[] ingnoredCollidersWhenGrabbed;
 
-    private float lockProgress = 0f;
+	private float lockProgress = 0f;
     private LockableTarget lockedTarget;
 
     void Start()
@@ -39,7 +41,11 @@ public class Gadget_MissileLauncher : MonoBehaviour
         {
             enabled = false;
         }
-    }
+		if (targetPainter)
+		{
+			targetPainter.gameObject.SetActive(false);
+		}
+	}
 
     void Update()
     {
@@ -48,13 +54,28 @@ public class Gadget_MissileLauncher : MonoBehaviour
 
     void OnGrabBegin(object sender, InteractableObjectEventArgs e)
     {
-        
+        for (int i = 0; i < ingnoredCollidersWhenGrabbed.Length; i++)
+		{
+			ingnoredCollidersWhenGrabbed[i].enabled = false;
+		}
+		if (targetPainter)
+		{
+			targetPainter.gameObject.SetActive(true);
+		}
     }
 
     void OnGrabEnd(object sender, InteractableObjectEventArgs e)
     {
-        lockProgress = 0f;
-    }
+		for (int i = 0; i < ingnoredCollidersWhenGrabbed.Length; i++)
+		{
+			ingnoredCollidersWhenGrabbed[i].enabled = true;
+		}
+		lockProgress = 0f;
+		if (targetPainter)
+		{
+			targetPainter.gameObject.SetActive(false);
+		}
+	}
 
     void OnUseBegin(object sender, InteractableObjectEventArgs e)
     {
@@ -80,8 +101,17 @@ public class Gadget_MissileLauncher : MonoBehaviour
                 if (lockedTarget)
                 {
                     lockProgress = Mathf.Clamp01(lockProgress + Time.deltaTime / lockTimeRequired);
-                }
-            }
+					Debug.DrawLine(targetPainter.position, hit.point, Color.green, Time.deltaTime, false);
+				}
+				else 
+				{
+					Debug.DrawLine(targetPainter.position, hit.point, Color.red, Time.deltaTime, false);
+				}
+			}
+			else
+			{
+				Debug.DrawLine(targetPainter.position, targetPainter.forward * 100f, Color.red, Time.deltaTime, false);
+			}
             if (!lockedTarget)
             {
                 lockProgress = 0f;
