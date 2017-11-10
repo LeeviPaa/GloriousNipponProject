@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ScoreManager : MonoBehaviour
+public class ScoreManager : Singleton<ScoreManager>
 {
     public readonly string RANKING_KEY = "RANKING";
     public readonly int maxRanking = 30;
@@ -14,12 +14,11 @@ public class ScoreManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        Example();
+        FetchRankingFromJson();
     }
 
     void Example()
     {
-        FetchRankingFromJson();
         CharangeRanking(new UserData("212121", "Ryohei", 1900));
         foreach (UserData r in ranking)
             print(r.ToString());
