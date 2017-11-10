@@ -9,7 +9,7 @@ public class ScoreManager : Singleton<ScoreManager>
     public readonly int maxRanking = 30;
     private bool isRunningAutoSave = false;
 
-    List<UserData> ranking = new List<UserData>();
+    public List<UserData> ranking = new List<UserData>();
 
     // Use this for initialization
     void Start()
