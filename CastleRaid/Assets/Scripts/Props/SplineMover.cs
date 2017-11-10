@@ -41,4 +41,12 @@ public class SplineMover : MonoBehaviour
             transform.rotation = Quaternion.LookRotation(dir, Vector3.up);
         }
     }
+    [AddEditorInvokeButton]
+    void VisualizePosition()
+    {
+        Vector3 pos = targetSpline.GetPoint(t);
+        Vector3 dir = targetSpline.GetDirection(t);
+        transform.position = pos;
+        transform.rotation = Quaternion.LookRotation(dir, Vector3.up);
+    }
 }
