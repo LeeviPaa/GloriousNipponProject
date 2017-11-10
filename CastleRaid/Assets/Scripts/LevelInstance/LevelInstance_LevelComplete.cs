@@ -9,16 +9,19 @@ public class LevelInstance_LevelComplete : LevelInstance_Menu
     public Vector2 spawnAreaExtents;
     public GameObject[] lootPrefabs;
     public float spawnInterval;
-    public Text valueCounter;
+    public Text pointCounter;
     public float lootCounterSpeed;
     public Text proceedButtonText;
     public string nextLevel;
     public string lootSpawnSound;
+    public string victorySound;
+    public string pointCounterSound;
 
     private int lootTotalValue = 0;
     private float lootCurrentValue = 0;
     private float spawnTimer;
     private int state = 0;
+    private AudioItem pointCounterSoundItem;
 
     protected override void Start()
     {
@@ -31,6 +34,8 @@ public class LevelInstance_LevelComplete : LevelInstance_Menu
         }
         spawnTimer = spawnInterval;
         lootCurrentValue = 0;
+        GameManager.audioManager.GetAudio(victorySound, true, true, Vector3.zero, transform);
+        pointCounterSoundItem = GameManager.audioManager.GetAudio(pointCounterSound, true, false, pointCounter.transform.position, pointCounter.transform);
     }
 
     protected override void Update()
@@ -40,7 +45,7 @@ public class LevelInstance_LevelComplete : LevelInstance_Menu
         switch (state)
         {
             case 0:
-                if (lootCurrentValue < lootTotalValue)
+                if (lootCurrentValue <= lootTotalValue)
                 {
                     lootCurrentValue += lootCounterSpeed * Time.deltaTime;
                     spawnTimer -= Time.deltaTime;
@@ -50,7 +55,7 @@ public class LevelInstance_LevelComplete : LevelInstance_Menu
                         FinishCurrentState();
                     }
 
-                    valueCounter.text = Mathf.Round(lootCurrentValue).ToString();
+                    pointCounter.text = Mathf.Round(lootCurrentValue).ToString();
 
                     if (spawnTimer <= 0f)
                     {
@@ -76,6 +81,7 @@ public class LevelInstance_LevelComplete : LevelInstance_Menu
             case 0:
                 lootCurrentValue = lootTotalValue;
                 proceedButtonText.text = "Continue";
+                pointCounterSoundItem.ReturnToPool();
                 break;
 
             case 1:
