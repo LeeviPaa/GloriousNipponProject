@@ -96,7 +96,7 @@ public class EnemyPatroller : MonoBehaviour {
 	[SerializeField]
 	ColliderController meleeCollider;
 
-	bool pauseBehaviorForAnimations = false;
+    bool pauseBehaviorForAnimations = false;
 
 	bool targetInSightTrigger = false;
 
@@ -383,8 +383,6 @@ public class EnemyPatroller : MonoBehaviour {
 		if (alertnessState == EAlertnessState.PATROLLING
 			&& (newState == EAlertnessState.SUSPICIOUS
 			|| newState == EAlertnessState.ALERTED)) {
-			navAgent.ResetPath();
-			clearPath = true;
 			animationController.PlayAlertedAnimation();
 			StartCoroutine(PauseAIAndSetTargetPositionAsDestinationAfterDuration(0.8f));
 		}
@@ -501,13 +499,17 @@ public class EnemyPatroller : MonoBehaviour {
 		meleeCollider._OnTriggerEnter -= OnMeleeColliderEnter;
 	}
 
-	IEnumerator PauseAIAndSetTargetPositionAsDestinationAfterDuration(float duration) {
-		pauseBehaviorForAnimations = true;
+	IEnumerator PauseAIAndSetTargetPositionAsDestinationAfterDuration(float duration)
+    {
+        navAgent.ResetPath();
+        clearPath = true;
+        pauseBehaviorForAnimations = true;
 
 		yield return new WaitForSeconds(duration);
 
 		pauseBehaviorForAnimations = false;
-		SetNewNavDestination(currentTarget.transform.position);
+        clearPath = false;
+		//SetNewNavDestination(currentTarget.transform.position);
 	}
 	#endregion
 
@@ -570,14 +572,16 @@ public class EnemyPatroller : MonoBehaviour {
 			c.enabled = newState;
 		}
 
-		meleeCollider.GetComponent<Collider>().enabled = false;
 
 		Rigidbody[] ragdollRigidbodies = ragdollColliderParent.GetComponentsInChildren<Rigidbody>(true);
 		foreach (Rigidbody rb in ragdollRigidbodies) {
 			rb.isKinematic = !newState;
 			rb.useGravity = newState;
 		}
-	}
+
+        //Disable melee collider
+        meleeCollider.GetComponent<Collider>().enabled = false;
+    }
 
 	private void AlertNearbyEnemies() {
 		alertColliderController.gameObject.SetActive(true);
@@ -622,14 +626,17 @@ public class EnemyPatroller : MonoBehaviour {
 			VisionCastInfo visionCast = VisionCast(angle, visionCastOrigin);
 
 			if (visionCast.hit && visionCast.col.GetComponent<TargetableByEnemy>()) {
+                Debug.Log("visionCast.col.gameObject: " + visionCast.col.gameObject);
 				return visionCast.col.GetComponent<TargetableByEnemy>().GetMainObject();
 			}
 
 			visionCastOrigin.y += 1f;
 			visionCast = VisionCast(angle, visionCastOrigin);
 
-			if (visionCast.hit && visionCast.col.GetComponent<TargetableByEnemy>()) {
-				return visionCast.col.GetComponent<TargetableByEnemy>().GetMainObject();
+			if (visionCast.hit && visionCast.col.GetComponent<TargetableByEnemy>())
+            {
+                Debug.Log("visionCast.col.gameObject: " + visionCast.col.gameObject);
+                return visionCast.col.GetComponent<TargetableByEnemy>().GetMainObject();
 			}
 
 
@@ -679,6 +686,7 @@ public class EnemyPatroller : MonoBehaviour {
 
 	#region External events
 	public void Distract(Vector3 distractorPosition) {
+        Debug.Log("Distract");
 		switch (alertnessState) {
 			case EAlertnessState.PATROLLING:
 				SetNewNavDestination(distractorPosition);
@@ -709,7 +717,7 @@ public class EnemyPatroller : MonoBehaviour {
 		Rigidbody collidingRigidbody = collision.rigidbody;
 		if (collidingRigidbody != null) {
 			float sqrVelocityThresholdToDamage = 5f;
-			//Debug.Log("EnemyPatroller: Collided with a rigidbody. Colliding rigidbody velocity sqrMagnitude: "
+			//Debug.Log("EnemyPatroller: Collided with a rigidbody: " + collision.collider.gameObject + ". Colliding rigidbody velocity sqrMagnitude: "
 			//	+ collidingRigidbody.velocity.sqrMagnitude + " , sqrVelocityThresholdToDamage: "
 			//	+ sqrVelocityThresholdToDamage);
 			if (collidingRigidbody.velocity.sqrMagnitude >= sqrVelocityThresholdToDamage) {
