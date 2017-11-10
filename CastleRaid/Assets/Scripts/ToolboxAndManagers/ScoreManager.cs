@@ -5,77 +5,130 @@ using UnityEngine;
 
 public class ScoreManager : MonoBehaviour
 {
-    [Serializable]
-    public class UserData
-    {
-        // Using the open canpus ic card's number
-        public string id;
-        public string name;
-        public int score;
+    public readonly string RANKING_KEY = "RANKING";
+    public readonly int maxRanking = 30;
+    private bool isRunningAutoSave = false;
 
-        public UserData(string _id, string _name, int _score)
-        {
-            id = _id;
-
-            name = _name;
-            score = _score;
-        }
-
-    }
     List<UserData> ranking = new List<UserData>();
 
     // Use this for initialization
     void Start()
     {
-        ranking = DataStorage.GetList("RANKING", new List<UserData>());
+        Example();
+    }
 
+    void Example()
+    {
+        FetchRankingFromJson();
+        CharangeRanking(new UserData("212121", "Ryohei", 1900));
         foreach (UserData r in ranking)
-            print(r.name);
+            print(r.ToString());
+
+        //print(GetUserDataInRanking(1).ToString());
+        //print(GetUserDataInRanking(3).ToString());
 
         DataStorage.Save();
     }
-
     void OnEnable()
     {
-        LevelInstance_Game li = GameManager.levelInstance as LevelInstance_Game;
-        if (li)
-            li.levelTimeEnded += OnLevelTimeEnded;
+        var levelInstance = GameManager.levelInstance as LevelInstance_Game;
+        if (levelInstance)
+            levelInstance.levelTimeEnded += OnLevelTimeEnded;
     }
     void OnDisable()
     {
-        LevelInstance_Game li = GameManager.levelInstance as LevelInstance_Game;
-        if (li)
-            li.levelTimeEnded -= OnLevelTimeEnded;
+        var levelInstance = GameManager.levelInstance as LevelInstance_Game;
+        if (levelInstance)
+            levelInstance.levelTimeEnded -= OnLevelTimeEnded;
     }
-    void ResetRanking()
+    public void ResetAllRanking()
     {
         DataStorage.Clear();
-        for (int i = 0; i < 30; i++)
-        {
-            ranking.Add(new UserData("000000", "unknown", 0));
-        }
-        DataStorage.SetList("RANKING", ranking);
+        FillInUnknown();
+        DataStorage.SetList(RANKING_KEY, ranking);
         DataStorage.Save();
     }
+    public void FillInUnknown()
+    {
+        for (int i = 0; i < maxRanking; i++)
+            if (ranking.Count <= i)
+                ranking.Add(UserData.Empty);
+    }
+    public void RemoveRanking(UserData userData)
+    {
+        if (ranking.Remove(userData))
+            Debug.Log("Remove completed!");
+        Debug.LogError("Did NOT complete!");
+    }
+    public void RemoveRankingWithID(string id)
+    {
+        if (ranking.Remove(GetUserDataWithID(id)))
+            Debug.Log("Remove completed!");
+        Debug.LogError("Did NOT complete!");
+    }
+    public void RemoveRankingWithName(string name)
+    {
+        if (ranking.Remove(GetUserDataWithName(name)))
+            Debug.Log("Remove completed!");
+        Debug.LogError("Did NOT complete!");
+    }
+    public void RemoveRankingWithRank(int rank)
+    {
+        if (ranking.Remove(GetUserDataInRanking(rank)))
+            Debug.Log("Remove completed!");
+        Debug.LogError("Did NOT complete!");
+    }
+    public void AutoSave(float interval)
+    {
+        StartCoroutine(AutoSaveCoroutine(interval));
+    }
+    IEnumerator AutoSaveCoroutine(float interval)
+    {
+        if (isRunningAutoSave)
+            yield break;
+        isRunningAutoSave = true;
 
-    // Get any data from ranking.
+        yield return new WaitForSeconds(interval);
+        DataStorage.Save();
+    }
+    public void FetchRankingFromJson()
+    {
+        ranking = DataStorage.GetList(RANKING_KEY, new List<UserData>());
+        if (ranking.Count <= 0)
+            ResetAllRanking();
+    }
+
+    public void Sort()
+    {
+        ranking.Sort((a, b) => b.score - a.score);
+    }
+
+    /// <summary>
+    /// Get any data from ranking.
+    /// </summary>
+    /// <param name="rank">1~maxRanking</param>
+    /// <returns></returns>
     public UserData GetUserDataInRanking(int rank)
     {
+        rank--;
         CheckRank(rank);
         return ranking[rank];
     }
     public string GetUserIDInRanking(int rank)
     {
+        rank--;
         CheckRank(rank);
         return ranking[rank].id;
     }
     public string GetUserNameInRanking(int rank)
     {
+        rank--;
         CheckRank(rank);
         return ranking[rank].name;
     }
     public int GetUserScoreInRanking(int rank)
     {
+        rank--;
         CheckRank(rank);
         return ranking[rank].score;
     }
@@ -129,26 +182,22 @@ public class ScoreManager : MonoBehaviour
     public bool TryGetUserDataWithID(string id, out UserData userData)
     {
         foreach (var r in ranking)
-        {
             if (r.id == id)
             {
                 userData = r;
                 return true;
             }
-        }
         userData = null;
         return false;
     }
     public bool TryGetUserDataWithName(string name, out UserData userData)
     {
         foreach (var r in ranking)
-        {
             if (r.name == name)
             {
                 userData = r;
                 return true;
             }
-        }
         userData = null;
         return false;
     }
@@ -210,19 +259,21 @@ public class ScoreManager : MonoBehaviour
     private void CheckRank(int rank)
     {
         if (rank < 0 || rank > ranking.Count)
-        {
             throw new ArgumentException("This parameter is outside of ranking!");
-        }
     }
 
     // You should use this function when time up.
-    void CharangeRanking(UserData charanger)
+    public void CharangeRanking(UserData charanger)
     {
-        for (int i = 0; i < ranking.Count; i++)
-        {
+        // When the first charange.
+        for (int i = 0; i < maxRanking; i++)
             if (ranking[i].score < charanger.score)
+            {
                 InsertToRank(i, charanger);
-        }
+                // Delete ranking[maxRanking]. So delete last data.
+                ranking.RemoveAt(maxRanking);
+                return;
+            }
     }
     void OnLevelTimeEnded(object sender, LevelInstance_Game.LevelEventArgs args)
     {

@@ -139,6 +139,8 @@ public class DataStorage
         Savedatabase.Save();
     }
 
+
+
     #endregion
 
     #region SaveDatabase Class
@@ -478,9 +480,7 @@ public class DataStorage
             return target;
         }
 
-        public Serialization()
-        {
-        }
+        public Serialization() { }
 
         public Serialization(Dictionary<TKey, TValue> target)
         {
