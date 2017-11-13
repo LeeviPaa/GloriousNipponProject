@@ -11,9 +11,9 @@ public class Gadget_Gyrocopter : MonoBehaviour {
 	Rigidbody grabberRigidbody;
 	bool isUsed = false;
 	[SerializeField]
-	float liftForce = 800f;
+	float liftForce = 1200f;
 	[SerializeField]
-	float cameraRigLiftForceMultiplier = 10f;
+	float cameraRigLiftForceMultiplier = 100f;
 	[SerializeField]
 	float flyVelocityMagnitudeLimit = 5f;
 	float rotateSpeed = 1080f;
@@ -36,12 +36,16 @@ public class Gadget_Gyrocopter : MonoBehaviour {
 
 	private void FixedUpdate() {
 		if (isUsed) {
-			if (grabberRigidbody != null) {
+			if (grabberRigidbody != null)
+			{
+				Debug.Log("grabberRigidbody is not null, adding force to it");
 				grabberRigidbody.isKinematic = false;
 				grabberRigidbody.AddForce(transform.up * liftForce * cameraRigLiftForceMultiplier * Time.fixedDeltaTime);
 
 				//LimitVelocity(grabberRigidbody, flyVelocityMagnitudeLimit);
-			} else {
+			} else
+			{
+				Debug.Log("grabberRigidbody was null, adding force to copterRigidbody");
 				copterRigidbody.AddForce(transform.up * liftForce * Time.fixedDeltaTime);
 
 				//LimitVelocity(copterRigidbody, flyVelocityMagnitudeLimit);
@@ -77,6 +81,16 @@ public class Gadget_Gyrocopter : MonoBehaviour {
 					}
 				}
 			}
+		}
+
+		if (grabberRigidbody != null)
+		{
+			grabberRigidbody.isKinematic = false;
+			grabberRigidbody.AddForce((transform.up * liftForce * cameraRigLiftForceMultiplier * Time.fixedDeltaTime) / 8f, ForceMode.Impulse);
+		}
+		else
+		{
+			copterRigidbody.AddForce((transform.up * liftForce * Time.fixedDeltaTime) / 8f, ForceMode.Impulse);		
 		}
 
 		isUsed = true;
