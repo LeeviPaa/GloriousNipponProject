@@ -1,10 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class VirtualKeyBoard : MonoBehaviour
 {
+    public delegate void VirtualKeyboardEventDelegate(string value);
+    public event VirtualKeyboardEventDelegate submit;
+
     public VirtualDisplay display;
     [SerializeField]
     GameObject keytop;
@@ -16,11 +20,9 @@ public class VirtualKeyBoard : MonoBehaviour
         "BS","BS","space","space","OK","OK",
     };
     GameObject[] keys = new GameObject[40];
-
     bool shiftState;
-
     string output = string.Empty;
-    // Use this for initialization
+
     void Start()
     {
         var margin = -0.26f;
@@ -110,8 +112,6 @@ public class VirtualKeyBoard : MonoBehaviour
         rect.sizeDelta = new Vector2(60.0f, 140.0f);
         rect.anchoredPosition += new Vector2(300.0f, 0.0f);
 
-
-
         //Default character is small.
         SetShiftKeyState(false);
 
@@ -141,9 +141,12 @@ public class VirtualKeyBoard : MonoBehaviour
     {
         return shiftState;
     }
-    // Update is called once per frame
-    void Update()
-    {
 
+    public void OnSubmit(string value)
+    {
+        if (submit != null)
+        {
+            submit.Invoke(value);
+        }
     }
 }

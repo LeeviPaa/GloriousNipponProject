@@ -52,9 +52,7 @@ public class DataStorage
     public static T GetClass<T>(string key, T _default) where T : class, new()
     {
         return Savedatabase.GetClass(key, _default);
-
     }
-
 
     public static void SetClass<T>(string key, T obj) where T : class, new()
     {
@@ -81,7 +79,6 @@ public class DataStorage
         Savedatabase.SetInt(key, value);
     }
 
-
     public static int GetInt(string key, int _default = 0)
     {
         return Savedatabase.GetInt(key, _default);
@@ -91,7 +88,6 @@ public class DataStorage
     {
         return Savedatabase.TryGetInt(key, out data);
     }
-
 
     public static void SetFloat(string key, float value)
     {
@@ -138,8 +134,6 @@ public class DataStorage
     {
         Savedatabase.Save();
     }
-
-
 
     #endregion
 

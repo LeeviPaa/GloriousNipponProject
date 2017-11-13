@@ -4,7 +4,7 @@ using UnityEngine;
 using VRTK;
 using UnityEngine.UI;
 
-public abstract class VRCanvas : MonoBehaviour
+public class VRCanvas : MonoBehaviour
 {
     public Canvas canvas;
     public VRTK_UICanvas canvasInteraction;
