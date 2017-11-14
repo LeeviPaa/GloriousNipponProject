@@ -8,7 +8,7 @@ public class RankingDisplay : MonoBehaviour {
     Text txt;
 	// Use this for initialization
 	void Start () {
-        var ranking = ScoreManager.Instance.ranking;
+        var ranking = ScoreManager.GetRanking();
         foreach (var r in ranking)
             txt.text += r.ToString() + "\n";
 	}
