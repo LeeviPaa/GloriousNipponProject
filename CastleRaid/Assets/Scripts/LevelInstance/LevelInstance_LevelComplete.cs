@@ -111,7 +111,10 @@ public class LevelInstance_LevelComplete : LevelInstance_Menu
         stepMachine.AddStepAction(3, StepActionMachine.StepActionTime.Start, () =>
         {
             vkb.submit -= SaveScore;
-            for (int i = 0; i < scoreNames.Count; i++)
+            hiscoreNameText.text = "";
+            hiscoreValueText.text = "";
+            int limit = scoreNames.Count < 10 ? scoreNames.Count : 10;
+            for (int i = 0; i < limit; i++)
             {
                 hiscoreNameText.text += i + 1 + ". " + scoreNames[i] + "\n";
                 hiscoreValueText.text += scoreValues[i] + "\n";
@@ -134,12 +137,23 @@ public class LevelInstance_LevelComplete : LevelInstance_Menu
         vkb.submit -= SaveScore;
         scoreNames = DataStorage.GetList("ScoreNames", scoreNames);
         scoreValues = DataStorage.GetList("ScoreValues", scoreValues);
-        for (int i = 0; i < scoreValues.Count; i++)
+        int limit = scoreValues.Count + 1;
+        for (int i = 0; i < limit; i++)
         {
-            if (lootTotalValue > scoreValues[i])
+            if (i < limit - 1)
             {
-                scoreNames.Insert(i, value);
-                scoreValues.Insert(i, lootTotalValue);
+                if (lootTotalValue > scoreValues[i])
+                {
+                    scoreNames.Insert(i, value);
+                    scoreValues.Insert(i, lootTotalValue);
+                    break;
+                }
+            }
+            else
+            {
+                scoreNames.Add(value);
+                scoreValues.Add(lootTotalValue);
+                break;
             }
         }
         DataStorage.SetList("ScoreNames", scoreNames);
