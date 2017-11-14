@@ -64,7 +64,7 @@ public class Keytop : MonoBehaviour
             case EKeyType.submit:
                 string temp = string.Empty;
                 vkb.display.Output(ref temp);
-                PlayerPrefs.SetString("USER_NAME", temp);
+                vkb.OnSubmit(temp);
                 break;
             default:
                 break;

@@ -6,17 +6,11 @@ using UnityEngine.UI;
 public class VirtualDisplay : MonoBehaviour
 {
     Text txt;
-    // Use this for initialization
+
     void Start()
     {
         txt = GetComponent<Text>();
         Clear();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     public void Add(string value)
