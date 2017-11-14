@@ -96,11 +96,20 @@ public class EnemyPatroller : MonoBehaviour {
 	[SerializeField]
 	ColliderController meleeCollider;
 
-    bool pauseBehaviorForAnimations = false;
+	bool pauseBehaviorForAnimations = false;
 
 	bool targetInSightTrigger = false;
 
 	bool clearPath = false;
+
+	AudioItem walkingSound;
+	AudioItem lookAroundSound;
+
+	[SerializeField]
+	GameObject suspiciousIndicator;
+	[SerializeField]
+	GameObject alertedIndicator;
+
 	#endregion
 
 	#region Initialization
@@ -115,6 +124,10 @@ public class EnemyPatroller : MonoBehaviour {
 		navAgent = GetComponent<NavMeshAgent>();
 		rb = GetComponent<Rigidbody>();
 		animationController = GetComponent<EnemyAnimationController>();
+
+		//Initialize looping sound effects
+		walkingSound = GameManager.audioManager.GetAudio("FootStep", false, false, transform.position, transform);
+		lookAroundSound = GameManager.audioManager.GetAudio("GuardLookAround", false, false, transform.position, transform);
 
 		ResetEnemy();
 
@@ -149,6 +162,8 @@ public class EnemyPatroller : MonoBehaviour {
 		pauseBehaviorForAnimations = false;
 		targetInSightTrigger = false;
 		clearPath = false;
+
+		SetAlertnessIndicatorState(0);
 	}
 	#endregion
 
@@ -198,6 +213,14 @@ public class EnemyPatroller : MonoBehaviour {
 	private void UpdateNavigation(float updateLoopDeltaTime) {
 
 		if (!clearPath) {
+
+			if (!walkingSound.source.isPlaying) {
+				walkingSound.source.Play();
+			}
+			if (lookAroundSound.source.isPlaying) {
+				lookAroundSound.source.Stop();
+			}
+
 			navTickCounter += updateLoopDeltaTime;
 
 			if (navTickCounter >= navTickInterval) {
@@ -306,6 +329,7 @@ public class EnemyPatroller : MonoBehaviour {
 		//if (Mathf.Abs(transform.position.y - currentDestination.y) <= navAgentDestinationHeightDifferenceIgnoreLimit)
 		//{
 		//}
+
 		currentPosition.y = 0;
 		destination.y = 0;
 
@@ -385,6 +409,8 @@ public class EnemyPatroller : MonoBehaviour {
 			|| newState == EAlertnessState.ALERTED)) {
 			animationController.PlayAlertedAnimation();
 			StartCoroutine(PauseAIAndSetTargetPositionAsDestinationAfterDuration(0.8f));
+
+			AudioItem alertedSoundEffect = GameManager.audioManager.GetAudio("GuardNotice", true, true, transform.position, transform);
 		}
 
 		alertnessState = newState;
@@ -400,6 +426,7 @@ public class EnemyPatroller : MonoBehaviour {
 				}
 
 				SetNextPatrolPoint();
+				SetAlertnessIndicatorState(0);
 				break;
 
 			case EAlertnessState.SUSPICIOUS:
@@ -410,6 +437,8 @@ public class EnemyPatroller : MonoBehaviour {
 					visionLight.range = currentVisionRange;
 					visionLight.spotAngle = currentVisionAngle;
 				}
+
+				SetAlertnessIndicatorState(1);
 				break;
 
 			case EAlertnessState.ALERTED:
@@ -424,6 +453,8 @@ public class EnemyPatroller : MonoBehaviour {
 				if (currentTarget == null) {
 					Debug.LogError("CurrentTarget is null when changing to ALERTED state!");
 				}
+
+				SetAlertnessIndicatorState(2);
 				break;
 
 			default:
@@ -499,16 +530,18 @@ public class EnemyPatroller : MonoBehaviour {
 		meleeCollider._OnTriggerEnter -= OnMeleeColliderEnter;
 	}
 
-	IEnumerator PauseAIAndSetTargetPositionAsDestinationAfterDuration(float duration)
-    {
-        navAgent.ResetPath();
-        clearPath = true;
-        pauseBehaviorForAnimations = true;
+	IEnumerator PauseAIAndSetTargetPositionAsDestinationAfterDuration(float duration) {
+		//Pause walking sound effect
+		walkingSound.source.Stop();
+
+		navAgent.ResetPath();
+		clearPath = true;
+		pauseBehaviorForAnimations = true;
 
 		yield return new WaitForSeconds(duration);
 
 		pauseBehaviorForAnimations = false;
-        clearPath = false;
+		clearPath = false;
 		//SetNewNavDestination(currentTarget.transform.position);
 	}
 	#endregion
@@ -527,6 +560,9 @@ public class EnemyPatroller : MonoBehaviour {
 
 			//Enable melee collider for the duration of the animation
 			StartCoroutine(EnableMeleeColliderForDuration(1.835f));
+
+			//Call melee sound effect
+			AudioItem meleeSoundEffect = GameManager.audioManager.GetAudio("GuardSwing", true, true, transform.position, transform);
 		}
 	}
 
@@ -537,6 +573,9 @@ public class EnemyPatroller : MonoBehaviour {
 		lookAroundStartTime = Time.time;
 		SetMovementState(EMovementState.LOOKINGAROUND);
 		animationController.StartGuardAnimation();
+
+		//Call lookAround sound effect
+		lookAroundSound.source.Play();
 	}
 
 	private void CheckPerimeter() {
@@ -546,6 +585,9 @@ public class EnemyPatroller : MonoBehaviour {
 		lookAroundStartTime = Time.time;
 		SetMovementState(EMovementState.LOOKINGAROUND);
 		animationController.StartCheckPerimeterAnimation();
+
+		//Call lookAround sound effect
+		lookAroundSound.source.Play();
 	}
 
 	private void TurnTowardsGivenDirection(Vector3 direction, float deltaTime) {
@@ -579,9 +621,9 @@ public class EnemyPatroller : MonoBehaviour {
 			rb.useGravity = newState;
 		}
 
-        //Disable melee collider
-        meleeCollider.GetComponent<Collider>().enabled = false;
-    }
+		//Disable melee collider
+		meleeCollider.GetComponent<Collider>().enabled = false;
+	}
 
 	private void AlertNearbyEnemies() {
 		alertColliderController.gameObject.SetActive(true);
@@ -589,6 +631,25 @@ public class EnemyPatroller : MonoBehaviour {
 		alertColliderController._OnTriggerEnter += OnColliderControllerTriggerEnter;
 		alertNearbyEnemiesTimer = alertNearbyEnemiesDuration;
 		alertingNearbyEnemies = true;
+	}
+
+	private void SetAlertnessIndicatorState(int newState) {
+		switch (newState) {
+			case 0:
+				suspiciousIndicator.SetActive(false);
+				alertedIndicator.SetActive(false);
+				break;
+			case 1:
+				suspiciousIndicator.SetActive(true);
+				alertedIndicator.SetActive(false);
+				break;
+			case 2:
+				suspiciousIndicator.SetActive(false);
+				alertedIndicator.SetActive(true);
+				break;
+			default:
+				break;
+		}
 	}
 	#endregion
 
@@ -626,17 +687,16 @@ public class EnemyPatroller : MonoBehaviour {
 			VisionCastInfo visionCast = VisionCast(angle, visionCastOrigin);
 
 			if (visionCast.hit && visionCast.col.GetComponent<TargetableByEnemy>()) {
-                Debug.Log("visionCast.col.gameObject: " + visionCast.col.gameObject);
+				//Debug.Log("visionCast.col.gameObject: " + visionCast.col.gameObject);
 				return visionCast.col.GetComponent<TargetableByEnemy>().GetMainObject();
 			}
 
 			visionCastOrigin.y += 1f;
 			visionCast = VisionCast(angle, visionCastOrigin);
 
-			if (visionCast.hit && visionCast.col.GetComponent<TargetableByEnemy>())
-            {
-                Debug.Log("visionCast.col.gameObject: " + visionCast.col.gameObject);
-                return visionCast.col.GetComponent<TargetableByEnemy>().GetMainObject();
+			if (visionCast.hit && visionCast.col.GetComponent<TargetableByEnemy>()) {
+				//Debug.Log("visionCast.col.gameObject: " + visionCast.col.gameObject);
+				return visionCast.col.GetComponent<TargetableByEnemy>().GetMainObject();
 			}
 
 
@@ -686,7 +746,7 @@ public class EnemyPatroller : MonoBehaviour {
 
 	#region External events
 	public void Distract(Vector3 distractorPosition) {
-        Debug.Log("Distract");
+		//Debug.Log("Distract");
 		switch (alertnessState) {
 			case EAlertnessState.PATROLLING:
 				SetNewNavDestination(distractorPosition);
@@ -717,9 +777,9 @@ public class EnemyPatroller : MonoBehaviour {
 		Rigidbody collidingRigidbody = collision.rigidbody;
 		if (collidingRigidbody != null) {
 			float sqrVelocityThresholdToDamage = 5f;
-			//Debug.Log("EnemyPatroller: Collided with a rigidbody: " + collision.collider.gameObject + ". Colliding rigidbody velocity sqrMagnitude: "
-			//	+ collidingRigidbody.velocity.sqrMagnitude + " , sqrVelocityThresholdToDamage: "
-			//	+ sqrVelocityThresholdToDamage);
+			Debug.Log("EnemyPatroller: Collided with a rigidbody: " + collision.collider.gameObject + ". Colliding rigidbody velocity sqrMagnitude: "
+				+ collidingRigidbody.velocity.sqrMagnitude + " , sqrVelocityThresholdToDamage: "
+				+ sqrVelocityThresholdToDamage);
 			if (collidingRigidbody.velocity.sqrMagnitude >= sqrVelocityThresholdToDamage) {
 				Ragdoll();
 			} else {

@@ -55,5 +55,6 @@ public class Gadget_Missile : MonoBehaviour
         {
             target.Destroy();
         }
+        Destroy(gameObject);
     }
 }

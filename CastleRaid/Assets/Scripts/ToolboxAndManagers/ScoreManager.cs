@@ -3,19 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ScoreManager : MonoBehaviour
+public class ScoreManager : Singleton<ScoreManager>
 {
     public readonly string RANKING_KEY = "RANKING";
     public readonly int maxRanking = 30;
     private bool isRunningAutoSave = false;
 
-    [SerializeField]
-    private static List<UserData> ranking = new List<UserData>();
+    public List<UserData> ranking = new List<UserData>();
 
     // Use this for initialization
-    void Awake() {
+    void Start()
+    {
         FetchRankingFromJson();
-
     }
 
     void Example()
@@ -279,7 +278,5 @@ public class ScoreManager : MonoBehaviour
     {
         print("Time up!");
     }
-    public static List<UserData> GetRanking() {
-        return ranking;
-    }
+
 }

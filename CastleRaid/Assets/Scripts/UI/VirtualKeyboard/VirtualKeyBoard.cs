@@ -10,7 +10,6 @@ public class VirtualKeyBoard : MonoBehaviour
     public event VirtualKeyboardEventDelegate submit;
 
     public VirtualDisplay display;
-    public bool drawRuntime = false;
     [SerializeField]
     GameObject keytop;
     private static string[] keyboardStr = {
@@ -20,21 +19,12 @@ public class VirtualKeyBoard : MonoBehaviour
         "sft","SFT","z","Z","x","X","c","C","v","V","b","B","n","N","m","M",
         "BS","BS","space","space","OK","OK",
     };
-    [SerializeField]
     GameObject[] keys = new GameObject[40];
     bool shiftState;
     string output = string.Empty;
 
     void Start()
     {
-        if (drawRuntime)
-            CreateKeyboard();
-
-        //Default character is small.
-        SetShiftKeyState(false);
-
-    }
-    public void CreateKeyboard() {
         var margin = -0.26f;
         var adjust_x = -1.25f;
         float x, y;
@@ -43,14 +33,16 @@ public class VirtualKeyBoard : MonoBehaviour
         float vk_z = transform.position.z;
         Vector3 pos;
         // 1234567890
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++)
+        {
             x = vk_x + adjust_x + 0.25f * i;
             pos = new Vector3(x, vk_y, vk_z);
             keys[i] = Instantiate(keytop, pos, transform.localRotation, transform);
             keys[i].GetComponent<Keytop>().Type = Keytop.EKeyType.character;
         }
         //qwertyuiop
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++)
+        {
             x = vk_x + adjust_x + 0.25f * i;
             y = vk_y + margin;
             pos = new Vector3(x, y, vk_z);
@@ -59,7 +51,8 @@ public class VirtualKeyBoard : MonoBehaviour
 
         }
         //asdfghjkl
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 9; i++)
+        {
             x = vk_x + adjust_x + 0.125f + 0.25f * i;
             y = vk_y + margin * 2;
             pos = new Vector3(x, y, vk_z);
@@ -78,7 +71,8 @@ public class VirtualKeyBoard : MonoBehaviour
         rect.sizeDelta = new Vector2(41.0f, 30.0f);
         rect.anchoredPosition += new Vector2(15f, 0f);
         //zxcvbnm
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 7; i++)
+        {
             x = vk_x + adjust_x + 0.375f + 0.25f * i;
             y = vk_y + margin * 3;
             pos = new Vector3(x, y, vk_z);
@@ -110,7 +104,7 @@ public class VirtualKeyBoard : MonoBehaviour
 
         // okay
         x = vk_x + 0.05f;
-        y = vk_y + margin * 2 + 0.01f;
+        y = vk_y + margin * 2+0.01f;
         pos = new Vector3(x, y, vk_z);
         keys[39] = Instantiate(keytop, pos, transform.localRotation, transform);
         keys[39].GetComponent<Keytop>().Type = Keytop.EKeyType.submit;
@@ -122,7 +116,6 @@ public class VirtualKeyBoard : MonoBehaviour
         SetShiftKeyState(false);
 
         transform.localRotation = transform.parent.localRotation;
-
     }
     public void SetShiftKeyState(bool value)
     {

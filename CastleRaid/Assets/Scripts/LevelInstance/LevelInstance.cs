@@ -9,6 +9,12 @@ public abstract class LevelInstance : MonoBehaviour
     protected PlayerRelocator playerRelocator;
     protected VRTK_HeadsetFade headsetFade;
     protected Color headsetFadeColor = Color.black;
+    [SerializeField]
+    protected bool useBgmAudio;
+    [SerializeField]
+    protected string bgmAudioName;
+
+    private AudioItem bgmAudio;
 
     protected virtual void Awake()
     {
@@ -45,6 +51,18 @@ public abstract class LevelInstance : MonoBehaviour
 		print(headsetFade + " unfade");
 		if (headsetFade)
             headsetFade.Unfade(duration);
+    }
+
+    protected virtual void InitBgmAudio()
+    {
+        if (useBgmAudio)
+        {
+            bgmAudio = GameManager.audioManager.GetAudio(bgmAudioName, true, false, Vector3.zero, transform);
+            if (!bgmAudio)
+            {
+                useBgmAudio = false;
+            }
+        }
     }
 
     protected virtual void OnEnable()

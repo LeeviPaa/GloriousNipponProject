@@ -28,6 +28,7 @@ public class AudioItem : MonoBehaviour
 
     public void ReturnToPool()
     {
+        source.Stop();
         audioManager.ReturnToPool(this);
     }
 }
