@@ -160,4 +160,11 @@ public class LevelInstance_LevelComplete : LevelInstance_Menu
         DataStorage.SetList("ScoreValues", scoreValues);
         ProceedStepMachine();
     }
+
+    [AddEditorInvokeButton]
+    void ClearScores()
+    {
+        DataStorage.SetList("ScoreNames", new List<string>());
+        DataStorage.SetList("ScoreValues", new List<int>());
+    }
 }

@@ -44,13 +44,18 @@ public class Keytop : MonoBehaviour
     }
     public void PushKey()
     {
+        string temp = string.Empty;
         switch (type)
         {
             case EKeyType.none:
                 Debug.LogError("There is empty key");
                 break;
-            case EKeyType.character:
-                vkb.display.Add(character);
+            case EKeyType.character:              
+                vkb.display.Output(ref temp);
+                if (temp.Length < vkb.charLimit)
+                {
+                    vkb.display.Add(character);
+                }
                 break;
             case EKeyType.shift:
                 vkb.SetShiftKeyState(!vkb.GetShiftState());
@@ -62,7 +67,6 @@ public class Keytop : MonoBehaviour
                 vkb.display.Add(' ');
                 break;
             case EKeyType.submit:
-                string temp = string.Empty;
                 vkb.display.Output(ref temp);
                 vkb.OnSubmit(temp);
                 break;
