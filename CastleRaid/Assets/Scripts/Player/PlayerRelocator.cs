@@ -90,7 +90,7 @@ public class PlayerRelocator : MonoBehaviour
         playArea.rotation = rot;
         GameManager.levelInstance.ScreenUnfade(relocationFadeDuration / 2);
 
-        AudioItem imprisonedSoundEffect = GameManager.audioManager.GetAudio("PlayerThrownToPrison", true, true, pos: playArea.transform.position);
+        AudioItem imprisonedSoundEffect = GameManager.audioManager.GetAudio("PlayerThrownToPrison", true, true, playArea.transform.position);
     }
 
     public void RotatePlayArea(float degreesPerSec)
