@@ -29,9 +29,17 @@ public class Door : MonoBehaviour {
 	Quaternion lockingLerpStartRotation = Quaternion.identity;
 	Quaternion lockingLerpEndRotation = Quaternion.identity;
 
-	private void Awake() {
-		//If the door has a lock, initialize relevant variables / states
-		if (lockType != ELockType.NONE) {
+	private void Awake()
+    {
+
+        hinge = doorObject.GetComponent<HingeJoint>();
+        defaultHingeLimits = hinge.limits;
+        lockedHingeLimits.min = -lockedHingeLimit;
+        lockedHingeLimits.max = lockedHingeLimit;
+        lockingLerpEndRotation = doorObject.transform.localRotation;
+
+        //If the door has a lock, initialize relevant variables / states
+        if (lockType != ELockType.NONE) {
 			//Print a warning if a key is set but the lock type is NONE
 			if (compatibleKeys.Length > 0) {
 				if (compatibleKeys[0] != null) {
@@ -44,17 +52,12 @@ public class Door : MonoBehaviour {
 				doorObject = gameObject;
 			}
 
-			hinge = doorObject.GetComponent<HingeJoint>();
-			defaultHingeLimits = hinge.limits;
-			lockedHingeLimits.min = -lockedHingeLimit;
-			lockedHingeLimits.max = lockedHingeLimit;
-			lockingLerpEndRotation = doorObject.transform.localRotation;
-
 			locked = initialLockState;
 
 			if (locked) {
 				Lock(false);
 			} else {
+                Debug.Log("Unlocking door for initial state");
 				Unlock();
 			}
 		} else {
@@ -89,7 +92,7 @@ public class Door : MonoBehaviour {
 
 	private void Unlock() {
 		lerpingToLockedRotation = false;
-		hinge.limits = defaultHingeLimits;
+        hinge.limits = defaultHingeLimits;
 		hinge.useLimits = useLimits;
 
 		locked = false;
