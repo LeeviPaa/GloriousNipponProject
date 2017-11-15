@@ -561,9 +561,9 @@ public class EnemyPatroller : MonoBehaviour {
 			//Enable melee collider for the duration of the animation
 			StartCoroutine(EnableMeleeColliderForDuration(1.835f));
 
-			//Call melee sound effect
-			AudioItem meleeSoundEffect = GameManager.audioManager.GetAudio("GuardSwing", true, true, transform.position, transform);
-		}
+            //Call melee sound effect
+            AudioItem meleeSoundEffect = GameManager.audioManager.GetAudio("GuardSwing", true, true, transform.position, transform);
+        }
 	}
 
 	private void GuardPoint() {
