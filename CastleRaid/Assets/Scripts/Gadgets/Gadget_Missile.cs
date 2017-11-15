@@ -4,20 +4,21 @@ using UnityEngine;
 
 public class Gadget_Missile : MonoBehaviour
 {
-    [SerializeField]
-    private float speed = 1f;
-    [SerializeField]
-    private float turnRate = 40f;
-    [SerializeField]
-    private float explosionRadius = 2f;
+	[SerializeField]
+	private float speed = 1f;
+	[SerializeField]
+	private float turnRate = 40f;
+	[SerializeField]
+	private float explosionRadius = 2f;
 
 	private Transform target;
+	private GameObject[] ignore;
 
-    public void Shoot(Transform target)
+	public void Shoot(Transform target, GameObject[] ignore)
     {
 		this.target = target;
-
-    }
+		this.ignore = ignore;
+	}
 
 	void Update()
 	{
@@ -35,6 +36,13 @@ public class Gadget_Missile : MonoBehaviour
     {
         if (!other.isTrigger)
         {
+			for (int i = 0; i < ignore.Length; i++)
+			{
+				if (other.gameObject == ignore[i])
+				{
+					return;
+				}
+			}
             Explode();
         }
     }
