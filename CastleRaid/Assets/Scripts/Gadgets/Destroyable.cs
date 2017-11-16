@@ -14,13 +14,14 @@ public class Destroyable : MonoBehaviour
     [SerializeField]
     private string[] effects;
 
+    [AddEditorInvokeButton]
     public void Destroy()
     {
         foreach (GameObject obj in savedObjects)
         {
             obj.transform.SetParent(transform.parent, true);
         }
-        foreach (GameObject obj in savedObjects)
+        foreach (GameObject obj in spawnedObjects)
         {
             Instantiate(obj, transform.position + Random.insideUnitSphere * objectSpawnRadius, Quaternion.identity);
         }
