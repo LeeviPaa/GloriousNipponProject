@@ -11,11 +11,13 @@ using System.IO;
 public class ScreenRecorder : MonoBehaviour
 {
     // 4k = 3840 x 2160   1080p = 1920 x 1080   8k = 7680 x 4320    A4 = 3508  x 2480   A4 (x3) = 10524 x 7440
-    int captureWidth = 7440;
-    int captureHeight = 10524;
+    int captureWidth = 1920;
+    int captureHeight = 1080;
 
     // optional game object to hide during screenshots (usually your scene canvas hud)
     public GameObject hideGameObject;
+
+	public float fovOverride;
 
     // optimize for many screenshots will not destroy any objects so future screenshots will be fast
     public bool optimizeForManyScreenshots = true;
@@ -100,7 +102,8 @@ public class ScreenRecorder : MonoBehaviour
             // get main camera and manually render scene into rt
             Camera camera = this.GetComponent<Camera>(); // NOTE: added because there was no reference to camera in original script; must add this script to Camera
             camera.targetTexture = renderTexture;
-            camera.Render();
+			camera.fieldOfView = fovOverride;
+			camera.Render();
 
             // read pixels will read from the currently active render texture so make our offscreen 
             // render texture active and then read the pixels

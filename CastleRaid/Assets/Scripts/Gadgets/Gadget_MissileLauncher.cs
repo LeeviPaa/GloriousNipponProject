@@ -126,6 +126,6 @@ public class Gadget_MissileLauncher : MonoBehaviour
     void Shoot()
     {
         Gadget_Missile missile = Instantiate(missilePrefab, missileSpawnPoint.position, missileSpawnPoint.rotation).GetComponent<Gadget_Missile>();
-        missile.Shoot(lockedTarget.transform);
+        missile.Shoot(lockedTarget.transform, new GameObject[] { gameObject });
     }
 }

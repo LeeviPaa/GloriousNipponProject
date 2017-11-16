@@ -26,6 +26,12 @@ ModelImporter:
     100036: Wing.1.Right
     100038: Wing.2.Left
     100040: Wing.2.Right
+    100042: Head_end
+    100044: Leg.Foot.Left_end
+    100046: Leg.Foot.Right_end
+    100048: Tail.2_end
+    100050: Wing.2.Left_end
+    100052: Wing.2.Right_end
     400000: Armature
     400002: //RootNode
     400004: Birb_model
@@ -47,6 +53,12 @@ ModelImporter:
     400036: Wing.1.Right
     400038: Wing.2.Left
     400040: Wing.2.Right
+    400042: Head_end
+    400044: Leg.Foot.Left_end
+    400046: Leg.Foot.Right_end
+    400048: Tail.2_end
+    400050: Wing.2.Left_end
+    400052: Wing.2.Right_end
     4300000: Birb_model
     7400000: Armature|Bake
     7400002: Armature|FlyBody
