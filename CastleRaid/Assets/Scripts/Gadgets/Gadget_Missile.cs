@@ -10,15 +10,19 @@ public class Gadget_Missile : MonoBehaviour
 	private float turnRate = 40f;
 	[SerializeField]
 	private float explosionRadius = 2f;
+    [SerializeField]
+    private float lifetime = 10f;
 
-	private Transform target;
+    private Transform target;
 	private GameObject[] ignore;
+    private float lifetimeTimer = 0f;
 
-	public void Shoot(Transform target, GameObject[] ignore)
+    public void Shoot(Transform target, GameObject[] ignore)
     {
 		this.target = target;
 		this.ignore = ignore;
-	}
+        lifetimeTimer = 0f;
+    }
 
 	void Update()
 	{
@@ -30,6 +34,14 @@ public class Gadget_Missile : MonoBehaviour
 			transform.rotation = actualRot;
 			transform.position += transform.forward * speed * Time.deltaTime;
 		}
+        else
+        {
+            transform.position += transform.forward * speed * Time.deltaTime;
+        }
+        if (lifetimeTimer >= lifetime)
+        {
+            Explode();
+        }
 	}
 
 	void OnTriggerEnter(Collider other)
