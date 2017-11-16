@@ -54,7 +54,19 @@ public class Gadget_Missile : MonoBehaviour
 				{
 					return;
 				}
+
+				Transform[] parentTransforms = other.gameObject.GetComponentsInParent<Transform>();
+
+				foreach (Transform t in parentTransforms)
+				{
+					if (t.gameObject == ignore[i])
+					{
+						return;
+					}
+				}
 			}
+
+			Debug.Log("Exploding on touch with non-ignored objects!");
             Explode();
         }
     }

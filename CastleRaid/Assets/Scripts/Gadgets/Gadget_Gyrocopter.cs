@@ -38,14 +38,12 @@ public class Gadget_Gyrocopter : MonoBehaviour {
 		if (isUsed) {
 			if (grabberRigidbody != null)
 			{
-				Debug.Log("grabberRigidbody is not null, adding force to it");
 				grabberRigidbody.isKinematic = false;
 				grabberRigidbody.AddForce(transform.up * liftForce * cameraRigLiftForceMultiplier * Time.fixedDeltaTime);
 
 				//LimitVelocity(grabberRigidbody, flyVelocityMagnitudeLimit);
 			} else
 			{
-				Debug.Log("grabberRigidbody was null, adding force to copterRigidbody");
 				copterRigidbody.AddForce(transform.up * liftForce * Time.fixedDeltaTime);
 
 				//LimitVelocity(copterRigidbody, flyVelocityMagnitudeLimit);
