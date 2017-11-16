@@ -10,6 +10,8 @@ public class Gadget_MissileLauncher : MonoBehaviour
     [SerializeField]
     private Transform targetPainter;
     [SerializeField]
+    private Camera lensCamera;
+    [SerializeField]
     private Transform missileSpawnPoint;
     [SerializeField]
     private GameObject missilePrefab;
@@ -45,7 +47,11 @@ public class Gadget_MissileLauncher : MonoBehaviour
 		{
 			targetPainter.gameObject.SetActive(false);
 		}
-	}
+        if (lensCamera)
+        {
+            lensCamera.gameObject.SetActive(false);
+        }
+    }
 
     void Update()
     {
@@ -62,6 +68,10 @@ public class Gadget_MissileLauncher : MonoBehaviour
 		{
 			targetPainter.gameObject.SetActive(true);
 		}
+        if (lensCamera)
+        {
+            lensCamera.gameObject.SetActive(true);
+        }
     }
 
     void OnGrabEnd(object sender, InteractableObjectEventArgs e)
@@ -75,7 +85,11 @@ public class Gadget_MissileLauncher : MonoBehaviour
 		{
 			targetPainter.gameObject.SetActive(false);
 		}
-	}
+        if (lensCamera)
+        {
+            lensCamera.gameObject.SetActive(false);
+        }
+    }
 
     void OnUseBegin(object sender, InteractableObjectEventArgs e)
     {
