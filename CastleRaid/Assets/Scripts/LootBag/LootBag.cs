@@ -45,16 +45,16 @@ public class LootBag : MonoBehaviour
 	public delegate void BoolIntVoid(bool boolean, int integer);
 	public event BoolIntVoid OnLootBagActiveStateChange;
 
-    [SerializeField]
-    private string itemLootedSoundSmall = "LootingFinished";
-    [SerializeField]
-    private int itemLootedSoundMediumThreshold = 250;
-    [SerializeField]
-    private string itemLootedSoundMedium = "LootingFinished";
-    [SerializeField]
-    private int itemLootedSoundLargeThreshold = 500;
-    [SerializeField]
-    private string itemLootedSoundLarge = "LootingFinished";
+    //[SerializeField]
+    private string itemLootedSoundSmall = "LootedSmall";
+    //[SerializeField]
+    private int itemLootedSoundMediumThreshold = 1000;
+    //[SerializeField]
+    private string itemLootedSoundMedium = "LootedMedium";
+    //[SerializeField]
+    private int itemLootedSoundLargeThreshold = 5000;
+    //[SerializeField]
+    private string itemLootedSoundLarge = "LootedLarge";
 
     //TODO: Implement bag streching as it fills
     //TODO: Implement bag physics (joints)
